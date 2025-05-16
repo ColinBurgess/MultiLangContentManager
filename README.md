@@ -25,223 +25,223 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Video production teams working with international audiences
 - Anyone needing to organize and track multilingual digital content
 
-## Características 🌟
+## Features 🌟
 
-- Gestión bilingüe de contenido (Español/Inglés)
-- Control de estado de publicación por idioma
-- Acceso directo a contenido publicado desde la interfaz
-- Sistema de etiquetas para categorización
-- Búsqueda avanzada en ambos idiomas
-- Gestión de enlaces a redes sociales
-- Interfaz de usuario responsive
-- Seguridad mejorada para credenciales de base de datos
-- Preferencias de usuario mediante cookies
+- Bilingual content management (Spanish/English)
+- Publication status tracking by language
+- Direct access to published content from the interface
+- Tagging system for categorization
+- Advanced search in both languages
+- Social media link management
+- Responsive user interface
+- Enhanced security for database credentials
+- User preferences via cookies
 
-## Estructura del Proyecto 📁
+## Project Structure 📁
 
 ```
 VideoContentCreationOrganizer/
 ├── server/
-│   ├── server.js         # Configuración principal del servidor
+│   ├── server.js         # Main server configuration
 │   ├── routes/
-│   │   └── content.js    # Rutas de la API de contenido
+│   │   └── content.js    # Content API routes
 │   └── models/
-│       └── Content.js    # Modelo de MongoDB
+│       └── Content.js    # MongoDB model
 ├── client/
 │   └── public/
-│       ├── index.html    # Página principal
-│       ├── new-content.html # Formulario de creación/edición
+│       ├── index.html    # Main page
+│       ├── new-content.html # Creation/editing form
 │       ├── css/
-│       │   └── styles.css # Estilos
+│       │   └── styles.css # Styles
 │       └── js/
-│           ├── list.js   # Lógica para la lista de contenidos
-│           ├── form.js   # Lógica para el formulario de edición
-│           └── utils.js  # Funciones de utilidad
+│           ├── list.js   # Logic for content list
+│           ├── form.js   # Logic for edit form
+│           └── utils.js  # Utility functions
 ├── utils/
-│   ├── credentials.js    # Utilidad de credenciales
-│   └── logger.js         # Sistema de logs
-├── logs/                 # Archivos de registro
+│   ├── credentials.js    # Credentials utility
+│   └── logger.js         # Logging system
+├── logs/                 # Log files
 ├── scripts/
-│   └── encrypt-credentials.js # Script de encriptación
-└── package.json         # Dependencias y scripts
+│   └── encrypt-credentials.js # Encryption script
+└── package.json         # Dependencies and scripts
 ```
 
-## Requisitos Previos 📋
+## Prerequisites 📋
 
-- Node.js (v14 o superior)
-- MongoDB (v4.4 o superior)
-- npm o yarn
+- Node.js (v14 or higher)
+- MongoDB (v4.4 or higher)
+- npm or yarn
 
-## Instalación 🔧
+## Installation 🔧
 
-1. Clonar el repositorio:
+1. Clone the repository:
    ```bash
-   git clone [url-del-repositorio]
+   git clone [repository-url]
    cd VideoContentCreationOrganizer
    ```
 
-2. Instalar dependencias:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Configurar las variables de entorno:
+3. Configure environment variables:
    ```bash
    cp .env.example .env
    ```
-   Editar el archivo `.env` con tus configuraciones.
+   Edit the `.env` file with your configurations.
 
-4. Encriptar las credenciales de MongoDB:
+4. Encrypt MongoDB credentials:
    ```bash
    node scripts/encrypt-credentials.js
    ```
-   Sigue las instrucciones en pantalla para configurar las credenciales de manera segura.
+   Follow the on-screen instructions to set up credentials securely.
 
-## Uso 🚀
+## Usage 🚀
 
-1. Iniciar el servidor:
+1. Start the server:
    ```bash
    npm start
    ```
 
-2. Abrir en el navegador:
+2. Open in the browser:
    ```
    http://localhost:3000
    ```
 
-## Guía de Usuario 📘
+## User Guide 📘
 
-### Gestión de Contenido
+### Content Management
 
-La aplicación permite gestionar contenido bilingüe para producciones de video:
+The application allows you to manage bilingual content for video productions:
 
-1. **Vista Principal:**
-   - Lista de todos los contenidos disponibles
-   - Indicadores de estado de publicación (ES/EN)
-   - Filtro de búsqueda en tiempo real
+1. **Main View:**
+   - List of all available content
+   - Publication status indicators (ES/EN)
+   - Real-time search filter
 
-2. **Estados de Publicación:**
-   - Indicador verde: Contenido publicado
-   - Indicador amarillo: Contenido pendiente
-   - Los indicadores verdes son clicables y llevan directamente al contenido publicado
+2. **Publication Status:**
+   - Green indicator: Published content
+   - Yellow indicator: Pending content
+   - Green indicators are clickable and lead directly to the published content
 
-3. **Crear/Editar Contenido:**
-   - Formulario completo para todos los campos en ambos idiomas
-   - Control de estado de publicación (publicado/pendiente)
-   - URLs para acceso directo al contenido publicado
-   - Limitadores de caracteres para redes sociales
+3. **Create/Edit Content:**
+   - Complete form for all fields in both languages
+   - Publication status control (published/pending)
+   - URLs for direct access to published content
+   - Character limiters for social networks
 
-4. **Visualización:**
-   - Vista detallada con toda la información
-   - Funcionalidad para copiar contenido al portapapeles
-   - Acceso rápido a la edición desde la vista detallada
+4. **Visualization:**
+   - Detailed view with all information
+   - Copy to clipboard functionality
+   - Quick access to editing from the detailed view
 
-### Preferencias de Usuario
+### User Preferences
 
-La aplicación recuerda ciertas preferencias del usuario:
+The application remembers certain user preferences:
 
-- El mensaje informativo sobre los indicadores ES/EN puede cerrarse
-- La preferencia se guarda en una cookie durante 1 año
-- Notificaciones temporales al copiar texto al portapapeles
+- The informative message about ES/EN indicators can be closed
+- The preference is saved in a cookie for 1 year
+- Temporary notifications when copying text to clipboard
 
 ## API Endpoints 🛣️
 
-### Contenido
+### Content
 
-- `GET /api/contents` - Obtener todos los contenidos
-- `POST /api/contents` - Crear nuevo contenido
-- `PUT /api/contents/:id` - Actualizar contenido existente
-- `PATCH /api/contents/:id` - Actualizar estado de publicación
-- `DELETE /api/contents/:id` - Eliminar contenido
-- `GET /api/contents/search` - Buscar contenidos
+- `GET /api/contents` - Get all contents
+- `POST /api/contents` - Create new content
+- `PUT /api/contents/:id` - Update existing content
+- `PATCH /api/contents/:id` - Update publication status
+- `DELETE /api/contents/:id` - Delete content
+- `GET /api/contents/search` - Search contents
 
-## Modelo de Datos 📊
+## Data Model 📊
 
-El modelo de datos incluye campos para:
+The data model includes fields for:
 
-- Información básica (título, tags)
-- Contenido bilingüe (ES/EN)
-- Estados de publicación por idioma
-- URLs de contenido publicado
-- Texto para teleprompter
-- Descripciones para diferentes plataformas:
+- Basic information (title, tags)
+- Bilingual content (ES/EN)
+- Publication status by language
+- Published content URLs
+- Teleprompter text
+- Descriptions for different platforms:
   - YouTube
   - TikTok
   - Twitter (X)
   - Facebook
-- Comentarios fijados
+- Pinned comments
 
-## Seguridad 🔒
+## Security 🔒
 
-El proyecto implementa varias medidas de seguridad:
+The project implements several security measures:
 
-1. **Credenciales Encriptadas:**
-   - Las credenciales de MongoDB se almacenan de forma segura
-   - Uso de encriptación AES-256-GCM
-   - Salt único para cada instalación
+1. **Encrypted Credentials:**
+   - MongoDB credentials are stored securely
+   - Use of AES-256-GCM encryption
+   - Unique salt for each installation
 
-2. **Buenas Prácticas:**
-   - Variables de entorno para configuración sensible
-   - Sanitización de entradas
-   - Validación de datos
-   - Sistema de logs para auditoría
+2. **Best Practices:**
+   - Environment variables for sensitive configuration
+   - Input sanitization
+   - Data validation
+   - Logging system for auditing
 
-## Mantenimiento 🔧
+## Maintenance 🔧
 
-### Backup de Base de Datos
+### Database Backup
 
-1. Exportar datos:
+1. Export data:
    ```bash
-   mongodump --uri="[tu-uri-de-mongodb]" --out=./backup
+   mongodump --uri="[your-mongodb-uri]" --out=./backup
    ```
 
-2. Importar datos:
+2. Import data:
    ```bash
-   mongorestore --uri="[tu-uri-de-mongodb]" ./backup
+   mongorestore --uri="[your-mongodb-uri]" ./backup
    ```
 
-### Actualización
+### Updates
 
-1. Obtener últimos cambios:
+1. Get latest changes:
    ```bash
    git pull origin main
    ```
 
-2. Actualizar dependencias:
+2. Update dependencies:
    ```bash
    npm install
    ```
 
-3. Aplicar migraciones si existen:
+3. Apply migrations if they exist:
    ```bash
    npm run migrate
    ```
 
-## Solución de Problemas 🔍
+## Troubleshooting 🔍
 
-### Problemas Comunes
+### Common Issues
 
-1. **Error de Conexión a MongoDB:**
-   - Verificar que MongoDB está corriendo
-   - Comprobar credenciales en .env
-   - Verificar conectividad de red
+1. **MongoDB Connection Error:**
+   - Verify that MongoDB is running
+   - Check credentials in .env
+   - Verify network connectivity
 
-2. **Errores de CORS:**
-   - Verificar configuración de CORS en server.js
-   - Comprobar origen de las peticiones
+2. **CORS Errors:**
+   - Verify CORS configuration in server.js
+   - Check origin of requests
 
-3. **Cookies y Preferencias:**
-   - Si las preferencias no se guardan, verificar configuración de cookies
-   - Limpiar cookies del navegador si hay comportamientos inesperados
+3. **Cookies and Preferences:**
+   - If preferences are not being saved, check cookie configuration
+   - Clear browser cookies if unexpected behavior occurs
 
-## Contribuir 🤝
+## Contributing 🤝
 
-1. Fork del repositorio
-2. Crear rama para feature: `git checkout -b feature/NuevaCaracteristica`
-3. Commit cambios: `git commit -am 'Añadir nueva característica'`
-4. Push a la rama: `git push origin feature/NuevaCaracteristica`
-5. Crear Pull Request
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/NewFeature`
+3. Commit changes: `git commit -am 'Add new feature'`
+4. Push to the branch: `git push origin feature/NewFeature`
+5. Create Pull Request
 
-## Licencia 📄
+## License 📄
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles
+This project is under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
