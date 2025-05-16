@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Contenido de Video</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Video Content Organizer</a>
+            <div class="d-flex">
+                <a href="/new-content.html" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Nuevo Contenido
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Content list -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Contenidos</h5>
+                        <input type="text" class="form-control w-auto" placeholder="Buscar..." id="searchInput">
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-3 alert-dismissible fade show" id="languageIndicatorInfo">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" id="closeInfoAlert"></button>
+                            <small><i class="bi bi-info-circle"></i> Los indicadores ES/EN muestran el estado de publicación. Los indicadores verdes son clicables y llevan a la URL del contenido. Para modificar los estados, utilice la vista de edición.</small>
+                        </div>
+                        <div id="contentList" class="list-group">
+                            <!-- Content items will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for viewing content details -->
+    <div class="modal fade" id="contentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content details will be dynamically added here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a href="#" class="btn btn-primary" id="editContentBtn">Editar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="/js/utils.js"></script>
+    <script src="/js/list.js"></script>
+</body>
+</html>
