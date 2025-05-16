@@ -16,7 +16,7 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Copy-to-clipboard functionality for easy content transfer
 - Kanban board for task management and workflow tracking
 - Responsive user interface
-- User preferences saved via cookies
+- User preferences with theme customization
 - MongoDB database for flexible content storage
 
 ## 🔍 Perfect For
@@ -28,37 +28,51 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 
 ## Features 🌟
 
+- Dashboard for content management
+- Statistics and analytics visualization
+- Workflow management with Kanban board
+- Backup and restore functionality
+- Theme customization and user preferences
+- Integration with external services
+- Advanced logging and monitoring
 - Bilingual content management (Spanish/English)
 - Publication status tracking by language
 - Direct access to published content from the interface
 - Tagging system for categorization
-- Advanced search in both languages
-- Social media link management
-- Responsive user interface
 - Enhanced security for database credentials
-- User preferences via cookies
-- Kanban board for task management and workflow tracking
 
 ## Project Structure 📁
 
 ```
-VideoContentCreationOrganizer/
+MultiLangContentManager/
 ├── server/
 │   ├── server.js         # Main server configuration
 │   ├── routes/
-│   │   └── content.js    # Content API routes
+│   │   ├── content.js    # Content API routes
+│   │   └── task.js       # Task management API routes
 │   └── models/
-│       └── Content.js    # MongoDB model
+│       ├── Content.js    # MongoDB model for content
+│       └── Task.js       # MongoDB model for tasks
 ├── client/
 │   └── public/
-│       ├── index.html    # Main page
-│       ├── new-content.html # Creation/editing form
+│       ├── index.html    # Dashboard/main page
+│       ├── stats.html    # Statistics page
+│       ├── kanban.html   # Workflow/Kanban board
+│       ├── backup.html   # Backup & restore page
+│       ├── themes.html   # Theme preferences
+│       ├── integrations.html # Integrations page
+│       ├── new-content.html  # Content creation/editing form
 │       ├── css/
-│       │   └── styles.css # Styles
+│       │   └── styles.css    # Styles
 │       └── js/
-│           ├── list.js   # Logic for content list
-│           ├── form.js   # Logic for edit form
-│           └── utils.js  # Utility functions
+│           ├── list.js       # Logic for content list
+│           ├── form.js       # Logic for edit form
+│           ├── kanban.js     # Logic for kanban board
+│           ├── stats.js      # Logic for statistics
+│           ├── backup.js     # Logic for backup/restore
+│           ├── themes.js     # Logic for theme preferences
+│           ├── integrations.js # Logic for integrations
+│           └── utils.js      # Utility functions
 ├── utils/
 │   ├── credentials.js    # Credentials utility
 │   └── logger.js         # Logging system
@@ -79,7 +93,7 @@ VideoContentCreationOrganizer/
 1. Clone the repository:
    ```bash
    git clone [repository-url]
-   cd VideoContentCreationOrganizer
+   cd MultiLangContentManager
    ```
 
 2. Install dependencies:
@@ -103,7 +117,9 @@ VideoContentCreationOrganizer/
 
 1. Start the server:
    ```bash
-   npm start
+   npm run dev     # Development mode with nodemon
+   # or
+   npm start       # Production mode
    ```
 
 2. Open in the browser:
@@ -113,55 +129,107 @@ VideoContentCreationOrganizer/
 
 ## User Guide 📘
 
-### Kanban Board for Task Management
+### Dashboard
 
-The application includes a Kanban board for managing and tracking tasks related to your content:
+The main interface provides an overview of all content:
+
+1. **Content List:**
+   - Complete list of available content
+   - Real-time search filter
+   - Publication status indicators (ES/EN)
+   - Quick access to view and edit options
+
+2. **Publication Status:**
+   - Green indicator: Published content (clickable, leads to published URL)
+   - Yellow indicator: Pending content
+   - Edit view allows changing publication status
+
+### Statistics
+
+The statistics page provides insights on your content:
+
+1. **Overview Metrics:**
+   - Total content count
+   - Published content by language
+   - Pending items
+
+2. **Visualizations:**
+   - Language distribution charts
+   - Publication trends
+   - Popular tags analysis
+
+### Workflow Management (Kanban Board)
+
+The Kanban board helps organize and track tasks related to your content:
 
 1. **Task Columns:**
-   - **Por Hacer (To Do)**: Tasks that need to be started
-   - **En Progreso (In Progress)**: Tasks currently being worked on
-   - **Completado (Done)**: Completed tasks
+   - **To Do**: Tasks that need to be started
+   - **In Progress**: Tasks currently being worked on
+   - **Completed**: Finished tasks
 
 2. **Task Management:**
-   - Create tasks linked to specific content pieces
-   - Drag and drop tasks between status columns
+   - Create tasks linked to specific content
    - Set due dates and assign to team members
-   - Track progress of content creation and publishing
+   - Drag and drop tasks between status columns
+   - Track content creation and publishing workflow
 
-For more details, see [README-KANBAN.md](README-KANBAN.md).
+### Backup & Restore
+
+Easily maintain and recover your data:
+
+1. **Backup Options:**
+   - Complete backup (all data)
+   - Content-only backup
+   - Include/exclude tasks and preferences
+   - Format JSON output
+
+2. **Restore Functionality:**
+   - Import from backup files
+   - Backup history tracking
+
+### Theme Preferences
+
+Customize your user experience:
+
+1. **Theme Selection:**
+   - Multiple dark themes (Dark, Deep Blue, Purple Night, Forest)
+   - Coming soon: Light theme support
+
+2. **View Settings:**
+   - Information density control
+   - Font size adjustments
+   - Animation toggles
+
+### Integrations
+
+Connect with external services:
+
+1. **Available Integrations:**
+   - AI Translation
+   - CMS connections
+   - Notifications
+   - Social media publishing
+   - Cloud storage
+   - Analytics
+
+2. **API Access:**
+   - API key management
+   - Webhook configuration
 
 ### Content Management
 
-The application allows you to manage bilingual content for video productions:
+Creating and editing content:
 
-1. **Main View:**
-   - List of all available content
-   - Publication status indicators (ES/EN)
-   - Real-time search filter
-
-2. **Publication Status:**
-   - Green indicator: Published content
-   - Yellow indicator: Pending content
-   - Green indicators are clickable and lead directly to the published content
-
-3. **Create/Edit Content:**
+1. **Content Form:**
    - Complete form for all fields in both languages
-   - Publication status control (published/pending)
+   - Publication status controls
    - URLs for direct access to published content
-   - Character limiters for social networks
+   - Character counters for social media optimization
 
-4. **Visualization:**
+2. **Content Details:**
    - Detailed view with all information
    - Copy to clipboard functionality
-   - Quick access to editing from the detailed view
-
-### User Preferences
-
-The application remembers certain user preferences:
-
-- The informative message about ES/EN indicators can be closed
-- The preference is saved in a cookie for 1 year
-- Temporary notifications when copying text to clipboard
+   - Quick access to editing
 
 ## API Endpoints 🛣️
 
@@ -169,14 +237,24 @@ The application remembers certain user preferences:
 
 - `GET /api/contents` - Get all contents
 - `POST /api/contents` - Create new content
+- `GET /api/contents/:id` - Get single content item
 - `PUT /api/contents/:id` - Update existing content
 - `PATCH /api/contents/:id` - Update publication status
 - `DELETE /api/contents/:id` - Delete content
 - `GET /api/contents/search` - Search contents
 
-## Data Model 📊
+### Tasks
 
-The data model includes fields for:
+- `GET /api/tasks` - Get all tasks
+- `POST /api/tasks` - Create new task
+- `GET /api/tasks/:id` - Get single task
+- `PUT /api/tasks/:id` - Update existing task
+- `PATCH /api/tasks/:id/status` - Update task status
+- `DELETE /api/tasks/:id` - Delete task
+
+## Data Models 📊
+
+### Content Model
 
 - Basic information (title, tags)
 - Bilingual content (ES/EN)
@@ -189,6 +267,15 @@ The data model includes fields for:
   - Twitter (X)
   - Facebook
 - Pinned comments
+
+### Task Model
+
+- Title and description
+- Status (draft, in-progress, done)
+- Due date
+- Assignee
+- Related content reference
+- Tags for categorization
 
 ## Security 🔒
 
@@ -215,4 +302,20 @@ The project implements several security measures:
    ```
 
 2. Import data:
+   ```bash
+   mongorestore --uri="[your-mongodb-uri]" ./backup
    ```
+
+## Troubleshooting 🔍
+
+- Server not starting: Check MongoDB connection and credentials
+- Tasks not updating: Verify proper ID formatting between frontend and MongoDB
+- Content not displaying: Check browser console for API errors
+
+## Future Enhancements 🚀
+
+- Support for additional languages
+- Advanced content analytics
+- User authentication and role-based access
+- Enhanced AI-powered translation integration
+- Mobile application version
