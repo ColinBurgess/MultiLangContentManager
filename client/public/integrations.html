@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integraciones - MultiLang Content Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .integration-card {
+            height: 100%;
+            transition: transform 0.2s;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .integration-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .integration-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-dark-secondary);
+            border-radius: 8px;
+            font-size: 1.5rem;
+        }
+
+        .integration-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .status-connected {
+            color: #10B981;
+        }
+
+        .status-disconnected {
+            color: #6B7280;
+        }
+
+        .api-key-display {
+            font-family: monospace;
+            background-color: var(--bg-dark-secondary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <a href="/" class="nav-item">
+                    <i class="bi bi-translate"></i>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <a href="/" class="nav-item" title="Dashboard">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </a>
+                <a href="/stats.html" class="nav-item" title="Estadísticas">
+                    <i class="bi bi-bar-chart-line"></i>
+                </a>
+                <a href="/kanban.html" class="nav-item" title="Flujo de Trabajo">
+                    <i class="bi bi-kanban"></i>
+                </a>
+                <a href="/backup.html" class="nav-item" title="Backup & Restauración">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                </a>
+                <a href="/themes.html" class="nav-item" title="Preferencias">
+                    <i class="bi bi-palette"></i>
+                </a>
+                <a href="/integrations.html" class="nav-item active" title="Integraciones">
+                    <i class="bi bi-plug"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="title-section">
+                    <h1 class="page-title">Integraciones</h1>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">API Keys</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary mb-4">
+                                    Gestiona tus claves de API para conectar con servicios externos o permitir que otras aplicaciones accedan a tus datos.
+                                </p>
+
+                                <div class="mb-4">
+                                    <h6 class="mb-2">API Key para Integraciones</h6>
+                                    <div class="api-key-display mb-2">
+                                        •••••••••••••••••••••••••••••••••
+                                        <button class="copy-btn" title="Mostrar API Key" id="showApiKeyBtn">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-light" id="copyApiKeyBtn">
+                                            <i class="bi bi-clipboard me-1"></i> Copiar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" id="regenerateApiKeyBtn">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h6 class="mb-3">Webhook URL</h6>
+                                <div class="api-key-display mb-2">
+                                    https://api.multilangcontent.com/webhook/XYZ123
+                                    <button class="copy-btn" id="copyWebhookBtn">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                                <p class="text-secondary small">Utiliza esta URL para recibir notificaciones de eventos en tiempo real.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Documentación</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="#" class="btn btn-sm btn-outline-light">
+                                        <i class="bi bi-file-earmark-text me-2"></i> Documentación de API
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-light">
+                                        <i class="bi bi-code-slash me-2"></i> Ejemplos de Código
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-light">
+                                        <i class="bi bi-journal-code me-2"></i> Tutoriales
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="my-4">Servicios Disponibles</h5>
+
+                <div class="row">
+                    <!-- Traducción IA -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-translate"></i>
+                                </div>
+                                <h5 class="mb-0">Traducción IA</h5>
+                                <span class="integration-status status-connected">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Traduce automáticamente tu contenido utilizando modelos avanzados de inteligencia artificial.</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Proveedor</label>
+                                    <select class="form-select form-select-sm">
+                                        <option value="openai">OpenAI</option>
+                                        <option value="azure">Azure AI</option>
+                                        <option value="google">Google Cloud</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-outline-light" id="configureAIBtn">
+                                        Configurar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CMS -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-pencil-square"></i>
+                                </div>
+                                <h5 class="mb-0">CMS</h5>
+                                <span class="integration-status status-disconnected">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Conecta con tu CMS para publicar automáticamente el contenido una vez aprobado.</p>
+                                <div class="mb-3">
+                                    <label class="form-label">CMS</label>
+                                    <select class="form-select form-select-sm">
+                                        <option value="">Seleccionar CMS...</option>
+                                        <option value="wordpress">WordPress</option>
+                                        <option value="strapi">Strapi</option>
+                                        <option value="contentful">Contentful</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-primary" id="connectCMSBtn">
+                                        Conectar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificaciones -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-bell"></i>
+                                </div>
+                                <h5 class="mb-0">Notificaciones</h5>
+                                <span class="integration-status status-connected">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Recibe alertas cuando el contenido es actualizado, traducido o cuando hay comentarios.</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Canal</label>
+                                    <select class="form-select form-select-sm">
+                                        <option value="slack">Slack</option>
+                                        <option value="email">Email</option>
+                                        <option value="telegram">Telegram</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-outline-light" id="configureNotificationsBtn">
+                                        Configurar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Redes Sociales -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-share"></i>
+                                </div>
+                                <h5 class="mb-0">Redes Sociales</h5>
+                                <span class="integration-status status-disconnected">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Publica automáticamente en tus redes sociales cuando el contenido es aprobado.</p>
+                                <div class="mb-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="twitterCheck">
+                                        <label class="form-check-label" for="twitterCheck">
+                                            Twitter
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="linkedinCheck">
+                                        <label class="form-check-label" for="linkedinCheck">
+                                            LinkedIn
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="facebookCheck">
+                                        <label class="form-check-label" for="facebookCheck">
+                                            Facebook
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-primary" id="connectSocialBtn">
+                                        Conectar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Almacenamiento -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-cloud-upload"></i>
+                                </div>
+                                <h5 class="mb-0">Almacenamiento</h5>
+                                <span class="integration-status status-disconnected">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Guarda archivos y recursos multimedia en la nube y vincúlalos con tu contenido.</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Proveedor</label>
+                                    <select class="form-select form-select-sm">
+                                        <option value="">Seleccionar proveedor...</option>
+                                        <option value="s3">Amazon S3</option>
+                                        <option value="gcs">Google Cloud Storage</option>
+                                        <option value="azure">Azure Blob Storage</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-primary" id="connectStorageBtn">
+                                        Conectar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analítica -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card integration-card">
+                            <div class="card-header">
+                                <div class="integration-icon">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <h5 class="mb-0">Analítica</h5>
+                                <span class="integration-status status-disconnected">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary">Obtén estadísticas sobre el rendimiento de tu contenido para mejorar tus publicaciones.</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Servicio</label>
+                                    <select class="form-select form-select-sm">
+                                        <option value="">Seleccionar servicio...</option>
+                                        <option value="ga">Google Analytics</option>
+                                        <option value="matomo">Matomo</option>
+                                        <option value="plausible">Plausible</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-sm btn-primary" id="connectAnalyticsBtn">
+                                        Conectar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="integrationNotification" class="copy-notification" style="display: none;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme-loader.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/integrations.js"></script>
+</body>
+</html>

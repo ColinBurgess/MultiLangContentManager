@@ -15,6 +15,14 @@ const contentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    publishedDateEs: {
+        type: Date,
+        default: null
+    },
+    publishedDateEn: {
+        type: Date,
+        default: null
+    },
     publishedUrlEs: {
         type: String,
         trim: true,

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        // Obtiene el ID del contenido de la URL si existe
+        const urlParams = new URLSearchParams(window.location.search);
+        const contentId = urlParams.get('id');
+
+        // Redirecciona a new-content.html manteniendo el ID si existe
+        if (contentId) {
+            window.location.href = `/new-content.html?id=${contentId}`;
+        } else {
+            window.location.href = '/new-content.html';
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting to content form...</p>
+</body>
+</html>

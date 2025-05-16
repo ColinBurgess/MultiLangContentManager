@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferencias - MultiLang Content Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .theme-option {
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .theme-option:hover {
+            transform: translateY(-5px);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--accent-color);
+        }
+
+        .theme-preview {
+            height: 160px;
+            background-color: var(--bg-dark-primary);
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        .theme-preview-header {
+            height: 30px;
+            background-color: var(--bg-card-header);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .theme-preview-sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 15px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .theme-preview-content {
+            padding: 40px 15px 15px 25px;
+        }
+
+        .theme-preview-card {
+            height: 40px;
+            background-color: var(--bg-card);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-dark {
+            --bg-dark-primary: #0F1115;
+            --bg-dark-secondary: #141822;
+            --bg-sidebar: #0F1115;
+            --bg-card: #1A1E27;
+            --bg-card-header: #23272C;
+            --border-color: #2D3748;
+            --accent-color: #0284c7;
+        }
+
+        .theme-blue {
+            --bg-dark-primary: #0A192F;
+            --bg-dark-secondary: #112240;
+            --bg-sidebar: #0A192F;
+            --bg-card: #173259;
+            --bg-card-header: #173F76;
+            --border-color: #234367;
+            --accent-color: #64FFDA;
+        }
+
+        .theme-purple {
+            --bg-dark-primary: #13111C;
+            --bg-dark-secondary: #1A1625;
+            --bg-sidebar: #13111C;
+            --bg-card: #261C37;
+            --bg-card-header: #312244;
+            --border-color: #3D2E58;
+            --accent-color: #9D65FF;
+        }
+
+        .theme-forest {
+            --bg-dark-primary: #111827;
+            --bg-dark-secondary: #1F2937;
+            --bg-sidebar: #111827;
+            --bg-card: #283442;
+            --bg-card-header: #374151;
+            --border-color: #4B5563;
+            --accent-color: #10B981;
+        }
+
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-right: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Estilos para la sección de depuración de temas */
+        .debug-card {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .debug-item {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .debug-title {
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-value {
+            font-family: monospace;
+            padding: 6px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <a href="/" class="nav-item">
+                    <i class="bi bi-translate"></i>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <a href="/" class="nav-item" title="Dashboard">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </a>
+                <a href="/stats.html" class="nav-item" title="Estadísticas">
+                    <i class="bi bi-bar-chart-line"></i>
+                </a>
+                <a href="/kanban.html" class="nav-item" title="Flujo de Trabajo">
+                    <i class="bi bi-kanban"></i>
+                </a>
+                <a href="/backup.html" class="nav-item" title="Backup & Restauración">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                </a>
+                <a href="/themes.html" class="nav-item active" title="Preferencias">
+                    <i class="bi bi-palette"></i>
+                </a>
+                <a href="/integrations.html" class="nav-item" title="Integraciones">
+                    <i class="bi bi-plug"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="title-section">
+                    <h1 class="page-title">Preferencias</h1>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Tema de la aplicación</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="theme-option theme-dark active" data-theme="dark" id="theme-dark">
+                                            <div class="theme-preview">
+                                                <div class="theme-preview-sidebar"></div>
+                                                <div class="theme-preview-header"></div>
+                                                <div class="theme-preview-content">
+                                                    <div class="theme-preview-card"></div>
+                                                    <div class="theme-preview-card"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-center">
+                                                <input type="radio" name="theme" id="darkTheme" value="dark" checked class="d-none">
+                                                <label for="darkTheme">Dark (Default)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="theme-option theme-blue" data-theme="blue" id="theme-blue">
+                                            <div class="theme-preview">
+                                                <div class="theme-preview-sidebar"></div>
+                                                <div class="theme-preview-header"></div>
+                                                <div class="theme-preview-content">
+                                                    <div class="theme-preview-card"></div>
+                                                    <div class="theme-preview-card"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-center">
+                                                <input type="radio" name="theme" id="blueTheme" value="blue" class="d-none">
+                                                <label for="blueTheme">Deep Blue</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="theme-option theme-purple" data-theme="purple" id="theme-purple">
+                                            <div class="theme-preview">
+                                                <div class="theme-preview-sidebar"></div>
+                                                <div class="theme-preview-header"></div>
+                                                <div class="theme-preview-content">
+                                                    <div class="theme-preview-card"></div>
+                                                    <div class="theme-preview-card"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-center">
+                                                <input type="radio" name="theme" id="purpleTheme" value="purple" class="d-none">
+                                                <label for="purpleTheme">Purple Night</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="theme-option theme-forest" data-theme="forest" id="theme-forest">
+                                            <div class="theme-preview">
+                                                <div class="theme-preview-sidebar"></div>
+                                                <div class="theme-preview-header"></div>
+                                                <div class="theme-preview-content">
+                                                    <div class="theme-preview-card"></div>
+                                                    <div class="theme-preview-card"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-center">
+                                                <input type="radio" name="theme" id="forestTheme" value="forest" class="d-none">
+                                                <label for="forestTheme">Forest</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info mb-4">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Próximamente: Soporte para tema claro y personalización avanzada.
+                                </div>
+
+                                <button class="btn btn-primary" id="saveThemeBtn">
+                                    <i class="bi bi-check-lg me-2"></i> Guardar Preferencias
+                                </button>
+
+                                <!-- Información de debug del tema actual -->
+                                <div class="debug-card mt-4">
+                                    <div class="debug-title">
+                                        <span>
+                                            <i class="bi bi-bug me-2"></i> Información de Debug
+                                        </span>
+                                        <button class="btn btn-sm btn-outline-secondary" id="refreshDebugInfo">
+                                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                        </button>
+                                    </div>
+                                    <div class="debug-item">
+                                        <div>Tema actual en localStorage:</div>
+                                        <div class="debug-value" id="debug-current-theme">Cargando...</div>
+                                    </div>
+                                    <div class="debug-item">
+                                        <div>Clases CSS de body:</div>
+                                        <div class="debug-value" id="debug-body-classes">Cargando...</div>
+                                    </div>
+                                    <div class="debug-item">
+                                        <div>Última actualización de tema:</div>
+                                        <div class="debug-value" id="debug-theme-updated">Cargando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Configuración de Vista</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Densidad de Información</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="density" id="densityCompact" value="compact">
+                                            <label class="form-check-label" for="densityCompact">
+                                                Compacta
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="density" id="densityDefault" value="default" checked>
+                                            <label class="form-check-label" for="densityDefault">
+                                                Normal
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="density" id="densityComfortable" value="comfortable">
+                                            <label class="form-check-label" for="densityComfortable">
+                                                Cómoda
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Tamaño de Fuente</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <input type="range" class="form-range" min="85" max="115" step="5" id="fontSizeRange" value="100">
+                                        <span id="fontSizeDisplay">100%</span>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary" id="saveViewSettingsBtn">
+                                    <i class="bi bi-check-lg me-2"></i> Guardar Configuración
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Paleta de Colores</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-secondary mb-3">Colores del tema actual:</p>
+                                <div class="mb-2">
+                                    <div class="color-preview" style="background-color: var(--accent-color);"></div>
+                                    <span>Acento</span>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="color-preview" style="background-color: var(--bg-dark-primary);"></div>
+                                    <span>Fondo Principal</span>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="color-preview" style="background-color: var(--bg-dark-secondary);"></div>
+                                    <span>Fondo Secundario</span>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="color-preview" style="background-color: var(--bg-card);"></div>
+                                    <span>Tarjetas</span>
+                                </div>
+                                <div>
+                                    <div class="color-preview" style="background-color: var(--border-color);"></div>
+                                    <span>Bordes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Preferencias Adicionales</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="animationsSwitch" checked>
+                                    <label class="form-check-label" for="animationsSwitch">
+                                        Animaciones
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoSaveSwitch" checked>
+                                    <label class="form-check-label" for="autoSaveSwitch">
+                                        Auto-guardado
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="hideInfoMessagesSwitch">
+                                    <label class="form-check-label" for="hideInfoMessagesSwitch">
+                                        Ocultar mensajes informativos
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="reloadPagesCheck" checked>
+                                    <label class="form-check-label" for="reloadPagesCheck">
+                                        Aplicar a todas las páginas abiertas
+                                    </label>
+                                    <div class="form-text">Recomendado para asegurar consistencia</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="themeNotification" class="copy-notification" style="display: none;"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Servicios y utilidades -->
+    <script src="/js/utils.js"></script>
+
+    <!-- Sistema de temas -->
+    <script src="/js/theme-debug.js"></script>
+    <script src="/js/theme-loader.js"></script>
+    <script src="/js/theme-fix.js"></script>
+    <script src="/js/themes.js"></script>
+
+    <!-- Script para información de debug -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para actualizar la información de debug
+        function updateDebugInfo() {
+            // Tema actual
+            const currentTheme = localStorage.getItem('theme') || 'default';
+            document.getElementById('debug-current-theme').textContent = currentTheme;
+
+            // Clases del body
+            const bodyClasses = document.body.className;
+            document.getElementById('debug-body-classes').textContent = bodyClasses;
+
+            // Última actualización
+            const themeUpdated = localStorage.getItem('theme_updated') || 'Nunca';
+            const lastUpdate = themeUpdated !== 'Nunca'
+                ? new Date(parseInt(themeUpdated)).toLocaleString()
+                : 'Nunca';
+            document.getElementById('debug-theme-updated').textContent = lastUpdate;
+        }
+
+        // Actualizar información al cargar
+        updateDebugInfo();
+
+        // Actualizar al hacer clic en el botón de refrescar
+        document.getElementById('refreshDebugInfo').addEventListener('click', updateDebugInfo);
+
+        // Actualizar cuando se guarde el tema
+        document.getElementById('saveThemeBtn').addEventListener('click', function() {
+            // Esperar un momento para que se guarden los cambios
+            setTimeout(updateDebugInfo, 100);
+        });
+    });
+    </script>
+</body>
+</html>

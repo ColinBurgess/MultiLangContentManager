@@ -1,166 +1,244 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuevo Contenido - Video Content Organizer</title>
+    <title>New Content - MultiLang Content Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Video Content Organizer</a>
-            <div class="d-flex">
-                <a href="/" class="btn btn-outline-light">
-                    <i class="bi bi-arrow-left"></i> Volver
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <a href="/" class="nav-item">
+                    <i class="bi bi-translate"></i>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <a href="/" class="nav-item">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-envelope"></i>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-bar-chart-line"></i>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-gear"></i>
                 </a>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Nuevo Contenido</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="contentForm">
-                            <div class="mb-4">
-                                <label for="title" class="form-label">Título del Video</label>
-                                <input type="text" class="form-control" id="title" required>
-                            </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="title-section">
+                    <a href="/" class="back-link">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                    <h1 class="page-title">New Content</h1>
+                </div>
+            </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Teleprompter</h6>
-                            <div class="mb-3">
-                                <label for="teleprompterEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="teleprompterEs" rows="4"></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="teleprompterEn" class="form-label">English</label>
-                                <textarea class="form-control" id="teleprompterEn" rows="4"></textarea>
-                            </div>
+            <div class="content-area">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="contentForm">
+                                    <div class="mb-4">
+                                        <label for="title" class="form-label">Video Title</label>
+                                        <input type="text" class="form-control" id="title" required>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Descripción del Video</h6>
-                            <div class="mb-3">
-                                <label for="videoDescriptionEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="videoDescriptionEs" rows="3"></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="videoDescriptionEn" class="form-label">English</label>
-                                <textarea class="form-control" id="videoDescriptionEn" rows="3"></textarea>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Teleprompter</h6>
+                                    <div class="mb-3">
+                                        <label for="teleprompterEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="teleprompterEs" rows="4"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="teleprompterEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="teleprompterEn" rows="4"></textarea>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Lista de Tags (máx. 500 caracteres)</h6>
-                            <div class="mb-3">
-                                <label for="tagsListEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="tagsListEs" rows="2" maxlength="500"></textarea>
-                                <div class="form-text">Caracteres restantes: <span id="tagsListEsCount">500</span></div>
-                            </div>
-                            <div class="mb-4">
-                                <label for="tagsListEn" class="form-label">English</label>
-                                <textarea class="form-control" id="tagsListEn" rows="2" maxlength="500"></textarea>
-                                <div class="form-text">Caracteres restantes: <span id="tagsListEnCount">500</span></div>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Video Description</h6>
+                                    <div class="mb-3">
+                                        <label for="videoDescriptionEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="videoDescriptionEs" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="videoDescriptionEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="videoDescriptionEn" rows="3"></textarea>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Comentario Fijado</h6>
-                            <div class="mb-3">
-                                <label for="pinnedCommentEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="pinnedCommentEs" rows="2"></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="pinnedCommentEn" class="form-label">English</label>
-                                <textarea class="form-control" id="pinnedCommentEn" rows="2"></textarea>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Tags List (max 500 characters)</h6>
+                                    <div class="mb-3">
+                                        <label for="tagsListEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="tagsListEs" rows="2" maxlength="500"></textarea>
+                                        <div class="form-text mt-1">Characters remaining: <span id="tagsListEsCount">500</span></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="tagsListEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="tagsListEn" rows="2" maxlength="500"></textarea>
+                                        <div class="form-text mt-1">Characters remaining: <span id="tagsListEnCount">500</span></div>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Descripción para TikTok</h6>
-                            <div class="mb-3">
-                                <label for="tiktokDescriptionEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="tiktokDescriptionEs" rows="2"></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="tiktokDescriptionEn" class="form-label">English</label>
-                                <textarea class="form-control" id="tiktokDescriptionEn" rows="2"></textarea>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Pinned Comment</h6>
+                                    <div class="mb-3">
+                                        <label for="pinnedCommentEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="pinnedCommentEs" rows="2"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="pinnedCommentEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="pinnedCommentEn" rows="2"></textarea>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Post para X (máx. 180 caracteres)</h6>
-                            <div class="mb-3">
-                                <label for="twitterPostEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="twitterPostEs" rows="2" maxlength="180"></textarea>
-                                <div class="form-text">Caracteres restantes: <span id="twitterPostEsCount">180</span></div>
-                            </div>
-                            <div class="mb-4">
-                                <label for="twitterPostEn" class="form-label">English</label>
-                                <textarea class="form-control" id="twitterPostEn" rows="2" maxlength="180"></textarea>
-                                <div class="form-text">Caracteres restantes: <span id="twitterPostEnCount">180</span></div>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">TikTok Description</h6>
+                                    <div class="mb-3">
+                                        <label for="tiktokDescriptionEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="tiktokDescriptionEs" rows="2"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="tiktokDescriptionEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="tiktokDescriptionEn" rows="2"></textarea>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Descripción para Facebook</h6>
-                            <div class="mb-3">
-                                <label for="facebookDescriptionEs" class="form-label">Español</label>
-                                <textarea class="form-control" id="facebookDescriptionEs" rows="3"></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="facebookDescriptionEn" class="form-label">English</label>
-                                <textarea class="form-control" id="facebookDescriptionEn" rows="3"></textarea>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">X (Twitter) Post (max 180 characters)</h6>
+                                    <div class="mb-3">
+                                        <label for="twitterPostEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="twitterPostEs" rows="2" maxlength="180"></textarea>
+                                        <div class="form-text mt-1">Characters remaining: <span id="twitterPostEsCount">180</span></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="twitterPostEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="twitterPostEn" rows="2" maxlength="180"></textarea>
+                                        <div class="form-text mt-1">Characters remaining: <span id="twitterPostEnCount">180</span></div>
+                                    </div>
 
-                            <div class="mb-4">
-                                <label for="tags" class="form-label">Tags para Categorización</label>
-                                <input type="text" class="form-control" id="tags" placeholder="Separar tags con comas">
-                                <div class="form-text">Estos tags se usan para categorizar y buscar el contenido en la aplicación</div>
-                            </div>
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Facebook Description</h6>
+                                    <div class="mb-3">
+                                        <label for="facebookDescriptionEs" class="form-label">
+                                            <span class="language-indicator not-published">ES</span> Spanish
+                                        </label>
+                                        <textarea class="form-control" id="facebookDescriptionEs" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="facebookDescriptionEn" class="form-label">
+                                            <span class="language-indicator not-published">EN</span> English
+                                        </label>
+                                        <textarea class="form-control" id="facebookDescriptionEn" rows="3"></textarea>
+                                    </div>
 
-                            <h6 class="mb-3 border-bottom pb-2">Estado de Publicación</h6>
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0">Español</h6>
+                                    <div class="mb-4">
+                                        <label for="tags" class="form-label">Tags for Categorization</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent border-end-0 text-secondary">
+                                                <i class="bi bi-tags"></i>
+                                            </span>
+                                            <input type="text" class="form-control border-start-0" id="tags" placeholder="Separate tags with commas">
                                         </div>
-                                        <div class="card-body">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" id="publishedEs">
-                                                <label class="form-check-label" for="publishedEs">
-                                                    Publicado en Español
-                                                </label>
+                                        <div class="form-text mt-1">These tags are used to categorize and search for content in the application</div>
+                                    </div>
+
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Publication Status</h6>
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">Spanish</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="publishedEs">
+                                                        <label class="form-check-label" for="publishedEs">
+                                                            Published in Spanish
+                                                        </label>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="publishedDateEs" class="form-label">Publication Date</label>
+                                                        <input type="date" class="form-control" id="publishedDateEs">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="publishedUrlEs" class="form-label">URL of Spanish content</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-transparent border-end-0 text-secondary">
+                                                                <i class="bi bi-link-45deg"></i>
+                                                            </span>
+                                                            <input type="url" class="form-control border-start-0" id="publishedUrlEs" placeholder="https://...">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <label for="publishedUrlEs" class="form-label">URL del contenido en Español</label>
-                                                <input type="url" class="form-control" id="publishedUrlEs" placeholder="https://...">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">English</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="publishedEn">
+                                                        <label class="form-check-label" for="publishedEn">
+                                                            Published in English
+                                                        </label>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="publishedDateEn" class="form-label">Publication Date</label>
+                                                        <input type="date" class="form-control" id="publishedDateEn">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="publishedUrlEn" class="form-label">URL of English content</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-transparent border-end-0 text-secondary">
+                                                                <i class="bi bi-link-45deg"></i>
+                                                            </span>
+                                                            <input type="url" class="form-control border-start-0" id="publishedUrlEn" placeholder="https://...">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0">English</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" id="publishedEn">
-                                                <label class="form-check-label" for="publishedEn">
-                                                    Published in English
-                                                </label>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="publishedUrlEn" class="form-label">URL of English content</label>
-                                                <input type="url" class="form-control" id="publishedUrlEn" placeholder="https://...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="text-end">
-                                <a href="/" class="btn btn-secondary me-2">Cancelar</a>
-                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-secondary me-2" onclick="window.location.href='/';">
+                                            <i class="bi bi-x-lg"></i> Cancel
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-lg"></i> Save
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -168,6 +246,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme-loader.js"></script>
+    <script src="/js/utils.js"></script>
     <script src="/js/form.js"></script>
 </body>
 </html>

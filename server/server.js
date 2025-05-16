@@ -5,6 +5,8 @@ const cors = require('cors');
 const path = require('path');
 const { getMongoDBUri } = require('../utils/credentials');
 const contentRoutes = require('./routes/content');
+const taskRoutes = require('./routes/task');
+const logRoutes = require('./routes/logs');
 const logger = require('../utils/logger');
 
 const app = express();
@@ -30,6 +32,8 @@ connectToMongoDB();
 
 // Routes
 app.use('/api/contents', contentRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/logs', logRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

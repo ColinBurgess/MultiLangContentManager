@@ -14,6 +14,7 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Create optimized descriptions for various platforms (YouTube, TikTok, Twitter, Facebook)
 - Real-time search functionality
 - Copy-to-clipboard functionality for easy content transfer
+- Kanban board for task management and workflow tracking
 - Responsive user interface
 - User preferences saved via cookies
 - MongoDB database for flexible content storage
@@ -36,6 +37,7 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Responsive user interface
 - Enhanced security for database credentials
 - User preferences via cookies
+- Kanban board for task management and workflow tracking
 
 ## Project Structure 📁
 
@@ -110,6 +112,23 @@ VideoContentCreationOrganizer/
    ```
 
 ## User Guide 📘
+
+### Kanban Board for Task Management
+
+The application includes a Kanban board for managing and tracking tasks related to your content:
+
+1. **Task Columns:**
+   - **Por Hacer (To Do)**: Tasks that need to be started
+   - **En Progreso (In Progress)**: Tasks currently being worked on
+   - **Completado (Done)**: Completed tasks
+
+2. **Task Management:**
+   - Create tasks linked to specific content pieces
+   - Drag and drop tasks between status columns
+   - Set due dates and assign to team members
+   - Track progress of content creation and publishing
+
+For more details, see [README-KANBAN.md](README-KANBAN.md).
 
 ### Content Management
 
@@ -196,52 +215,4 @@ The project implements several security measures:
    ```
 
 2. Import data:
-   ```bash
-   mongorestore --uri="[your-mongodb-uri]" ./backup
    ```
-
-### Updates
-
-1. Get latest changes:
-   ```bash
-   git pull origin main
-   ```
-
-2. Update dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Apply migrations if they exist:
-   ```bash
-   npm run migrate
-   ```
-
-## Troubleshooting 🔍
-
-### Common Issues
-
-1. **MongoDB Connection Error:**
-   - Verify that MongoDB is running
-   - Check credentials in .env
-   - Verify network connectivity
-
-2. **CORS Errors:**
-   - Verify CORS configuration in server.js
-   - Check origin of requests
-
-3. **Cookies and Preferences:**
-   - If preferences are not being saved, check cookie configuration
-   - Clear browser cookies if unexpected behavior occurs
-
-## Contributing 🤝
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/NewFeature`
-3. Commit changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature/NewFeature`
-5. Create Pull Request
-
-## License 📄
-
-This project is under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

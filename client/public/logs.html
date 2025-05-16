@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs de Temas - MultiLang Content Manager</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .log-container {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            border-left: 4px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .log-entry.info { border-left-color: #0d6efd; background-color: rgba(13, 110, 253, 0.05); }
+        .log-entry.error { border-left-color: #dc3545; background-color: rgba(220, 53, 69, 0.05); }
+        .log-entry.warning { border-left-color: #ffc107; background-color: rgba(255, 193, 7, 0.05); }
+        .log-entry.success { border-left-color: #198754; background-color: rgba(25, 135, 84, 0.05); }
+
+        .badge-level {
+            font-size: 0.75rem;
+            padding: 3px 6px;
+        }
+
+        .log-empty {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .log-data {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+
+        .filter-bar {
+            background-color: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div id="sidebar" class="col-auto px-0 sidebar">
+                <div class="sidebar-header">
+                    <h3>MultiLang CM</h3>
+                </div>
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a href="/index.html" class="nav-link">
+                            <i class="bi bi-house-door"></i> <span class="nav-label">Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/new.html" class="nav-link">
+                            <i class="bi bi-plus-circle"></i> <span class="nav-label">Nuevo</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/themes.html" class="nav-link">
+                            <i class="bi bi-palette"></i> <span class="nav-label">Temas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/stats.html" class="nav-link">
+                            <i class="bi bi-bar-chart"></i> <span class="nav-label">Estadísticas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/backup.html" class="nav-link">
+                            <i class="bi bi-cloud-arrow-up"></i> <span class="nav-label">Backup</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/integrations.html" class="nav-link">
+                            <i class="bi bi-link-45deg"></i> <span class="nav-label">Integraciones</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/logs.html" class="nav-link active">
+                            <i class="bi bi-list-check"></i> <span class="nav-label">Logs</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contenido principal -->
+            <div id="content" class="col py-3 content">
+                <header class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="button" id="sidebarCollapse" class="btn">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <h1>Logs de Temas</h1>
+                        <div></div>
+                    </div>
+                </header>
+
+                <div class="filter-bar">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="levelFilter" class="form-label">Nivel</label>
+                            <select id="levelFilter" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="info">Info</option>
+                                <option value="warning">Warning</option>
+                                <option value="error">Error</option>
+                                <option value="success">Success</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="pageFilter" class="form-label">Página</label>
+                            <input type="text" id="pageFilter" class="form-control form-control-sm" placeholder="Filtrar por página">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="limitFilter" class="form-label">Límite</label>
+                            <select id="limitFilter" class="form-select form-select-sm">
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button id="applyFilters" class="btn btn-primary btn-sm me-2">Aplicar Filtros</button>
+                            <button id="clearFilters" class="btn btn-outline-secondary btn-sm me-2">Limpiar</button>
+                            <button id="refreshLogs" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-arrow-clockwise"></i> Actualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Logs de Tema Recientes</span>
+                            <span id="logCount" class="badge bg-secondary">0 logs</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="logsContainer" class="log-container">
+                            <div class="log-empty">
+                                <i class="bi bi-hourglass text-muted" style="font-size: 2rem;"></i>
+                                <p class="mt-3">Cargando logs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme-loader.js"></script>
+    <script src="/js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle Sidebar
+            document.getElementById('sidebarCollapse').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.getElementById('content').classList.toggle('active');
+            });
+
+            // Inicialmente cargar logs
+            loadLogs();
+
+            // Eventos para filtros
+            document.getElementById('applyFilters').addEventListener('click', loadLogs);
+            document.getElementById('clearFilters').addEventListener('click', clearFilters);
+            document.getElementById('refreshLogs').addEventListener('click', loadLogs);
+
+            // Función para cargar logs del servidor
+            function loadLogs() {
+                const level = document.getElementById('levelFilter').value;
+                const page = document.getElementById('pageFilter').value;
+                const limit = document.getElementById('limitFilter').value;
+
+                // Construir URL con filtros
+                let url = '/api/logs/theme?';
+                if (level) url += `level=${encodeURIComponent(level)}&`;
+                if (page) url += `page=${encodeURIComponent(page)}&`;
+                if (limit) url += `limit=${encodeURIComponent(limit)}&`;
+
+                // Actualizar UI para mostrar carga
+                document.getElementById('logsContainer').innerHTML = `
+                    <div class="log-empty">
+                        <i class="bi bi-hourglass text-muted" style="font-size: 2rem;"></i>
+                        <p class="mt-3">Cargando logs...</p>
+                    </div>
+                `;
+
+                // Hacer petición
+                fetch(url)
+                    .then(response => response.json())
+                    .then(logs => displayLogs(logs))
+                    .catch(error => {
+                        console.error('Error cargando logs:', error);
+                        document.getElementById('logsContainer').innerHTML = `
+                            <div class="log-empty">
+                                <i class="bi bi-exclamation-circle text-danger" style="font-size: 2rem;"></i>
+                                <p class="mt-3">Error cargando logs: ${error.message}</p>
+                            </div>
+                        `;
+                    });
+            }
+
+            // Función para mostrar logs
+            function displayLogs(logs) {
+                const container = document.getElementById('logsContainer');
+
+                // Actualizar contador
+                document.getElementById('logCount').textContent = `${logs.length} logs`;
+
+                // Si no hay logs
+                if (logs.length === 0) {
+                    container.innerHTML = `
+                        <div class="log-empty">
+                            <i class="bi bi-search text-muted" style="font-size: 2rem;"></i>
+                            <p class="mt-3">No se encontraron logs con los filtros actuales</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Mostrar logs
+                let html = '';
+                logs.forEach(log => {
+                    const time = new Date(log.timestamp || log.serverTimestamp).toLocaleString();
+                    const level = log.level || 'info';
+
+                    let levelBadge = '';
+                    switch (level) {
+                        case 'info':
+                            levelBadge = '<span class="badge badge-level bg-primary">INFO</span>';
+                            break;
+                        case 'warning':
+                            levelBadge = '<span class="badge badge-level bg-warning">WARNING</span>';
+                            break;
+                        case 'error':
+                            levelBadge = '<span class="badge badge-level bg-danger">ERROR</span>';
+                            break;
+                        case 'success':
+                            levelBadge = '<span class="badge badge-level bg-success">SUCCESS</span>';
+                            break;
+                        default:
+                            levelBadge = `<span class="badge badge-level bg-secondary">${level.toUpperCase()}</span>`;
+                    }
+
+                    html += `
+                        <div class="log-entry ${level}">
+                            <div class="d-flex justify-content-between">
+                                <div>${levelBadge} ${log.message}</div>
+                                <small class="text-muted">${time}</small>
+                            </div>
+                            <div class="mt-1 small">
+                                <strong>Página:</strong> ${log.page || 'N/A'}
+                                ${log.pageTitle ? `<span class="ms-2"><strong>Título:</strong> ${log.pageTitle}</span>` : ''}
+                                ${log.theme ? `<span class="ms-2"><strong>Tema:</strong> ${log.theme}</span>` : ''}
+                                ${log.source ? `<span class="ms-2"><strong>Fuente:</strong> ${log.source}</span>` : ''}
+                            </div>
+                            ${log.data ? `<div class="log-data">${formatLogData(log.data)}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            // Función para formatear datos de log
+            function formatLogData(data) {
+                if (!data) return '';
+
+                try {
+                    if (typeof data === 'string') {
+                        return data;
+                    }
+                    return JSON.stringify(data, null, 2);
+                } catch (e) {
+                    return String(data);
+                }
+            }
+
+            // Función para limpiar filtros
+            function clearFilters() {
+                document.getElementById('levelFilter').value = '';
+                document.getElementById('pageFilter').value = '';
+                document.getElementById('limitFilter').value = '50';
+
+                // Recargar logs sin filtros
+                loadLogs();
+            }
+        });
+    </script>
+</body>
+</html>
