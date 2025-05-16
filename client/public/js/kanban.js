@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar datos de tareas o inicializar si no existen
+    // Load task data or initialize if they don't exist
     initKanban();
 
-    // Configurar botones del modal
+    // Set up modal buttons
     document.getElementById('addTaskBtn').addEventListener('click', showTaskModal);
     document.getElementById('closeTaskModal').addEventListener('click', closeTaskModal);
     document.getElementById('closeTaskBtn').addEventListener('click', closeTaskModal);
@@ -10,91 +10,91 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
     document.getElementById('deleteTaskBtn').addEventListener('click', deleteTask);
     document.getElementById('reloadBtn').addEventListener('click', function() {
-        showToast('Recargando datos...');
+        showToast('Reloading data...');
         reloadKanbanData();
     });
 
-    // Cargar contenidos para el selector de tareas
+    // Load contents for the task selector
     loadContentOptions();
 });
 
-// Inicializar datos de kanban
+// Initialize kanban data
 function initKanban() {
-    console.log('Inicializando kanban...');
+    console.log('Initializing kanban...');
 
-    // Limpiar cualquier dato antiguo del localStorage
+    // Clear any old data from localStorage
     localStorage.removeItem('kanbanTasks');
 
-    // Cargar datos desde el servidor
+    // Load data from server
     fetch('/api/tasks')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error cargando datos del servidor: ' + response.status);
+                throw new Error('Error loading data from server: ' + response.status);
             }
             return response.json();
         })
         .then(tasks => {
-            console.log('Datos recibidos del servidor:', tasks);
+            console.log('Data received from server:', tasks);
 
             if (tasks && tasks.length > 0) {
-                // Solo guardar en localStorage si hay datos reales
+                // Only save to localStorage if there's actual data
                 localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
 
-                // Renderizar el tablero con las tareas
+                // Render the board with tasks
                 renderKanban(tasks);
             } else {
-                console.log('No hay tareas en la base de datos para mostrar en Kanban');
-                // Mostrar mensaje informativo
+                console.log('No tasks in the database to display in Kanban');
+                // Show informative message
                 renderEmptyState();
             }
 
-            // Inicializar sortable para cada columna
+            // Initialize sortable for each column
             initSortable();
         })
         .catch(error => {
-            console.error('Error al cargar datos del servidor:', error);
-            showToast('No se pudieron cargar los datos del servidor', 'error');
+            console.error('Error loading data from server:', error);
+            showToast('Could not load data from server', 'error');
 
-            // Mostrar estado vacío
+            // Show empty state
             renderEmptyState();
             initSortable();
         });
 }
 
-// Renderizar el tablero Kanban
+// Render the Kanban board
 function renderKanban(tasks) {
-    console.log('Renderizando kanban con tareas:', tasks);
+    console.log('Rendering kanban with tasks:', tasks);
 
-    // Limpiar las columnas
+    // Clear columns
     document.getElementById('draft-items').innerHTML = '';
     document.getElementById('in-progress-items').innerHTML = '';
     document.getElementById('done-items').innerHTML = '';
 
-    // Contador para cada columna
+    // Counter for each column
     const counts = {
         draft: 0,
         'in-progress': 0,
         done: 0
     };
 
-    // Si no hay tareas, mostrar un mensaje guía
+    // If there are no tasks, show a guide message
     if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
         renderEmptyState();
         return;
     }
 
-    // Ordenar tareas por fecha de creación (más recientes primero)
+    // Sort tasks by creation date (most recent first)
     tasks.sort((a, b) => {
         const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
         const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
         return dateB - dateA;
     });
 
-    // Distribuir las tareas en las columnas correspondientes
+    // Distribute tasks in corresponding columns
     tasks.forEach(task => {
-        // Asegurarse de que la tarea tiene un estado válido
+        // Make sure the task has a valid status
         if (!task.status || !counts.hasOwnProperty(task.status)) {
-            task.status = 'draft'; // Estado por defecto si no es válido
+            task.status = 'draft'; // Default state if not valid
         }
 
         const taskElement = createTaskElement(task);
@@ -107,7 +107,7 @@ function renderKanban(tasks) {
         }
     });
 
-    // Actualizar los contadores
+    // Update counters
     Object.keys(counts).forEach(status => {
         const countElement = document.getElementById(`${status}-count`);
         if (countElement) {
@@ -115,47 +115,47 @@ function renderKanban(tasks) {
         }
     });
 
-    // Persistir el estado actualizado
+    // Persist the updated state
     if (tasks && tasks.length > 0) {
         localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
     }
 }
 
-// Crear un elemento de tarea para el tablero
+// Create a task element for the board
 function createTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'kanban-item';
     taskElement.dataset.id = task.id;
 
-    // Formato de fecha límite
+    // Due date format
     const dueDate = task.dueDate ? new Date(task.dueDate) : null;
     const formattedDueDate = dueDate ? dueDate.toLocaleDateString() : '';
 
-    // Fecha de creación
+    // Creation date
     const createdDate = task.createdAt ? new Date(task.createdAt) : null;
     const formattedCreatedDate = createdDate ? createdDate.toLocaleDateString() : '';
 
-    // Determinar icono y texto de estado
+    // Determine icon and status text
     let statusIcon, statusText;
     switch(task.status) {
         case 'draft':
             statusIcon = 'bi-hourglass';
-            statusText = 'Por Hacer';
+            statusText = 'To Do';
             break;
         case 'in-progress':
             statusIcon = 'bi-arrow-repeat';
-            statusText = 'En Progreso';
+            statusText = 'In Progress';
             break;
         case 'done':
             statusIcon = 'bi-check2-all';
-            statusText = 'Completado';
+            statusText = 'Completed';
             break;
         default:
             statusIcon = 'bi-question-circle';
-            statusText = 'Desconocido';
+            statusText = 'Unknown';
     }
 
-    // Información del contenido relacionado (si existe)
+    // Related content information (if exists)
     const contentInfo = task.contentTitle ?
         `<div class="content-info text-secondary mb-2">
             <i class="bi bi-link me-1"></i> ${task.contentTitle}
@@ -170,20 +170,20 @@ function createTaskElement(task) {
                 ${task.tags.map(tag => `<span class="kanban-tag">${tag}</span>`).join('')}
             </div>
             <div class="kanban-status">
-                <span class="text-secondary" title="Estado">
+                <span class="text-secondary" title="Status">
                     <i class="bi ${statusIcon} me-1"></i>${statusText}
                 </span>
-                ${formattedDueDate ? `<span class="text-secondary ms-2" title="Fecha límite">
+                ${formattedDueDate ? `<span class="text-secondary ms-2" title="Due date">
                     <i class="bi bi-calendar-event me-1"></i>${formattedDueDate}
                 </span>` : ''}
-                ${formattedCreatedDate ? `<span class="text-secondary ms-2" title="Fecha de creación">
+                ${formattedCreatedDate ? `<span class="text-secondary ms-2" title="Creation date">
                     <i class="bi bi-calendar me-1"></i>${formattedCreatedDate}
                 </span>` : ''}
             </div>
         </div>
     `;
 
-    // Agregar evento de clic para editar
+    // Add click event for editing
     taskElement.addEventListener('click', function() {
         editTask(task.id);
     });
@@ -191,17 +191,17 @@ function createTaskElement(task) {
     return taskElement;
 }
 
-// Inicializar la funcionalidad de arrastrar y soltar
+// Initialize drag and drop functionality
 function initSortable() {
     const columns = document.querySelectorAll('.kanban-items');
 
     columns.forEach(column => {
-        // Destruir instancias previas de Sortable si existieran
+        // Destroy previous Sortable instances if they existed
         if (column.sortableInstance) {
             column.sortableInstance.destroy();
         }
 
-        // Crear nueva instancia de Sortable
+        // Create new Sortable instance
         column.sortableInstance = new Sortable(column, {
             group: 'kanban',
             animation: 150,
@@ -212,26 +212,26 @@ function initSortable() {
         });
     });
 
-    // Cambiar el cursor a pointer para indicar que las tarjetas son interactivas
+    // Change cursor to pointer to indicate interactive cards
     const items = document.querySelectorAll('.kanban-item');
     items.forEach(item => {
         item.style.cursor = 'pointer';
     });
 
-    console.log('Drag and drop habilitado para todas las columnas.');
+    console.log('Drag and drop enabled for all columns.');
 }
 
-// Actualizar el estado de una tarea después de arrastrarla
+// Update task status after dragging
 function updateTaskStatus(evt) {
     const taskId = evt.item.dataset.id;
     const newStatus = evt.to.id.replace('-items', '');
 
-    console.log(`Actualizando tarea ${taskId} a estado: ${newStatus}`);
+    console.log(`Updating task ${taskId} to status: ${newStatus}`);
 
-    // Deshabilitar interacción durante la actualización
+    // Disable interaction during update
     document.body.classList.add('updating');
 
-    // Actualizar el estado en el servidor
+    // Update status on the server
     fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
         headers: {
@@ -241,15 +241,15 @@ function updateTaskStatus(evt) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Estado de tarea actualizado:', data);
-        showToast(`Tarea movida a ${getStatusText(newStatus)}`);
+        console.log('Task status updated:', data);
+        showToast(`Task moved to ${getStatusText(newStatus)}`);
 
-        // Actualizar la tarea en el localStorage
+        // Update task in localStorage
         const tasks = JSON.parse(localStorage.getItem('kanbanTasks') || '[]');
         const taskIndex = tasks.findIndex(t => t.id === taskId);
 
@@ -258,40 +258,40 @@ function updateTaskStatus(evt) {
             localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
         }
 
-        // Actualizar los contadores
+        // Update counters
         updateColumnCounts();
     })
     .catch(error => {
-        console.error('Error al actualizar estado:', error);
-        showToast('Error al actualizar el estado', 'error');
-        // Revertir el movimiento visualmente en caso de error
+        console.error('Error updating status:', error);
+        showToast('Error updating status', 'error');
+        // Revert movement visually in case of error
         reloadKanbanData();
     })
     .finally(() => {
-        // Habilitar interacción nuevamente
+        // Enable interaction again
         document.body.classList.remove('updating');
     });
 }
 
-// Obtener texto descriptivo del estado
+// Get descriptive text for status
 function getStatusText(status) {
     switch(status) {
-        case 'draft': return 'Por Hacer';
-        case 'in-progress': return 'En Progreso';
-        case 'done': return 'Completado';
-        default: return 'Desconocido';
+        case 'draft': return 'To Do';
+        case 'in-progress': return 'In Progress';
+        case 'done': return 'Completed';
+        default: return 'Unknown';
     }
 }
 
-// Mostrar notificación toast
+// Show toast notification
 function showToast(message, type = 'success') {
-    // Eliminar toast anterior si existe
+    // Remove previous toast if exists
     const existingToast = document.getElementById('kanban-toast');
     if (existingToast) {
         existingToast.remove();
     }
 
-    // Crear nuevo toast
+    // Create new toast
     const toast = document.createElement('div');
     toast.id = 'kanban-toast';
     toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-3`;
@@ -311,17 +311,17 @@ function showToast(message, type = 'success') {
 
     document.body.appendChild(toast);
 
-    // Mostrar y ocultar automáticamente
+    // Show and hide automatically
     const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
     bsToast.show();
 
-    // Auto destruir despues de cerrarse
+    // Auto destroy after closing
     toast.addEventListener('hidden.bs.toast', () => {
         toast.remove();
     });
 }
 
-// Actualizar los contadores de cada columna
+// Update the counters for each column
 function updateColumnCounts() {
     const tasks = JSON.parse(localStorage.getItem('kanbanTasks'));
     const counts = {
@@ -330,7 +330,7 @@ function updateColumnCounts() {
         done: 0
     };
 
-    // Contar las tareas por estado
+    // Count tasks by status
     if (tasks && Array.isArray(tasks)) {
         tasks.forEach(task => {
             if (counts.hasOwnProperty(task.status)) {
@@ -339,7 +339,7 @@ function updateColumnCounts() {
         });
     }
 
-    // Actualizar los contadores en el DOM
+    // Update counters in DOM
     Object.keys(counts).forEach(status => {
         const countElement = document.getElementById(`${status}-count`);
         if (countElement) {
@@ -348,23 +348,23 @@ function updateColumnCounts() {
     });
 }
 
-// Truncar texto a una longitud máxima
+// Truncate text to a maximum length
 function truncateText(text, maxLength) {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
-// Editar una tarea existente
+// Edit an existing task
 function editTask(taskId) {
     const tasks = JSON.parse(localStorage.getItem('kanbanTasks'));
     const task = tasks.find(t => t.id === taskId);
 
     if (task) {
-        // Actualizar el título del modal
-        document.getElementById('taskModalTitle').textContent = 'Editar Tarea';
+        // Update modal title
+        document.getElementById('taskModalTitle').textContent = 'Edit Task';
         document.getElementById('taskModal').dataset.taskId = taskId;
 
-        // Llenar el formulario con los datos de la tarea
+        // Fill the form with task data
         document.getElementById('taskTitle').value = task.title;
         document.getElementById('taskDescription').value = task.description;
         document.getElementById('taskStatus').value = task.status;
@@ -373,60 +373,60 @@ function editTask(taskId) {
         document.getElementById('taskAssignee').value = task.assignee;
         document.getElementById('taskTags').value = task.tags.join(', ');
 
-        // Mostrar el botón de eliminar para tareas existentes
+        // Show delete button for existing tasks
         document.getElementById('deleteTaskBtn').style.display = 'block';
 
-        // Mostrar el modal
+        // Show modal
         document.getElementById('taskModalBackdrop').style.display = 'block';
         document.getElementById('taskModal').style.display = 'block';
         document.body.classList.add('modal-open');
     }
 }
 
-// Mostrar el modal para nueva tarea
+// Show modal for new task
 function showTaskModal() {
-    // Verificar primero si hay contenidos disponibles
+    // First check if there are available contents
     fetch('/api/contents')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error obteniendo contenidos');
+                throw new Error('Error getting contents');
             }
             return response.json();
         })
         .then(contents => {
             if (!contents || contents.length === 0) {
-                showToast('No hay contenidos disponibles para asignar a tareas. Crea contenidos primero.', 'error');
+                showToast('No contents available to assign to tasks. Create contents first.', 'error');
                 return;
             }
 
-            // Resetear modal para nueva tarea
-            document.getElementById('taskModalTitle').textContent = 'Nueva Tarea';
+            // Reset modal for new task
+            document.getElementById('taskModalTitle').textContent = 'New Task';
             document.getElementById('taskModal').dataset.taskId = '';
             document.getElementById('taskForm').reset();
             document.getElementById('taskStatus').value = 'draft';
             document.getElementById('deleteTaskBtn').style.display = 'none';
 
-            // Mostrar el modal
+            // Show modal
             document.getElementById('taskModalBackdrop').style.display = 'block';
             document.getElementById('taskModal').style.display = 'block';
             document.body.classList.add('modal-open');
         })
         .catch(error => {
-            console.error('Error al verificar contenidos:', error);
-            showToast('Error al verificar contenidos disponibles', 'error');
+            console.error('Error checking contents:', error);
+            showToast('Error checking available contents', 'error');
         });
 }
 
-// Cerrar el modal
+// Close modal
 function closeTaskModal() {
     document.getElementById('taskModalBackdrop').style.display = 'none';
     document.getElementById('taskModal').style.display = 'none';
     document.body.classList.remove('modal-open');
 }
 
-// Guardar una tarea (nueva o editada)
+// Save a task (new or edited)
 function saveTask() {
-    // Obtener los datos del formulario
+    // Get form data
     const taskId = document.getElementById('taskModal').dataset.taskId;
     const title = document.getElementById('taskTitle').value;
     const description = document.getElementById('taskDescription').value;
@@ -437,35 +437,40 @@ function saveTask() {
     const tagsInput = document.getElementById('taskTags').value;
     const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
 
-    // Validar que al menos el título esté presente
+    // Validate that at least title is present
     if (!title) {
-        showToast('El título es obligatorio', 'error');
+        showToast('Title is required', 'error');
         return;
     }
 
     if (!contentId) {
-        showToast('Debe seleccionar un contenido para la tarea', 'error');
+        showToast('You must select a content for the task', 'error');
         return;
     }
 
-    // Construir objeto de tarea
+    // Prepare task data
     const taskData = {
         title,
         description,
         status,
         dueDate,
         contentId,
-        assignee,
-        tags
+        tags,
+        assignee
     };
 
-    // Determinar si es actualización o creación
-    const method = taskId ? 'PUT' : 'POST';
-    const url = taskId ? `/api/tasks/${taskId}` : '/api/tasks';
+    // Create new task or update existing one
+    const isNewTask = !taskId;
+    const url = isNewTask ? '/api/tasks' : `/api/tasks/${taskId}`;
+    const method = isNewTask ? 'POST' : 'PUT';
 
-    // Enviar al servidor
+    // Show loading state
+    document.body.classList.add('updating');
+    showToast(isNewTask ? 'Creating task...' : 'Updating task...');
+
+    // Make API request
     fetch(url, {
-        method: method,
+        method,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -473,56 +478,62 @@ function saveTask() {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        showToast(taskId ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente');
+        console.log('Task saved:', data);
 
-        // Recargar datos para mostrar los cambios
-        reloadKanbanData();
-
-        // Cerrar el modal
+        // Update local storage and UI
         closeTaskModal();
+        showToast(isNewTask ? 'Task created successfully' : 'Task updated successfully');
+        reloadKanbanData();
     })
     .catch(error => {
-        console.error('Error al guardar la tarea:', error);
-        showToast('Error al guardar la tarea', 'error');
+        console.error('Error saving task:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    })
+    .finally(() => {
+        document.body.classList.remove('updating');
     });
 }
 
-// Cargar opciones de contenidos para el select
+// Load content options for task form
 function loadContentOptions() {
     fetch('/api/contents')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al cargar contenidos');
+                throw new Error('Error loading contents');
             }
             return response.json();
         })
         .then(contents => {
-            const select = document.getElementById('taskContentId');
-
-            // Limpiar opciones existentes excepto la primera
-            while (select.options.length > 1) {
-                select.options.remove(1);
+            if (!contents || !Array.isArray(contents)) {
+                return;
             }
 
-            // Agregar nuevas opciones
+            const contentSelect = document.getElementById('taskContentId');
+
+            // Keep the default empty option
+            const defaultOption = contentSelect.options[0];
+            contentSelect.innerHTML = '';
+            contentSelect.appendChild(defaultOption);
+
+            // Add content options
             contents.forEach(content => {
                 const option = document.createElement('option');
-                option.value = content._id;
+                option.value = content.id;
                 option.textContent = content.title;
-                select.appendChild(option);
+                contentSelect.appendChild(option);
             });
         })
         .catch(error => {
-            console.error('Error al cargar opciones de contenido:', error);
+            console.error('Error loading contents:', error);
         });
 }
 
-// Eliminar una tarea
+// Delete a task
 function deleteTask() {
     const taskId = document.getElementById('taskModal').dataset.taskId;
 
@@ -531,92 +542,93 @@ function deleteTask() {
         return;
     }
 
-    // Confirmar eliminación
-    if (!confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
+    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
         return;
     }
 
-    // Eliminar del servidor
+    // Show loading state
+    document.body.classList.add('updating');
+    showToast('Deleting task...');
+
     fetch(`/api/tasks/${taskId}`, {
         method: 'DELETE'
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        showToast('Tarea eliminada correctamente');
+        console.log('Task deleted:', data);
 
-        // Actualizar en localStorage
-        const tasks = JSON.parse(localStorage.getItem('kanbanTasks') || '[]');
-        const updatedTasks = tasks.filter(task => task.id !== taskId);
-        localStorage.setItem('kanbanTasks', JSON.stringify(updatedTasks));
-
-        // Actualizar UI
-        renderKanban(updatedTasks);
+        // Update UI
         closeTaskModal();
+        showToast('Task deleted successfully');
+        reloadKanbanData();
     })
     .catch(error => {
-        console.error('Error al eliminar la tarea:', error);
-        showToast('Error al eliminar la tarea', 'error');
+        console.error('Error deleting task:', error);
+        showToast('Error deleting task', 'error');
+    })
+    .finally(() => {
+        document.body.classList.remove('updating');
     });
 }
 
-// Función para recargar datos del Kanban desde el servidor
+// Reload kanban data from server
 function reloadKanbanData() {
+    document.body.classList.add('updating');
+
     fetch('/api/tasks')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al recargar datos');
+                throw new Error(`Server error: ${response.status}`);
             }
             return response.json();
         })
         .then(tasks => {
-            console.log('Datos recargados del servidor:', tasks);
+            console.log('Data reloaded from server:', tasks);
 
-            // Actualizar localStorage con los datos más recientes
-            localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
-
-            // Renderizar el tablero con las tareas actualizadas
-            renderKanban(tasks);
-
-            // Reinicializar sortable
-            initSortable();
+            // Update localStorage and UI
+            if (tasks && Array.isArray(tasks)) {
+                localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
+                renderKanban(tasks);
+            } else {
+                renderEmptyState();
+            }
         })
         .catch(error => {
-            console.error('Error al recargar datos:', error);
-            showToast('Error al recargar datos', 'error');
+            console.error('Error reloading data:', error);
+            showToast('Error reloading data', 'error');
+        })
+        .finally(() => {
+            document.body.classList.remove('updating');
         });
 }
 
-// Renderizar estado vacío para el Kanban
+// Render empty state with guide message
 function renderEmptyState() {
-    // Limpiar las columnas
+    // Clear columns
     document.getElementById('draft-items').innerHTML = '';
     document.getElementById('in-progress-items').innerHTML = '';
     document.getElementById('done-items').innerHTML = '';
 
-    // Mostrar mensaje en la primera columna
-    const emptyMessage = document.createElement('div');
-    emptyMessage.className = 'kanban-item';
-    emptyMessage.style.textAlign = 'center';
-    emptyMessage.style.color = 'var(--text-secondary)';
-    emptyMessage.innerHTML = `
-        <div class="mb-3">
-            <i class="bi bi-info-circle" style="font-size: 1.5rem;"></i>
-        </div>
-        <div>
-            <p>No hay tareas para mostrar en el Kanban.</p>
-            <p>Puedes crear nuevas tareas haciendo clic en el botón "Nueva Tarea".</p>
-        </div>
-    `;
-
-    document.getElementById('draft-items').appendChild(emptyMessage);
-
-    // Actualizar los contadores
+    // Reset counters
     document.getElementById('draft-count').textContent = '0';
     document.getElementById('in-progress-count').textContent = '0';
     document.getElementById('done-count').textContent = '0';
+
+    // Add guide message to first column
+    const guideElement = document.createElement('div');
+    guideElement.className = 'p-3 text-center';
+    guideElement.innerHTML = `
+        <div class="mb-3">
+            <i class="bi bi-info-circle text-info" style="font-size: 2rem;"></i>
+        </div>
+        <h5>No tasks yet</h5>
+        <p>You can create new tasks by clicking on the "New Task" button.</p>
+    `;
+
+    document.getElementById('draft-items').appendChild(guideElement);
 }

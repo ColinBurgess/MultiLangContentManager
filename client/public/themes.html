@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preferencias - MultiLang Content Manager</title>
+    <title>Preferences - MultiLang Content Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -108,7 +108,7 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Estilos para la sección de depuración de temas */
+        /* Styles for theme debugging section */
         .debug-card {
             background-color: rgba(0, 0, 0, 0.2);
             padding: 10px;
@@ -153,19 +153,19 @@
                 <a href="/" class="nav-item" title="Dashboard">
                     <i class="bi bi-grid-1x2-fill"></i>
                 </a>
-                <a href="/stats.html" class="nav-item" title="Estadísticas">
+                <a href="/stats.html" class="nav-item" title="Statistics">
                     <i class="bi bi-bar-chart-line"></i>
                 </a>
-                <a href="/kanban.html" class="nav-item" title="Flujo de Trabajo">
+                <a href="/kanban.html" class="nav-item" title="Workflow">
                     <i class="bi bi-kanban"></i>
                 </a>
-                <a href="/backup.html" class="nav-item" title="Backup & Restauración">
+                <a href="/backup.html" class="nav-item" title="Backup & Restore">
                     <i class="bi bi-cloud-arrow-up"></i>
                 </a>
-                <a href="/themes.html" class="nav-item active" title="Preferencias">
+                <a href="/themes.html" class="nav-item active" title="Preferences">
                     <i class="bi bi-palette"></i>
                 </a>
-                <a href="/integrations.html" class="nav-item" title="Integraciones">
+                <a href="/integrations.html" class="nav-item" title="Integrations">
                     <i class="bi bi-plug"></i>
                 </a>
             </div>
@@ -175,7 +175,7 @@
         <div class="main-content">
             <div class="header">
                 <div class="title-section">
-                    <h1 class="page-title">Preferencias</h1>
+                    <h1 class="page-title">Preferences</h1>
                 </div>
             </div>
 
@@ -184,7 +184,7 @@
                     <div class="col-md-8">
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0">Tema de la aplicación</h5>
+                                <h5 class="mb-0">Application Theme</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-4">
@@ -256,34 +256,34 @@
 
                                 <div class="alert alert-info mb-4">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    Próximamente: Soporte para tema claro y personalización avanzada.
+                                    Coming soon: Support for light theme and advanced customization.
                                 </div>
 
                                 <button class="btn btn-primary" id="saveThemeBtn">
-                                    <i class="bi bi-check-lg me-2"></i> Guardar Preferencias
+                                    <i class="bi bi-check-lg me-2"></i> Save Preferences
                                 </button>
 
-                                <!-- Información de debug del tema actual -->
+                                <!-- Debug information for current theme -->
                                 <div class="debug-card mt-4">
                                     <div class="debug-title">
                                         <span>
-                                            <i class="bi bi-bug me-2"></i> Información de Debug
+                                            <i class="bi bi-bug me-2"></i> Debug Information
                                         </span>
                                         <button class="btn btn-sm btn-outline-secondary" id="refreshDebugInfo">
-                                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                            <i class="bi bi-arrow-clockwise"></i> Refresh
                                         </button>
                                     </div>
                                     <div class="debug-item">
-                                        <div>Tema actual en localStorage:</div>
-                                        <div class="debug-value" id="debug-current-theme">Cargando...</div>
+                                        <div>Current theme in localStorage:</div>
+                                        <div class="debug-value" id="debug-current-theme">Loading...</div>
                                     </div>
                                     <div class="debug-item">
-                                        <div>Clases CSS de body:</div>
-                                        <div class="debug-value" id="debug-body-classes">Cargando...</div>
+                                        <div>Body CSS classes:</div>
+                                        <div class="debug-value" id="debug-body-classes">Loading...</div>
                                     </div>
                                     <div class="debug-item">
-                                        <div>Última actualización de tema:</div>
-                                        <div class="debug-value" id="debug-theme-updated">Cargando...</div>
+                                        <div>Last theme update:</div>
+                                        <div class="debug-value" id="debug-theme-updated">Loading...</div>
                                     </div>
                                 </div>
                             </div>
@@ -291,16 +291,16 @@
 
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0">Configuración de Vista</h5>
+                                <h5 class="mb-0">View Settings</h5>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label class="form-label">Densidad de Información</label>
+                                    <label class="form-label">Information Density</label>
                                     <div class="d-flex gap-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="density" id="densityCompact" value="compact">
                                             <label class="form-check-label" for="densityCompact">
-                                                Compacta
+                                                Compact
                                             </label>
                                         </div>
                                         <div class="form-check">
@@ -312,14 +312,14 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="density" id="densityComfortable" value="comfortable">
                                             <label class="form-check-label" for="densityComfortable">
-                                                Cómoda
+                                                Comfortable
                                             </label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Tamaño de Fuente</label>
+                                    <label class="form-label">Font Size</label>
                                     <div class="d-flex align-items-center gap-3">
                                         <input type="range" class="form-range" min="85" max="115" step="5" id="fontSizeRange" value="100">
                                         <span id="fontSizeDisplay">100%</span>
@@ -327,7 +327,7 @@
                                 </div>
 
                                 <button class="btn btn-primary" id="saveViewSettingsBtn">
-                                    <i class="bi bi-check-lg me-2"></i> Guardar Configuración
+                                    <i class="bi bi-check-lg me-2"></i> Save Settings
                                 </button>
                             </div>
                         </div>
@@ -336,65 +336,65 @@
                     <div class="col-md-4">
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0">Paleta de Colores</h5>
+                                <h5 class="mb-0">Color Palette</h5>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary mb-3">Colores del tema actual:</p>
+                                <p class="text-secondary mb-3">Colors of the current theme:</p>
                                 <div class="mb-2">
                                     <div class="color-preview" style="background-color: var(--accent-color);"></div>
-                                    <span>Acento</span>
+                                    <span>Accent</span>
                                 </div>
                                 <div class="mb-2">
                                     <div class="color-preview" style="background-color: var(--bg-dark-primary);"></div>
-                                    <span>Fondo Principal</span>
+                                    <span>Primary Background</span>
                                 </div>
                                 <div class="mb-2">
                                     <div class="color-preview" style="background-color: var(--bg-dark-secondary);"></div>
-                                    <span>Fondo Secundario</span>
+                                    <span>Secondary Background</span>
                                 </div>
                                 <div class="mb-2">
                                     <div class="color-preview" style="background-color: var(--bg-card);"></div>
-                                    <span>Tarjetas</span>
+                                    <span>Cards</span>
                                 </div>
                                 <div>
                                     <div class="color-preview" style="background-color: var(--border-color);"></div>
-                                    <span>Bordes</span>
+                                    <span>Borders</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Preferencias Adicionales</h5>
+                                <h5 class="mb-0">Additional Preferences</h5>
                             </div>
                             <div class="card-body">
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" id="animationsSwitch" checked>
                                     <label class="form-check-label" for="animationsSwitch">
-                                        Animaciones
+                                        Animations
                                     </label>
                                 </div>
 
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" id="autoSaveSwitch" checked>
                                     <label class="form-check-label" for="autoSaveSwitch">
-                                        Auto-guardado
+                                        Auto-save
                                     </label>
                                 </div>
 
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" id="hideInfoMessagesSwitch">
                                     <label class="form-check-label" for="hideInfoMessagesSwitch">
-                                        Ocultar mensajes informativos
+                                        Hide informational messages
                                     </label>
                                 </div>
 
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" id="reloadPagesCheck" checked>
                                     <label class="form-check-label" for="reloadPagesCheck">
-                                        Aplicar a todas las páginas abiertas
+                                        Apply to all open pages
                                     </label>
-                                    <div class="form-text">Recomendado para asegurar consistencia</div>
+                                    <div class="form-text">Recommended to ensure consistency</div>
                                 </div>
                             </div>
                         </div>
@@ -410,45 +410,45 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Servicios y utilidades -->
+    <!-- Services and utilities -->
     <script src="/js/utils.js"></script>
 
-    <!-- Sistema de temas -->
+    <!-- Theme system -->
     <script src="/js/theme-debug.js"></script>
     <script src="/js/theme-loader.js"></script>
     <script src="/js/theme-fix.js"></script>
     <script src="/js/themes.js"></script>
 
-    <!-- Script para información de debug -->
+    <!-- Script for debug information -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Función para actualizar la información de debug
+        // Function to update debug information
         function updateDebugInfo() {
-            // Tema actual
+            // Current theme
             const currentTheme = localStorage.getItem('theme') || 'default';
             document.getElementById('debug-current-theme').textContent = currentTheme;
 
-            // Clases del body
+            // Body classes
             const bodyClasses = document.body.className;
             document.getElementById('debug-body-classes').textContent = bodyClasses;
 
-            // Última actualización
-            const themeUpdated = localStorage.getItem('theme_updated') || 'Nunca';
-            const lastUpdate = themeUpdated !== 'Nunca'
+            // Last update
+            const themeUpdated = localStorage.getItem('theme_updated') || 'Never';
+            const lastUpdate = themeUpdated !== 'Never'
                 ? new Date(parseInt(themeUpdated)).toLocaleString()
-                : 'Nunca';
+                : 'Never';
             document.getElementById('debug-theme-updated').textContent = lastUpdate;
         }
 
-        // Actualizar información al cargar
+        // Update information on load
         updateDebugInfo();
 
-        // Actualizar al hacer clic en el botón de refrescar
+        // Update when clicking the refresh button
         document.getElementById('refreshDebugInfo').addEventListener('click', updateDebugInfo);
 
-        // Actualizar cuando se guarde el tema
+        // Update when the theme is saved
         document.getElementById('saveThemeBtn').addEventListener('click', function() {
-            // Esperar un momento para que se guarden los cambios
+            // Wait a moment for changes to be saved
             setTimeout(updateDebugInfo, 100);
         });
     });

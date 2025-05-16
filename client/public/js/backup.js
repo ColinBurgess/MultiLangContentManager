@@ -1,23 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurar event listeners para los botones
+    // Set up event listeners for buttons
     document.getElementById('backupAllBtn').addEventListener('click', () => createBackup('full'));
     document.getElementById('backupContentBtn').addEventListener('click', () => createBackup('content'));
     document.getElementById('restoreFile').addEventListener('change', handleFileSelection);
     document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
 
-    // Cargar historial de backups
+    // Load backup history
     loadBackupHistory();
 });
 
-// Función para crear un backup
+// Function to create a backup
 function createBackup(type) {
     try {
-        // Obtener las opciones seleccionadas
+        // Get selected options
         const includeTasks = document.getElementById('includeTasksCheck').checked;
         const includePreferences = document.getElementById('includePreferencesCheck').checked;
         const prettyPrint = document.getElementById('prettyPrintCheck').checked;
 
-        // Obtener los datos para el backup
+        // Get data for backup
         const backupData = {
             version: '1.0',
             type: type,
@@ -25,13 +25,13 @@ function createBackup(type) {
             data: {}
         };
 
-        // Siempre incluir datos de contenido en cualquier tipo de backup
+        // Always include content data in any type of backup
         const contentData = localStorage.getItem('contentData');
         if (contentData) {
             backupData.data.content = JSON.parse(contentData);
         }
 
-        // Incluir tareas de Kanban si está seleccionado
+        // Include Kanban tasks if selected
         if (includeTasks && type === 'full') {
             const kanbanTasks = localStorage.getItem('kanbanTasks');
             if (kanbanTasks) {
@@ -39,15 +39,15 @@ function createBackup(type) {
             }
         }
 
-        // Incluir preferencias si está seleccionado
+        // Include preferences if selected
         if (includePreferences && type === 'full') {
-            // Recopilar todas las cookies y configuraciones
+            // Collect all cookies and settings
             const preferences = {
                 cookies: {},
                 settings: {}
             };
 
-            // Obtener cookies
+            // Get cookies
             document.cookie.split(';').forEach(cookie => {
                 if (cookie.trim()) {
                     const [name, value] = cookie.trim().split('=');
@@ -55,7 +55,7 @@ function createBackup(type) {
                 }
             });
 
-            // Guardar otras configuraciones como tema, etc.
+            // Save other settings like theme, etc.
             const themePref = localStorage.getItem('theme');
             if (themePref) {
                 preferences.settings.theme = themePref;
@@ -64,44 +64,44 @@ function createBackup(type) {
             backupData.data.preferences = preferences;
         }
 
-        // Generar el JSON para descargar
+        // Generate JSON for download
         const backupJson = prettyPrint
             ? JSON.stringify(backupData, null, 2)
             : JSON.stringify(backupData);
 
-        // Crear objeto Blob para la descarga
+        // Create Blob object for download
         const blob = new Blob([backupJson], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
 
-        // Crear elemento de descarga
+        // Create download element
         const a = document.createElement('a');
         a.href = url;
         a.download = `multilang_backup_${type}_${formatDateForFilename(new Date())}.json`;
         document.body.appendChild(a);
         a.click();
 
-        // Limpiar
+        // Clean up
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        // Guardar en el historial de backups
+        // Save to backup history
         saveBackupToHistory(backupData, backupJson.length);
 
-        // Mostrar notificación de éxito
-        showNotification('Backup creado exitosamente', 'success');
+        // Show success notification
+        showNotification('Backup created successfully', 'success');
 
     } catch (error) {
         console.error('Error creating backup:', error);
-        showNotification('Error al crear backup', 'error');
+        showNotification('Error creating backup', 'error');
     }
 }
 
-// Guardar referencia del backup en el historial
+// Save backup reference in history
 function saveBackupToHistory(backupData, size) {
-    // Obtener historial existente o crear uno nuevo
+    // Get existing history or create new one
     const backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
 
-    // Preparar el nuevo registro
+    // Prepare new record
     const newEntry = {
         timestamp: backupData.timestamp,
         type: backupData.type,
@@ -109,56 +109,56 @@ function saveBackupToHistory(backupData, size) {
         contents: generateContentSummary(backupData)
     };
 
-    // Agregar al inicio del historial (más reciente primero)
+    // Add to the beginning of history (most recent first)
     backupHistory.unshift(newEntry);
 
-    // Limitar a 10 entradas
+    // Limit to 10 entries
     if (backupHistory.length > 10) {
         backupHistory.pop();
     }
 
-    // Guardar de vuelta en localStorage
+    // Save back to localStorage
     localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
 
-    // Actualizar el historial en la interfaz
+    // Update history in the interface
     loadBackupHistory();
 }
 
-// Cargar y mostrar el historial de backups
+// Load and display backup history
 function loadBackupHistory() {
     const historyList = document.getElementById('backupHistoryList');
     const noBackupsMessage = document.getElementById('noBackupsMessage');
 
-    // Obtener historial de backups
+    // Get backup history
     const backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
 
-    // Mostrar mensaje si no hay historial
+    // Show message if no history
     if (backupHistory.length === 0) {
         historyList.innerHTML = '';
         noBackupsMessage.style.display = 'block';
         return;
     }
 
-    // Ocultar mensaje de "no hay backups"
+    // Hide "no backups" message
     noBackupsMessage.style.display = 'none';
 
-    // Generar filas para la tabla
+    // Generate rows for the table
     historyList.innerHTML = backupHistory.map(entry => `
         <tr>
             <td>${formatDate(new Date(entry.timestamp))}</td>
-            <td><span class="badge ${entry.type === 'full' ? 'bg-primary' : 'bg-secondary'}">${entry.type === 'full' ? 'Completo' : 'Solo Contenido'}</span></td>
+            <td><span class="badge ${entry.type === 'full' ? 'bg-primary' : 'bg-secondary'}">${entry.type === 'full' ? 'Complete' : 'Content Only'}</span></td>
             <td>${entry.size}</td>
             <td>${entry.contents}</td>
             <td>
                 <button class="btn btn-sm btn-outline-light" disabled>
-                    <i class="bi bi-download"></i> Descargar
+                    <i class="bi bi-download"></i> Download
                 </button>
             </td>
         </tr>
     `).join('');
 }
 
-// Habilitar/deshabilitar botón de restauración cuando se selecciona un archivo
+// Enable/disable restore button when a file is selected
 function handleFileSelection() {
     const fileInput = document.getElementById('restoreFile');
     const restoreBtn = document.getElementById('restoreBtn');
@@ -166,12 +166,12 @@ function handleFileSelection() {
     restoreBtn.disabled = !fileInput.files || fileInput.files.length === 0;
 }
 
-// Restaurar desde un archivo de backup
+// Restore from a backup file
 function restoreBackup() {
     const fileInput = document.getElementById('restoreFile');
 
     if (!fileInput.files || fileInput.files.length === 0) {
-        showNotification('No se ha seleccionado ningún archivo', 'error');
+        showNotification('No file has been selected', 'error');
         return;
     }
 
@@ -180,88 +180,88 @@ function restoreBackup() {
 
     reader.onload = function(event) {
         try {
-            // Parsear el contenido del archivo
+            // Parse file content
             const backupData = JSON.parse(event.target.result);
 
-            // Verificar la versión y estructura
+            // Verify version and structure
             if (!backupData.version || !backupData.data) {
-                throw new Error('Formato de archivo inválido');
+                throw new Error('Invalid file format');
             }
 
-            // Restaurar datos de contenido
+            // Restore content data
             if (backupData.data.content) {
                 localStorage.setItem('contentData', JSON.stringify(backupData.data.content));
             }
 
-            // Restaurar tareas de Kanban
+            // Restore Kanban tasks
             if (backupData.data.kanban) {
                 localStorage.setItem('kanbanTasks', JSON.stringify(backupData.data.kanban));
             }
 
-            // Restaurar preferencias
+            // Restore preferences
             if (backupData.data.preferences) {
-                // Restaurar configuraciones
+                // Restore settings
                 if (backupData.data.preferences.settings) {
                     Object.keys(backupData.data.preferences.settings).forEach(key => {
                         localStorage.setItem(key, backupData.data.preferences.settings[key]);
                     });
                 }
 
-                // No restauramos cookies directamente por seguridad
+                // We don't restore cookies directly for security reasons
             }
 
-            // Mostrar notificación de éxito
-            showNotification('Datos restaurados exitosamente', 'success');
+            // Show success notification
+            showNotification('Data restored successfully', 'success');
 
-            // Recargar la página para aplicar los cambios
+            // Reload page to apply changes
             setTimeout(() => {
                 window.location.reload();
             }, 1500);
 
         } catch (error) {
             console.error('Error restoring backup:', error);
-            showNotification('Error al restaurar el backup: ' + error.message, 'error');
+            showNotification('Error restoring backup: ' + error.message, 'error');
         }
     };
 
     reader.readAsText(file);
 }
 
-// Mostrar notificación
+// Show notification
 function showNotification(message, type) {
     const notification = document.getElementById('backupNotification');
     notification.textContent = message;
     notification.className = `copy-notification ${type}`;
     notification.style.display = 'block';
 
-    // Ocultar después de 3 segundos
+    // Hide after 3 seconds
     setTimeout(() => {
         notification.style.display = 'none';
     }, 3000);
 }
 
-// Generar resumen del contenido del backup
+// Generate backup content summary
 function generateContentSummary(backupData) {
     const summary = [];
 
     if (backupData.data.content) {
         const contentCount = Array.isArray(backupData.data.content) ? backupData.data.content.length : 'N/A';
-        summary.push(`${contentCount} contenidos`);
+        summary.push(`${contentCount} contents`);
     }
 
     if (backupData.data.kanban) {
         const tasksCount = Array.isArray(backupData.data.kanban) ? backupData.data.kanban.length : 'N/A';
-        summary.push(`${tasksCount} tareas`);
+        summary.push(`${tasksCount} tasks`);
     }
 
     if (backupData.data.preferences) {
-        summary.push('Preferencias');
+        summary.push('Preferences');
     }
 
     return summary.join(', ');
 }
 
-// Formatear fecha para nombre de archivo
+// Format date for filename
 function formatDateForFilename(date) {
     return date.toISOString()
         .replace(/:/g, '-')
@@ -269,9 +269,9 @@ function formatDateForFilename(date) {
         .replace('T', '_');
 }
 
-// Formatear fecha para mostrar
+// Format date for display
 function formatDate(date) {
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -280,7 +280,7 @@ function formatDate(date) {
     }).format(date);
 }
 
-// Formatear tamaño de archivo
+// Format file size
 function formatFileSize(bytes) {
     if (bytes < 1024) {
         return bytes + ' B';

@@ -1,71 +1,71 @@
-# Tablero Kanban - Guía de Uso
+# Kanban Board - User Guide
 
-El tablero Kanban es una herramienta visual para gestionar tareas relacionadas con tus contenidos. Te permite ver el flujo de trabajo de tus tareas y seguir su progreso.
+The Kanban board is a visual tool for managing tasks related to your content. It allows you to see the workflow of your tasks and track their progress.
 
-## Cambios Importantes
+## Important Changes
 
-El tablero Kanban ha sido rediseñado para enfocarse en **gestionar tareas de trabajo** en lugar de simplemente reflejar el estado de publicación de los contenidos. Los principales cambios son:
+The Kanban board has been redesigned to focus on **managing work tasks** instead of simply reflecting the publication status of content. The main changes are:
 
-1. **Nuevas columnas de estado**: Las columnas ahora representan estados de progreso en el flujo de trabajo:
-   - **Por Hacer**: Tareas que aún no han comenzado.
-   - **En Progreso**: Tareas que se están trabajando actualmente.
-   - **Completado**: Tareas finalizadas.
+1. **New status columns**: The columns now represent progress states in the workflow:
+   - **To Do**: Tasks that have not yet started.
+   - **In Progress**: Tasks that are currently being worked on.
+   - **Completed**: Finished tasks.
 
-2. **Tareas independientes**: Las tareas ahora son entidades independientes que hacen referencia a un contenido. Una tarea puede ser "Grabar versión en inglés" para un contenido específico.
+2. **Independent tasks**: Tasks are now independent entities that reference content. A task can be "Record English version" for a specific content.
 
-3. **Arrastrar y soltar**: Ahora puedes mover tareas entre las columnas para actualizar su estado.
+3. **Drag and drop**: You can now move tasks between columns to update their status.
 
-4. **Fecha límite**: Las tareas pueden tener una fecha límite para su finalización.
+4. **Due date**: Tasks can have a deadline for completion.
 
-## Usando el Tablero Kanban
+## Using the Kanban Board
 
-### Crear una nueva tarea
+### Creating a new task
 
-1. Haz clic en el botón **"Nueva Tarea"** en la esquina superior derecha.
-2. Completa el formulario:
-   - **Título de la Tarea**: Un nombre claro y descriptivo (ej. "Grabar versión en inglés").
-   - **Descripción de la Tarea**: Información detallada sobre lo que hay que hacer.
-   - **Estado**: El estado actual de la tarea.
-   - **Fecha Límite**: Fecha objetivo para completar la tarea.
-   - **Contenido Relacionado**: El contenido al que está asociada esta tarea.
-   - **Asignado a**: La persona responsable de completar la tarea.
-   - **Etiquetas**: Palabras clave para agrupar o identificar tareas.
+1. Click on the **"New Task"** button in the top right corner.
+2. Complete the form:
+   - **Task Title**: A clear and descriptive name (e.g., "Record English version").
+   - **Task Description**: Detailed information about what needs to be done.
+   - **Status**: The current status of the task.
+   - **Due Date**: Target date for completing the task.
+   - **Related Content**: The content to which this task is associated.
+   - **Assigned to**: The person responsible for completing the task.
+   - **Tags**: Keywords to group or identify tasks.
 
-### Editar una tarea existente
+### Editing an existing task
 
-1. Haz clic en cualquier tarjeta del tablero para abrir el formulario de edición.
-2. Actualiza los detalles necesarios.
-3. Haz clic en **"Guardar"** para aplicar los cambios.
+1. Click on any card on the board to open the edit form.
+2. Update the necessary details.
+3. Click on **"Save"** to apply the changes.
 
-### Cambiar el estado de una tarea
+### Changing the status of a task
 
-Tienes dos opciones para cambiar el estado:
+You have two options to change the status:
 
-1. **Arrastrar y soltar**: Simplemente arrastra la tarjeta a la columna deseada.
-2. **Editar la tarea**: Haz clic en la tarjeta y cambia el estado en el formulario.
+1. **Drag and drop**: Simply drag the card to the desired column.
+2. **Edit the task**: Click on the card and change the status in the form.
 
-### Eliminar una tarea
+### Deleting a task
 
-1. Haz clic en la tarea para abrir el formulario de edición.
-2. Haz clic en el botón **"Eliminar"** en la esquina inferior izquierda.
-3. Confirma la eliminación cuando se te solicite.
+1. Click on the task to open the edit form.
+2. Click on the **"Delete"** button in the bottom left corner.
+3. Confirm the deletion when prompted.
 
-## Migración de Datos Existentes
+## Migration of Existing Data
 
-Si estás actualizando desde una versión anterior, tus contenidos existentes se han migrado automáticamente a la nueva estructura de tareas. Para cada contenido:
+If you're updating from a previous version, your existing content has been automatically migrated to the new task structure. For each content:
 
-- Se ha creado una tarea con el título "Gestionar: [Título del contenido]"
-- El estado de la tarea se ha establecido en base al estado de publicación anterior
-- La descripción de la tarea indica qué acciones son necesarias
+- A task has been created with the title "Manage: [Content Title]"
+- The task status has been set based on the previous publication status
+- The task description indicates what actions are needed
 
-Para migrar manualmente, puedes ejecutar el script:
+To migrate manually, you can run the script:
 
 ```
 ./migrate-to-tasks.sh
 ```
 
-## Diferencias con el Sistema Anterior
+## Differences from the Previous System
 
-En el sistema anterior, el tablero Kanban simplemente reflejaba el estado de publicación de los contenidos, con columnas específicas para la publicación en diferentes idiomas.
+In the previous system, the Kanban board simply reflected the publication status of the content, with specific columns for publication in different languages.
 
-El nuevo sistema está diseñado para ser más flexible y enfocado en el flujo de trabajo, permitiéndote gestionar tareas específicas relacionadas con un contenido, no solo su estado de publicación.
+The new system is designed to be more flexible and workflow-focused, allowing you to manage specific tasks related to content, not just its publication status.

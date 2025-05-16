@@ -1,26 +1,26 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tema y preferencias
+    // Initialize theme and preferences
     initThemePage();
 
-    // Configurar event listeners
+    // Set up event listeners
     setupEventListeners();
 
-    // Mostrar el tamaño de fuente actual
+    // Display the current font size
     updateFontSizeDisplay();
 
-    // Función para inicializar la aplicación con configuraciones consistentes
+    // Function to initialize the application with consistent settings
     initializeWithTheme();
 });
 
-// Variable para controlar el logging (debe coincidir con theme-loader.js)
+// Variable to control logging (must match theme-loader.js)
 const THEMES_LOGGING_ENABLED = false;
 
-// Inicializar el tema basado en las preferencias guardadas
+// Initialize theme based on saved preferences
 function initThemePage() {
-    // Cargar preferencias
+    // Load preferences
     loadThemePreferences();
 
-    // Marcar la opción correspondiente como activa
+    // Mark the corresponding option as active
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.querySelectorAll('.theme-option').forEach(option => {
         if (option.dataset.theme === savedTheme) {
@@ -32,85 +32,85 @@ function initThemePage() {
         }
     });
 
-    // Cargar la configuración de vista (solo para inicializar los controles)
+    // Load view settings (only to initialize controls)
     loadThemeControlValues();
 }
 
-// Configurar listeners para los eventos de la página
+// Set up listeners for page events
 function setupEventListeners() {
-    // Event listeners para las opciones de tema
+    // Event listeners for theme options
     document.querySelectorAll('.theme-option').forEach(option => {
         option.addEventListener('click', function() {
             const selectedTheme = this.dataset.theme;
 
-            // Loggear cambio de tema
-            sendLogToServer(`Tema cambiado a "${selectedTheme}"`, 'info', {
+            // Log theme change
+            sendLogToServer(`Theme changed to "${selectedTheme}"`, 'info', {
                 previousTheme: localStorage.getItem('theme') || 'default',
                 newTheme: selectedTheme,
                 userAction: true
             });
 
-            // Marcar opción seleccionada
+            // Mark selected option
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             this.classList.add('active');
 
-            // Seleccionar radio button
+            // Select radio button
             const radioInput = this.querySelector('input[type="radio"]');
             if (radioInput) radioInput.checked = true;
 
-            // Guardar tema en localStorage
+            // Save theme in localStorage
             localStorage.setItem('theme', selectedTheme);
 
-            // Notificar a otras pestañas sobre el cambio de tema
+            // Notify other tabs about theme change
             localStorage.setItem('theme_updated', Date.now().toString());
 
-            // Aplicar al body para vista previa instantánea
+            // Apply to body for instant preview
             document.body.classList.remove('theme-dark', 'theme-blue', 'theme-purple', 'theme-forest');
             document.body.classList.add(`theme-${selectedTheme}`);
         });
     });
 
-    // Event listener para el botón de guardar tema
+    // Event listener for save theme button
     document.getElementById('saveThemeBtn').addEventListener('click', function() {
         const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
 
-        // Guardar el tema en localStorage
+        // Save theme in localStorage
         localStorage.setItem('theme', selectedTheme);
 
-        // Aplicar el tema a esta página inmediatamente
+        // Apply theme to this page immediately
         applyTheme(selectedTheme);
 
-        // Enviar mensaje a otras ventanas abiertas para actualizar el tema
+        // Send message to other open windows to update theme
         localStorage.setItem('theme_updated', Date.now().toString());
 
-        // Verificar si el usuario quiere recargar todas las páginas
+        // Check if user wants to reload all pages
         const reloadPages = document.getElementById('reloadPagesCheck')?.checked;
 
         if (reloadPages) {
-            // Mostrar notificación de que se van a recargar las páginas
-            showNotification('Actualizando todas las páginas...', 'success');
+            // Show notification that pages will be reloaded
+            showNotification('Updating all pages...', 'success');
 
-            // Pequeño retraso antes de recargar para que la notificación sea visible
+            // Small delay before reloading so notification is visible
             setTimeout(() => {
-                // Marcar en localStorage que todas las páginas deben recargarse
+                // Mark in localStorage that all pages should be reloaded
                 localStorage.setItem('theme_reload_required', 'true');
 
-                // Recargar esta página
+                // Reload this page
                 window.location.reload();
             }, 1000);
         } else {
-            // Mostrar notificación normal
-            showNotification('Preferencias de tema guardadas', 'success');
+            // Show normal notification
+            showNotification('Theme preferences saved', 'success');
         }
 
-        // Loggear guardado de configuraciones
-        sendLogToServer('Configuraciones de tema guardadas', 'info', {
+        // Log saved settings
+        sendLogToServer('Theme settings saved', 'info', {
             theme: selectedTheme,
             userAction: true
         });
     });
 
-    // Event listener para el tamaño de fuente
+    // Event listener for font size
     const fontSizeRange = document.getElementById('fontSizeRange');
     if (fontSizeRange) {
         fontSizeRange.addEventListener('input', function() {
@@ -118,36 +118,36 @@ function setupEventListeners() {
         });
     }
 
-    // Event listener para guardar configuración de vista
+    // Event listener for saving view settings
     document.getElementById('saveViewSettingsBtn').addEventListener('click', function() {
         saveViewSettings();
-        showNotification('Configuración de vista guardada', 'success');
+        showNotification('View settings saved', 'success');
     });
 }
 
-// Aplicar el tema seleccionado
+// Apply the selected theme
 function applyTheme(theme) {
-    // Quitar todas las clases de tema del body
+    // Remove all theme classes from body
     document.body.classList.remove('theme-dark', 'theme-blue', 'theme-purple', 'theme-forest');
 
-    // Agregar la clase del tema seleccionado
+    // Add class for selected theme
     document.body.classList.add(`theme-${theme}`);
 }
 
-// Guardar configuración de vista
+// Save view settings
 function saveViewSettings() {
-    // Densidad
+    // Density
     const density = document.querySelector('input[name="density"]:checked').value;
 
-    // Tamaño de fuente
+    // Font size
     const fontSize = document.getElementById('fontSizeRange').value;
 
-    // Preferencias adicionales
+    // Additional preferences
     const animations = document.getElementById('animationsSwitch').checked;
     const autoSave = document.getElementById('autoSaveSwitch').checked;
     const hideInfoMessages = document.getElementById('hideInfoMessagesSwitch').checked;
 
-    // Guardar en localStorage
+    // Save to localStorage
     const viewSettings = {
         density,
         fontSize,
@@ -158,25 +158,25 @@ function saveViewSettings() {
 
     localStorage.setItem('viewSettings', JSON.stringify(viewSettings));
 
-    // Aplicar cambios inmediatamente
+    // Apply changes immediately
     if (typeof applyViewSettings === 'function') {
-        // Si existe la función en utils.js, usarla
+        // If the function exists in utils.js, use it
         applyViewSettings();
     } else {
-        // Si no, aplicar aquí los cambios básicos
+        // If not, apply basic changes here
         applyThemeViewSettings(viewSettings);
     }
 
-    // Notificar a otras ventanas/pestañas sobre el cambio
+    // Notify other windows/tabs about the change
     localStorage.setItem('viewSettings_updated', Date.now().toString());
 
-    // Loggear guardado de configuraciones
-    sendLogToServer('Configuraciones de vista guardadas', 'info', viewSettings);
+    // Log saved settings
+    sendLogToServer('View settings saved', 'info', viewSettings);
 }
 
-// Cargar valores en los controles de configuración de vista
+// Load values in view settings controls
 function loadThemeControlValues() {
-    // Obtener configuración guardada o usar valores por defecto
+    // Get saved settings or use default values
     const defaultSettings = {
         density: 'default',
         fontSize: '100',
@@ -187,7 +187,7 @@ function loadThemeControlValues() {
 
     const savedSettings = JSON.parse(localStorage.getItem('viewSettings')) || defaultSettings;
 
-    // Establecer valores en los controles
+    // Set values in controls
     document.getElementById(`density${capitalizeFirstLetter(savedSettings.density)}`).checked = true;
     document.getElementById('fontSizeRange').value = savedSettings.fontSize;
     document.getElementById('animationsSwitch').checked = savedSettings.animations;
@@ -195,24 +195,24 @@ function loadThemeControlValues() {
     document.getElementById('hideInfoMessagesSwitch').checked = savedSettings.hideInfoMessages;
 }
 
-// Aplicar configuración de vista
+// Apply view settings
 function applyThemeViewSettings(settings) {
     if (!settings) {
-        console.error('No se proporcionaron configuraciones de vista');
+        console.error('No view settings were provided');
         return;
     }
 
-    // Aplicar tamaño de fuente
+    // Apply font size
     document.documentElement.style.fontSize = `${settings.fontSize}%`;
 
-    // Aplicar densidad de información
+    // Apply information density
     document.body.classList.remove('density-compact', 'density-default', 'density-comfortable');
     document.body.classList.add(`density-${settings.density}`);
 
-    // Aplicar animaciones
+    // Apply animations
     document.body.classList.toggle('no-animations', !settings.animations);
 
-    // Ocultar mensajes informativos si es necesario
+    // Hide informational messages if needed
     if (settings.hideInfoMessages) {
         document.querySelectorAll('.alert-info').forEach(alert => {
             alert.style.display = 'none';
@@ -220,54 +220,54 @@ function applyThemeViewSettings(settings) {
     }
 }
 
-// Cargar preferencias de tema
+// Load theme preferences
 function loadThemePreferences() {
-    // Esta función se puede expandir para cargar más preferencias relacionadas con el tema
+    // This function can be expanded to load more theme-related preferences
     const savedTheme = localStorage.getItem('theme') || 'dark';
     return { theme: savedTheme };
 }
 
-// Actualizar el display del tamaño de fuente
+// Update the font size display
 function updateFontSizeDisplay() {
     const fontSizeValue = document.getElementById('fontSizeRange').value;
     document.getElementById('fontSizeDisplay').textContent = `${fontSizeValue}%`;
 }
 
-// Mostrar notificación
+// Show notification
 function showNotification(message, type) {
     const notification = document.getElementById('themeNotification');
     notification.textContent = message;
     notification.className = `copy-notification ${type}`;
     notification.style.display = 'block';
 
-    // Ocultar después de 3 segundos
+    // Hide after 3 seconds
     setTimeout(() => {
         notification.style.display = 'none';
     }, 3000);
 }
 
-// Función auxiliar para capitalizar la primera letra
+// Helper function to capitalize the first letter
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-// Función para inicializar la aplicación con configuraciones consistentes
+// Function to initialize the application with consistent settings
 function initializeWithTheme() {
-    // Crear un elemento en la interfaz para ofrecer la opción de recargar
+    // Create an interface element to offer the reload option
     document.addEventListener('DOMContentLoaded', function() {
         const cardBody = document.querySelector('#saveThemeBtn').parentElement;
 
         if (cardBody) {
-            // Verificar si ya existe el checkbox para evitar duplicados
+            // Check if the checkbox already exists to avoid duplicates
             if (!document.getElementById('reloadPagesCheck')) {
                 const reloadOption = document.createElement('div');
                 reloadOption.className = 'form-check mt-3';
                 reloadOption.innerHTML = `
                     <input class="form-check-input" type="checkbox" id="reloadPagesCheck" checked>
                     <label class="form-check-label" for="reloadPagesCheck">
-                        Aplicar a todas las páginas abiertas
+                        Apply to all open pages
                     </label>
-                    <div class="form-text">Recomendado para asegurar que el tema se aplique correctamente en todas las páginas.</div>
+                    <div class="form-text">Recommended to ensure that the theme is correctly applied across all pages.</div>
                 `;
 
                 cardBody.appendChild(reloadOption);
@@ -276,9 +276,9 @@ function initializeWithTheme() {
     });
 }
 
-// Función para enviar logs al servidor (similar a theme-loader.js)
+// Function to send logs to the server (similar to theme-loader.js)
 function sendLogToServer(message, level = 'debug', data = null) {
-    // Si el logging está desactivado, no hacer nada
+    // If logging is disabled, do nothing
     if (!THEMES_LOGGING_ENABLED) return;
 
     try {
@@ -294,7 +294,7 @@ function sendLogToServer(message, level = 'debug', data = null) {
             source: 'themes.js'
         };
 
-        // Enviar log al servidor
+        // Send log to server
         fetch('/api/logs/theme', {
             method: 'POST',
             headers: {
@@ -302,9 +302,9 @@ function sendLogToServer(message, level = 'debug', data = null) {
             },
             body: JSON.stringify(logEntry)
         }).catch(err => {
-            console.error('Error enviando log al servidor:', err);
+            console.error('Error sending log to server:', err);
         });
     } catch (error) {
-        console.error('Error preparando log para enviar:', error);
+        console.error('Error preparing log to send:', error);
     }
 }
