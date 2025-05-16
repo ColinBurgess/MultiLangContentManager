@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integraciones - MultiLang Content Manager</title>
+    <title>Integrations - MultiLang Content Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -78,26 +78,26 @@
         <div class="sidebar">
             <div class="sidebar-logo">
                 <a href="/" class="nav-item">
-                    <i class="bi bi-translate"></i>
+                    <i class="bi bi-house"></i>
                 </a>
             </div>
             <div class="sidebar-nav">
                 <a href="/" class="nav-item" title="Dashboard">
                     <i class="bi bi-grid-1x2-fill"></i>
                 </a>
-                <a href="/stats.html" class="nav-item" title="Estadísticas">
+                <a href="/stats.html" class="nav-item" title="Statistics">
                     <i class="bi bi-bar-chart-line"></i>
                 </a>
-                <a href="/kanban.html" class="nav-item" title="Flujo de Trabajo">
+                <a href="/kanban.html" class="nav-item" title="Workflow">
                     <i class="bi bi-kanban"></i>
                 </a>
-                <a href="/backup.html" class="nav-item" title="Backup & Restauración">
+                <a href="/backup.html" class="nav-item" title="Backup & Restore">
                     <i class="bi bi-cloud-arrow-up"></i>
                 </a>
-                <a href="/themes.html" class="nav-item" title="Preferencias">
+                <a href="/themes.html" class="nav-item" title="Preferences">
                     <i class="bi bi-palette"></i>
                 </a>
-                <a href="/integrations.html" class="nav-item active" title="Integraciones">
+                <a href="/integrations.html" class="nav-item active" title="Integrations">
                     <i class="bi bi-plug"></i>
                 </a>
             </div>
@@ -107,7 +107,7 @@
         <div class="main-content">
             <div class="header">
                 <div class="title-section">
-                    <h1 class="page-title">Integraciones</h1>
+                    <h1 class="page-title">Integrations</h1>
                 </div>
             </div>
 
@@ -120,23 +120,23 @@
                             </div>
                             <div class="card-body">
                                 <p class="text-secondary mb-4">
-                                    Gestiona tus claves de API para conectar con servicios externos o permitir que otras aplicaciones accedan a tus datos.
+                                    Manage your API keys to connect with external services or allow other applications to access your data.
                                 </p>
 
                                 <div class="mb-4">
-                                    <h6 class="mb-2">API Key para Integraciones</h6>
+                                    <h6 class="mb-2">API Key for Integrations</h6>
                                     <div class="api-key-display mb-2">
                                         •••••••••••••••••••••••••••••••••
-                                        <button class="copy-btn" title="Mostrar API Key" id="showApiKeyBtn">
+                                        <button class="copy-btn" title="Show API Key" id="showApiKeyBtn">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </div>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-light" id="copyApiKeyBtn">
-                                            <i class="bi bi-clipboard me-1"></i> Copiar
+                                            <i class="bi bi-clipboard me-1"></i> Copy
                                         </button>
                                         <button class="btn btn-sm btn-outline-secondary" id="regenerateApiKeyBtn">
-                                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerar
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
                                         </button>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
                                         <i class="bi bi-clipboard"></i>
                                     </button>
                                 </div>
-                                <p class="text-secondary small">Utiliza esta URL para recibir notificaciones de eventos en tiempo real.</p>
+                                <p class="text-secondary small">Use this URL to receive real-time event notifications.</p>
                             </div>
                         </div>
                     </div>
@@ -156,18 +156,18 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Documentación</h5>
+                                <h5 class="mb-0">Documentation</h5>
                             </div>
                             <div class="card-body">
                                 <div class="d-grid gap-2">
                                     <a href="#" class="btn btn-sm btn-outline-light">
-                                        <i class="bi bi-file-earmark-text me-2"></i> Documentación de API
+                                        <i class="bi bi-file-earmark-text me-2"></i> API Documentation
                                     </a>
                                     <a href="#" class="btn btn-sm btn-outline-light">
-                                        <i class="bi bi-code-slash me-2"></i> Ejemplos de Código
+                                        <i class="bi bi-code-slash me-2"></i> Code Examples
                                     </a>
                                     <a href="#" class="btn btn-sm btn-outline-light">
-                                        <i class="bi bi-journal-code me-2"></i> Tutoriales
+                                        <i class="bi bi-journal-code me-2"></i> Tutorials
                                     </a>
                                 </div>
                             </div>
@@ -175,25 +175,25 @@
                     </div>
                 </div>
 
-                <h5 class="my-4">Servicios Disponibles</h5>
+                <h5 class="my-4">Available Services</h5>
 
                 <div class="row">
-                    <!-- Traducción IA -->
+                    <!-- AI Translation -->
                     <div class="col-md-4 mb-4">
                         <div class="card integration-card">
                             <div class="card-header">
                                 <div class="integration-icon">
                                     <i class="bi bi-translate"></i>
                                 </div>
-                                <h5 class="mb-0">Traducción IA</h5>
+                                <h5 class="mb-0">AI Translation</h5>
                                 <span class="integration-status status-connected">
                                     <i class="bi bi-check-circle-fill"></i>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Traduce automáticamente tu contenido utilizando modelos avanzados de inteligencia artificial.</p>
+                                <p class="text-secondary">Automatically translate your content using advanced artificial intelligence models.</p>
                                 <div class="mb-3">
-                                    <label class="form-label">Proveedor</label>
+                                    <label class="form-label">Provider</label>
                                     <select class="form-select form-select-sm">
                                         <option value="openai">OpenAI</option>
                                         <option value="azure">Azure AI</option>
@@ -202,7 +202,7 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-outline-light" id="configureAIBtn">
-                                        Configurar
+                                        Configure
                                     </button>
                                 </div>
                             </div>
@@ -222,11 +222,11 @@
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Conecta con tu CMS para publicar automáticamente el contenido una vez aprobado.</p>
+                                <p class="text-secondary">Connect with your CMS to automatically publish content once approved.</p>
                                 <div class="mb-3">
                                     <label class="form-label">CMS</label>
                                     <select class="form-select form-select-sm">
-                                        <option value="">Seleccionar CMS...</option>
+                                        <option value="">Select CMS...</option>
                                         <option value="wordpress">WordPress</option>
                                         <option value="strapi">Strapi</option>
                                         <option value="contentful">Contentful</option>
@@ -234,29 +234,29 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-primary" id="connectCMSBtn">
-                                        Conectar
+                                        Connect
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Notificaciones -->
+                    <!-- Notifications -->
                     <div class="col-md-4 mb-4">
                         <div class="card integration-card">
                             <div class="card-header">
                                 <div class="integration-icon">
                                     <i class="bi bi-bell"></i>
                                 </div>
-                                <h5 class="mb-0">Notificaciones</h5>
+                                <h5 class="mb-0">Notifications</h5>
                                 <span class="integration-status status-connected">
                                     <i class="bi bi-check-circle-fill"></i>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Recibe alertas cuando el contenido es actualizado, traducido o cuando hay comentarios.</p>
+                                <p class="text-secondary">Receive alerts when content is updated, translated, or when there are comments.</p>
                                 <div class="mb-3">
-                                    <label class="form-label">Canal</label>
+                                    <label class="form-label">Channel</label>
                                     <select class="form-select form-select-sm">
                                         <option value="slack">Slack</option>
                                         <option value="email">Email</option>
@@ -265,27 +265,27 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-outline-light" id="configureNotificationsBtn">
-                                        Configurar
+                                        Configure
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Redes Sociales -->
+                    <!-- Social Media -->
                     <div class="col-md-4 mb-4">
                         <div class="card integration-card">
                             <div class="card-header">
                                 <div class="integration-icon">
                                     <i class="bi bi-share"></i>
                                 </div>
-                                <h5 class="mb-0">Redes Sociales</h5>
+                                <h5 class="mb-0">Social Media</h5>
                                 <span class="integration-status status-disconnected">
                                     <i class="bi bi-x-circle-fill"></i>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Publica automáticamente en tus redes sociales cuando el contenido es aprobado.</p>
+                                <p class="text-secondary">Automatically post to your social media accounts when content is approved.</p>
                                 <div class="mb-3">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" id="twitterCheck">
@@ -308,31 +308,31 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-primary" id="connectSocialBtn">
-                                        Conectar
+                                        Connect
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Almacenamiento -->
+                    <!-- Storage -->
                     <div class="col-md-4 mb-4">
                         <div class="card integration-card">
                             <div class="card-header">
                                 <div class="integration-icon">
                                     <i class="bi bi-cloud-upload"></i>
                                 </div>
-                                <h5 class="mb-0">Almacenamiento</h5>
+                                <h5 class="mb-0">Storage</h5>
                                 <span class="integration-status status-disconnected">
                                     <i class="bi bi-x-circle-fill"></i>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Guarda archivos y recursos multimedia en la nube y vincúlalos con tu contenido.</p>
+                                <p class="text-secondary">Store files and media assets in the cloud and link them with your content.</p>
                                 <div class="mb-3">
-                                    <label class="form-label">Proveedor</label>
+                                    <label class="form-label">Provider</label>
                                     <select class="form-select form-select-sm">
-                                        <option value="">Seleccionar proveedor...</option>
+                                        <option value="">Select provider...</option>
                                         <option value="s3">Amazon S3</option>
                                         <option value="gcs">Google Cloud Storage</option>
                                         <option value="azure">Azure Blob Storage</option>
@@ -340,31 +340,31 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-primary" id="connectStorageBtn">
-                                        Conectar
+                                        Connect
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Analítica -->
+                    <!-- Analytics -->
                     <div class="col-md-4 mb-4">
                         <div class="card integration-card">
                             <div class="card-header">
                                 <div class="integration-icon">
                                     <i class="bi bi-graph-up"></i>
                                 </div>
-                                <h5 class="mb-0">Analítica</h5>
+                                <h5 class="mb-0">Analytics</h5>
                                 <span class="integration-status status-disconnected">
                                     <i class="bi bi-x-circle-fill"></i>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p class="text-secondary">Obtén estadísticas sobre el rendimiento de tu contenido para mejorar tus publicaciones.</p>
+                                <p class="text-secondary">Get statistics about your content performance to improve your publications.</p>
                                 <div class="mb-3">
-                                    <label class="form-label">Servicio</label>
+                                    <label class="form-label">Service</label>
                                     <select class="form-select form-select-sm">
-                                        <option value="">Seleccionar servicio...</option>
+                                        <option value="">Select service...</option>
                                         <option value="ga">Google Analytics</option>
                                         <option value="matomo">Matomo</option>
                                         <option value="plausible">Plausible</option>
@@ -372,7 +372,7 @@
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-sm btn-primary" id="connectAnalyticsBtn">
-                                        Conectar
+                                        Connect
                                     </button>
                                 </div>
                             </div>

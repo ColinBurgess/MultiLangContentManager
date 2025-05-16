@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // Obtiene el ID del contenido de la URL si existe
+        // Get content ID from URL if it exists
         const urlParams = new URLSearchParams(window.location.search);
         const contentId = urlParams.get('id');
 
-        // Redirecciona a new-content.html manteniendo el ID si existe
+        // Redirect to new-content.html keeping the ID if it exists
         if (contentId) {
             window.location.href = `/new-content.html?id=${contentId}`;
         } else {

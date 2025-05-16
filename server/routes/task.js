@@ -3,6 +3,7 @@ const router = express.Router();
 const Task = require('../models/Task');
 const Content = require('../models/Content');
 const logger = require('../../utils/logger');
+const mongoose = require('mongoose');
 
 // Get all tasks
 router.get('/', async (req, res) => {
@@ -35,6 +36,18 @@ router.get('/:id', async (req, res) => {
 // Create new task
 router.post('/', async (req, res) => {
     try {
+        // Validate contentId first
+        if (!req.body.contentId) {
+            logger.error('Content ID is required for task creation');
+            return res.status(400).json({ message: 'Content ID is required' });
+        }
+
+        // Verify if contentId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(req.body.contentId)) {
+            logger.error(`Invalid Content ID format: ${req.body.contentId}`);
+            return res.status(400).json({ message: 'Invalid Content ID format' });
+        }
+
         // Verify content exists
         const content = await Content.findById(req.body.contentId);
         if (!content) {
@@ -74,6 +87,12 @@ router.put('/:id', async (req, res) => {
 
         // If content ID changed, verify new content exists and update title
         if (req.body.contentId && req.body.contentId !== task.contentId.toString()) {
+            // Verify if contentId is a valid ObjectId
+            if (!mongoose.Types.ObjectId.isValid(req.body.contentId)) {
+                logger.error(`Invalid Content ID format for task update: ${req.body.contentId}`);
+                return res.status(400).json({ message: 'Invalid Content ID format' });
+            }
+
             const content = await Content.findById(req.body.contentId);
             if (!content) {
                 logger.error(`Content not found for task update. Content ID: ${req.body.contentId}`);

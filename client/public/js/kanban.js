@@ -125,7 +125,8 @@ function renderKanban(tasks) {
 function createTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'kanban-item';
-    taskElement.dataset.id = task.id;
+    // Use MongoDB _id if available, otherwise fall back to id
+    taskElement.dataset.id = task._id || task.id;
 
     // Due date format
     const dueDate = task.dueDate ? new Date(task.dueDate) : null;
@@ -155,6 +156,9 @@ function createTaskElement(task) {
             statusText = 'Unknown';
     }
 
+    // Make sure tags is always an array
+    const tags = Array.isArray(task.tags) ? task.tags : [];
+
     // Related content information (if exists)
     const contentInfo = task.contentTitle ?
         `<div class="content-info text-secondary mb-2">
@@ -167,7 +171,7 @@ function createTaskElement(task) {
         <div class="kanban-item-desc text-secondary">${truncateText(task.description, 80)}</div>
         <div class="kanban-item-footer">
             <div>
-                ${task.tags.map(tag => `<span class="kanban-tag">${tag}</span>`).join('')}
+                ${tags.map(tag => `<span class="kanban-tag">${tag}</span>`).join('')}
             </div>
             <div class="kanban-status">
                 <span class="text-secondary" title="Status">
@@ -185,7 +189,8 @@ function createTaskElement(task) {
 
     // Add click event for editing
     taskElement.addEventListener('click', function() {
-        editTask(task.id);
+        // Use task._id if available, otherwise fall back to task.id
+        editTask(task._id || task.id);
     });
 
     return taskElement;
@@ -226,6 +231,13 @@ function updateTaskStatus(evt) {
     const taskId = evt.item.dataset.id;
     const newStatus = evt.to.id.replace('-items', '');
 
+    if (!taskId) {
+        console.error('Invalid task ID in drag event');
+        showToast('Error: Invalid task ID', 'error');
+        reloadKanbanData();
+        return;
+    }
+
     console.log(`Updating task ${taskId} to status: ${newStatus}`);
 
     // Disable interaction during update
@@ -251,7 +263,8 @@ function updateTaskStatus(evt) {
 
         // Update task in localStorage
         const tasks = JSON.parse(localStorage.getItem('kanbanTasks') || '[]');
-        const taskIndex = tasks.findIndex(t => t.id === taskId);
+        // Find task by either id or _id
+        const taskIndex = tasks.findIndex(t => t.id === taskId || t._id === taskId);
 
         if (taskIndex !== -1) {
             tasks[taskIndex].status = newStatus;
@@ -357,21 +370,26 @@ function truncateText(text, maxLength) {
 // Edit an existing task
 function editTask(taskId) {
     const tasks = JSON.parse(localStorage.getItem('kanbanTasks'));
-    const task = tasks.find(t => t.id === taskId);
+
+    // Asegurarse de buscar tareas por _id o id según sea disponible
+    const task = tasks.find(t => t.id === taskId || t._id === taskId);
 
     if (task) {
+        console.log('Editing task:', task);
+
         // Update modal title
         document.getElementById('taskModalTitle').textContent = 'Edit Task';
-        document.getElementById('taskModal').dataset.taskId = taskId;
+        // Use either _id or id
+        document.getElementById('taskModal').dataset.taskId = task._id || task.id;
 
         // Fill the form with task data
-        document.getElementById('taskTitle').value = task.title;
-        document.getElementById('taskDescription').value = task.description;
-        document.getElementById('taskStatus').value = task.status;
-        document.getElementById('taskDueDate').value = task.dueDate;
+        document.getElementById('taskTitle').value = task.title || '';
+        document.getElementById('taskDescription').value = task.description || '';
+        document.getElementById('taskStatus').value = task.status || 'draft';
+        document.getElementById('taskDueDate').value = task.dueDate || '';
         document.getElementById('taskContentId').value = task.contentId || '';
-        document.getElementById('taskAssignee').value = task.assignee;
-        document.getElementById('taskTags').value = task.tags.join(', ');
+        document.getElementById('taskAssignee').value = task.assignee || '';
+        document.getElementById('taskTags').value = Array.isArray(task.tags) ? task.tags.join(', ') : '';
 
         // Show delete button for existing tasks
         document.getElementById('deleteTaskBtn').style.display = 'block';
@@ -380,6 +398,9 @@ function editTask(taskId) {
         document.getElementById('taskModalBackdrop').style.display = 'block';
         document.getElementById('taskModal').style.display = 'block';
         document.body.classList.add('modal-open');
+    } else {
+        console.error('Task not found with ID:', taskId);
+        showToast('Error: Task not found', 'error');
     }
 }
 
@@ -523,10 +544,13 @@ function loadContentOptions() {
             // Add content options
             contents.forEach(content => {
                 const option = document.createElement('option');
-                option.value = content.id;
-                option.textContent = content.title;
+                // Use MongoDB _id instead of id
+                option.value = content._id || content.id;
+                option.textContent = content.title || 'Untitled Content';
                 contentSelect.appendChild(option);
             });
+
+            console.log('Content options loaded:', contents.length);
         })
         .catch(error => {
             console.error('Error loading contents:', error);
