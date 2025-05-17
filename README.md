@@ -18,6 +18,7 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Responsive user interface
 - User preferences with theme customization
 - MongoDB database for flexible content storage
+- Word document parser for importing structured content
 
 ## 🔍 Perfect For
 
@@ -40,6 +41,7 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Direct access to published content from the interface
 - Tagging system for categorization
 - Enhanced security for database credentials
+- Word document parsing for content import
 
 ## Project Structure 📁
 
@@ -73,10 +75,19 @@ MultiLangContentManager/
 │           ├── themes.js     # Logic for theme preferences
 │           ├── integrations.js # Logic for integrations
 │           └── utils.js      # Utility functions
+├── parser/                # Word document parsing module
+│   ├── wordexporter.py    # Parser for structured text from Word
+│   ├── __init__.py        # Module initialization
+│   └── tests/             # Parser tests
+│       ├── test_parser.py # Basic parser tests
+│       ├── test_complex.py # Complex input tests
+│       └── test_curl.py   # API submission tests
 ├── utils/
 │   ├── credentials.js    # Credentials utility
 │   └── logger.js         # Logging system
 ├── logs/                 # Log files
+├── docs/                 # Documentation
+│   └── README-KANBAN.md  # Kanban board documentation
 ├── scripts/
 │   └── encrypt-credentials.js # Encryption script
 └── package.json         # Dependencies and scripts
@@ -87,6 +98,7 @@ MultiLangContentManager/
 - Node.js (v14 or higher)
 - MongoDB (v4.4 or higher)
 - npm or yarn
+- Python 3.6+ (for word document parser)
 
 ## Installation 🔧
 

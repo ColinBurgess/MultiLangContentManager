@@ -1,0 +1,2 @@
+# No external dependencies required for the basic parser
+# The parser uses only standard library modules (json, re)
