@@ -324,6 +324,33 @@ The project implements several security measures:
 - Tasks not updating: Verify proper ID formatting between frontend and MongoDB
 - Content not displaying: Check browser console for API errors
 
+## Word Document Parser 📄
+
+The project includes a Python module to parse structured content from Word documents into the JSON format required by the API.
+
+### Parser Features
+
+- Convert formatted text into structured JSON
+- Extract bilingual content (Spanish/English)
+- Support for multiple content types (teleprompter, descriptions, tags, etc.)
+- Generate curl commands for API submission
+
+### Using the Parser
+
+```bash
+# Basic parsing (reads from stdin, outputs to stdout)
+cd parser
+python cli.py
+
+# Parse from file with pretty-printed output
+python cli.py -i input_file.txt -p
+
+# Parse and generate curl command for API submission
+python cli.py -i input_file.txt -c http://localhost:3000/api/contents -o output.json
+```
+
+For more details, see the [Parser Documentation](./parser/README.md).
+
 ## Future Enhancements 🚀
 
 - Support for additional languages
