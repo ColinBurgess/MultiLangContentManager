@@ -70,7 +70,7 @@ MultiLangContentManager/
 │           ├── list.js       # Logic for content list
 │           ├── form.js       # Logic for edit form
 │           ├── kanban.js     # Logic for kanban board
-│           ├── stats.js      # Logic for statistics
+│           ├── stats.js      # Logic for statistics with GitHub-style calendar
 │           ├── backup.js     # Logic for backup/restore
 │           ├── themes.js     # Logic for theme preferences
 │           ├── integrations.js # Logic for integrations
@@ -165,7 +165,19 @@ The statistics page provides insights on your content:
    - Published content by language
    - Pending items
 
-2. **Visualizations:**
+2. **Publication Calendar:**
+   - GitHub-style contribution calendar showing publication activity
+   - Interactive visualization of publication dates by day
+   - Color intensity reflecting publication frequency
+   - Year navigation to view historical data
+   - Shows actual publication dates for both Spanish and English content
+
+3. **Activity Log:**
+   - Chronological view of recent publications
+   - Filtering by language (Spanish/English)
+   - Direct access to published content
+
+4. **Additional Visualizations:**
    - Language distribution charts
    - Publication trends
    - Popular tags analysis
@@ -350,6 +362,12 @@ python cli.py -i input_file.txt -c http://localhost:3000/api/contents -o output.
 ```
 
 For more details, see the [Parser Documentation](./parser/README.md).
+
+## Recent Updates 🆕
+
+- **GitHub-Style Publication Calendar**: Added an interactive visualization similar to GitHub's contribution calendar to show publication activity by date
+- **Language-Specific Publication Dates**: Updated the system to track and display separate publication dates for Spanish and English content
+- **Activity Log Enhancement**: Improved the chronological activity log with language indicators and direct access to published content
 
 ## Future Enhancements 🚀
 

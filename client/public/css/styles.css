@@ -740,3 +740,112 @@ textarea::-webkit-scrollbar-thumb {
     white-space: nowrap;
     border-width: 0;
 }
+
+/* Estilos para el calendario de contribuciones */
+#publication-calendar {
+  margin: 1rem 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.calendar-scale-item {
+  width: 15px;
+  height: 15px;
+  margin: 0 2px;
+  border-radius: 2px;
+}
+
+/* Estilos generales cal-heatmap */
+.cal-heatmap-container rect {
+  rx: 2px;
+  stroke: #1e1e1e;
+  stroke-width: 1px;
+}
+
+/* Estilos para la intensidad del día */
+.cal-heatmap-container rect.q0 {
+  fill: rgba(14, 68, 41, 0.05);
+}
+.cal-heatmap-container rect.q1 {
+  fill: rgba(14, 68, 41, 0.2);
+}
+.cal-heatmap-container rect.q2 {
+  fill: rgba(14, 68, 41, 0.4);
+}
+.cal-heatmap-container rect.q3 {
+  fill: rgba(14, 68, 41, 0.6);
+}
+.cal-heatmap-container rect.q4 {
+  fill: rgba(14, 68, 41, 0.8);
+}
+.cal-heatmap-container rect.q5 {
+  fill: rgba(14, 68, 41, 1);
+}
+
+/* Estilos para etiquetas del calendario */
+.cal-heatmap-container text {
+  fill: #fff;
+  font-size: 12px;
+}
+
+/* Aplicar a todos los textos del calendario */
+.ch-month-label,
+.ch-weekday-label,
+.cal-heatmap-weekday-label,
+.cal-heatmap-month-label {
+  fill: #fff !important;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Estilos para tooltip del calendario */
+.ch-tooltip,
+.cal-heatmap-tooltip {
+  background-color: #2d333b;
+  border: 1px solid #444c56;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos para la tabla de log */
+#activity-log tr {
+  transition: background-color 0.2s;
+}
+
+#activity-log tr:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.log-date {
+  white-space: nowrap;
+}
+
+.log-badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.log-badge-es {
+  background-color: #0284c7;
+  color: white;
+}
+
+.log-badge-en {
+  background-color: #10B981;
+  color: white;
+}
+
+.log-badge-both {
+  background-color: #8B5CF6;
+  color: white;
+}

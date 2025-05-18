@@ -149,3 +149,86 @@ function applyViewSettings() {
         });
     }
 }
+
+/**
+ * Genera datos de ejemplo para el localStorage si no existen
+ */
+function generateSampleDataIfNeeded() {
+    const existingData = localStorage.getItem('contentData');
+
+    // Verificar si ya existen datos
+    if (existingData) {
+        const parsedData = JSON.parse(existingData);
+
+        // Si hay datos, no hacer nada
+        if (parsedData && parsedData.length > 0) {
+            console.log(`Datos existentes encontrados: ${parsedData.length} elementos`);
+            return;
+        }
+    }
+
+    console.log('Generando datos de ejemplo para demostración...');
+
+    const contentData = [];
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear() - 1, 0, 1); // Inicio del año anterior
+
+    // Generar contenido aleatorio para el último año
+    for (let i = 0; i < 150; i++) {
+        // Fecha aleatoria entre startDate y currentDate
+        const randomDays = Math.floor(Math.random() * ((currentDate - startDate) / (1000 * 60 * 60 * 24)));
+        const createdAt = new Date(startDate.getTime() + randomDays * 24 * 60 * 60 * 1000);
+
+        // Estado de publicación aleatorio
+        const publishedEs = Math.random() > 0.3;
+        const publishedEn = Math.random() > 0.6;
+
+        // Fecha de publicación (si está publicado)
+        let publishedDate = null;
+        if (publishedEs || publishedEn) {
+            // Fecha de publicación aleatoria después de la fecha de creación
+            const daysAfterCreation = Math.floor(Math.random() * 14) + 1; // 1-14 días después
+            publishedDate = new Date(createdAt.getTime() + daysAfterCreation * 24 * 60 * 60 * 1000);
+        }
+
+        // Plataformas posibles
+        const platforms = ['YouTube', 'TikTok', 'Facebook', 'Instagram', 'Twitter'];
+        const platform = platforms[Math.floor(Math.random() * platforms.length)];
+
+        // Etiquetas aleatorias
+        const allTags = ['Tutorial', 'Explicación', 'Review', 'Consejos', 'Unboxing', 'Viaje', 'Cocina', 'Tecnología', 'Gaming', 'Música'];
+        const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 etiquetas
+        const tags = [];
+
+        for (let j = 0; j < numTags; j++) {
+            const randomTagIndex = Math.floor(Math.random() * allTags.length);
+            if (!tags.includes(allTags[randomTagIndex])) {
+                tags.push(allTags[randomTagIndex]);
+            }
+        }
+
+        // Crear objeto de contenido
+        contentData.push({
+            id: `content_${i}`,
+            title: `Contenido de ejemplo #${i + 1}`,
+            description: `Descripción de ejemplo para el contenido #${i + 1}`,
+            createdAt: createdAt.toISOString(),
+            publishedDate: publishedDate ? publishedDate.toISOString() : null,
+            publishedEs: publishedEs,
+            publishedEn: publishedEn,
+            publishedUrlEs: publishedEs ? `https://example.com/es/video${i}` : "",
+            publishedUrlEn: publishedEn ? `https://example.com/en/video${i}` : "",
+            platform: platform,
+            tags: tags.join(', ')
+        });
+    }
+
+    // Guardar en localStorage
+    localStorage.setItem('contentData', JSON.stringify(contentData));
+    console.log(`Se han generado ${contentData.length} elementos de ejemplo`);
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    generateSampleDataIfNeeded();
+});

@@ -7,7 +7,72 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.1.0/dist/cal-heatmap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.1.0/dist/cal-heatmap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilos específicos para Cal-Heatmap */
+        #publication-calendar {
+            padding: 10px;
+            width: 100%;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            min-height: 200px; /* Garantizar altura mínima */
+            background-color: rgba(30, 41, 59, 0.3); /* Fondo ligeramente visible */
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        /* Estilos específicos para el calendario de GitHub */
+        .github-calendar-container {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        .week-column {
+            min-width: 15px;
+        }
+
+        .day-cell {
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .day-cell:hover {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Estilo para los botones de navegación del año */
+        #year-prev, #year-next, #current-year-label {
+            color: var(--text-primary);
+            background-color: var(--bg-dark-secondary);
+            border-color: var(--border-color);
+        }
+
+        #year-prev:hover, #year-next:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        /* Asegurar que el tooltip se vea bien */
+        .ch-tooltip {
+            background-color: #1d2530;
+            border: 1px solid #444c56;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            z-index: 1000;
+            font-size: 12px;
+        }
+
+        /* Escala de colores para la leyenda */
+        .calendar-scale-item {
+            width: 15px;
+            height: 15px;
+            margin: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -47,6 +112,9 @@
                     <h1 class="page-title">Content Statistics</h1>
                 </div>
                 <div>
+                    <button class="btn btn-sm btn-outline-light me-2" id="resetDataBtn" title="Recargar datos de ejemplo">
+                        <i class="bi bi-arrow-repeat"></i> Reset Data
+                    </button>
                     <button class="btn btn-primary" id="refreshStatsBtn">
                         <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
@@ -90,48 +158,74 @@
                     </div>
                 </div>
 
+                <!-- Nueva sección: Calendario de contribuciones similar a GitHub -->
                 <div class="row mb-4">
-                    <!-- Charts -->
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Language Distribution</h5>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Actividad de Publicación</h5>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="year-prev">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="current-year-label">2023</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="year-next">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <canvas id="languageDistribution" height="250"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Publication Trend</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="publicationTrend" height="250"></canvas>
+                                <div id="publication-calendar" class="d-flex justify-content-center">
+                                    <!-- Spinner de carga inicial -->
+                                    <div class="text-center p-5">
+                                        <div class="spinner-border text-primary mb-3" role="status">
+                                            <span class="visually-hidden">Cargando...</span>
+                                        </div>
+                                        <p class="text-secondary">Cargando calendario de publicaciones...</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-secondary me-2">Menos</small>
+                                        <div class="d-flex">
+                                            <div class="calendar-scale-item" style="background-color: #0e4429; opacity: 0.15;"></div>
+                                            <div class="calendar-scale-item" style="background-color: #0e4429; opacity: 0.4;"></div>
+                                            <div class="calendar-scale-item" style="background-color: #0e4429; opacity: 0.6;"></div>
+                                            <div class="calendar-scale-item" style="background-color: #0e4429; opacity: 0.8;"></div>
+                                            <div class="calendar-scale-item" style="background-color: #0e4429; opacity: 1;"></div>
+                                        </div>
+                                        <small class="text-secondary ms-2">Más</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Log de actividad -->
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Most Popular Tags</h5>
+                                <h5 class="mb-0">Log de Publicaciones</h5>
                             </div>
                             <div class="card-body">
-                                <canvas id="popularTags" height="250"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Publication Status</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="publicationStatus" height="250"></canvas>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Contenido</th>
+                                                <th>Idioma</th>
+                                                <th>Plataforma</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="activity-log">
+                                            <!-- El log se llenará dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -141,7 +235,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/theme-loader.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/js/stats.js"></script>

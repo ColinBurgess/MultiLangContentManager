@@ -62,7 +62,9 @@ function loadContentData() {
                         publishedEn: false,
                         publishedUrlEs: "https://example.com/es/video1",
                         publishedUrlEn: "",
-                        tags: "product, marketing, startup"
+                        tags: "product, marketing, startup",
+                        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 días atrás
+                        publishedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 día atrás
                     },
                     {
                         id: 2,
@@ -77,7 +79,9 @@ function loadContentData() {
                         publishedEn: true,
                         publishedUrlEs: "https://example.com/es/video2",
                         publishedUrlEn: "https://example.com/en/video2",
-                        tags: "webdev, coding, html, css"
+                        tags: "webdev, coding, html, css",
+                        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 días atrás
+                        publishedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 días atrás
                     },
                     {
                         id: 3,
@@ -92,7 +96,77 @@ function loadContentData() {
                         publishedEn: true,
                         publishedUrlEs: "",
                         publishedUrlEn: "https://example.com/en/video3",
-                        tags: "design, ux, mobile, app"
+                        tags: "design, ux, mobile, app",
+                        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 días atrás
+                        publishedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 días atrás
+                    },
+                    {
+                        id: 4,
+                        title: "🎬 Video Editing Masterclass",
+                        teleprompterEs: "Clase magistral de edición de video en español...",
+                        teleprompterEn: "Video editing masterclass in English...",
+                        videoDescriptionEs: "Descripción de edición de video en español...",
+                        videoDescriptionEn: "Video editing description in English...",
+                        tagsListEs: "edición, video, tutorial, masterclass",
+                        tagsListEn: "editing, video, tutorial, masterclass",
+                        publishedEs: true,
+                        publishedEn: true,
+                        publishedUrlEs: "https://example.com/es/video4",
+                        publishedUrlEn: "https://example.com/en/video4",
+                        tags: "editing, video, tutorial",
+                        createdAt: new Date().toISOString(), // Hoy
+                        publishedDate: new Date().toISOString() // Hoy
+                    },
+                    {
+                        id: 5,
+                        title: "💼 Business Growth Strategies",
+                        teleprompterEs: "Estrategias de crecimiento empresarial en español...",
+                        teleprompterEn: "Business growth strategies in English...",
+                        videoDescriptionEs: "Descripción de estrategias en español...",
+                        videoDescriptionEn: "Strategies description in English...",
+                        tagsListEs: "negocios, crecimiento, estrategias",
+                        tagsListEn: "business, growth, strategies",
+                        publishedEs: true,
+                        publishedEn: false,
+                        publishedUrlEs: "https://example.com/es/video5",
+                        publishedUrlEn: "",
+                        tags: "business, growth, marketing",
+                        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 días atrás
+                        publishedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 día atrás
+                    },
+                    {
+                        id: 6,
+                        title: "🧠 Learning Techniques for Students",
+                        teleprompterEs: "Técnicas de aprendizaje para estudiantes en español...",
+                        teleprompterEn: "Learning techniques for students in English...",
+                        videoDescriptionEs: "Descripción de técnicas en español...",
+                        videoDescriptionEn: "Techniques description in English...",
+                        tagsListEs: "aprendizaje, estudiantes, técnicas",
+                        tagsListEn: "learning, students, techniques",
+                        publishedEs: true,
+                        publishedEn: true,
+                        publishedUrlEs: "https://example.com/es/video6",
+                        publishedUrlEn: "https://example.com/en/video6",
+                        tags: "education, learning, students",
+                        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 días atrás
+                        publishedDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString() // 12 días atrás
+                    },
+                    {
+                        id: 7,
+                        title: "🌱 Sustainable Living Tips",
+                        teleprompterEs: "Consejos para una vida sostenible en español...",
+                        teleprompterEn: "Sustainable living tips in English...",
+                        videoDescriptionEs: "Descripción de vida sostenible en español...",
+                        videoDescriptionEn: "Sustainable living description in English...",
+                        tagsListEs: "sostenible, ecología, vida",
+                        tagsListEn: "sustainable, ecology, life",
+                        publishedEs: false,
+                        publishedEn: true,
+                        publishedUrlEs: "",
+                        publishedUrlEn: "https://example.com/en/video7",
+                        tags: "sustainability, ecology, green",
+                        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 días atrás
+                        publishedDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString() // 18 días atrás
                     }
                 ];
 
