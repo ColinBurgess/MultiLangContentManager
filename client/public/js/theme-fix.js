@@ -1,6 +1,5 @@
 /**
- * Theme Fix Script
- * Herramienta para detectar y corregir problemas con la aplicación de temas
+ * Tool to detect and fix theme application issues
  */
 
 // Variable para controlar el logging (debe coincidir con theme-loader.js)
@@ -22,15 +21,15 @@ function logFix(message, level = 'debug', data = null) {
 const ThemeFix = {
     // Verificar problemas comunes con los temas
     checkThemeIssues: function() {
-        logFix('Iniciando diagnóstico de temas', 'info');
+        logFix('Starting theme diagnosis', 'info');
 
         // Verificar que document.body existe
         if (!document.body) {
-            logFix('document.body aún no disponible, no se puede realizar diagnóstico completo', 'warning');
+            logFix('document.body not yet available, cannot perform complete diagnosis', 'warning');
             return {
                 issue: 'body_not_available',
-                description: 'El elemento document.body aún no está disponible',
-                suggestion: 'Espere a que la página termine de cargarse e intente nuevamente',
+                description: 'The document.body element is not yet available',
+                suggestion: 'Wait for the page to finish loading and try again',
                 fixable: false
             };
         }
@@ -38,36 +37,36 @@ const ThemeFix = {
         // 1. Verificar si hay tema guardado en localStorage
         const savedTheme = localStorage.getItem('theme');
         if (!savedTheme) {
-            logFix('No se encontró tema guardado en localStorage', 'warning');
+            logFix('No theme found in localStorage', 'warning');
             return {
                 issue: 'no_theme_stored',
-                description: 'No hay tema guardado en localStorage',
-                suggestion: 'Seleccione y guarde un tema en la página de preferencias'
+                description: 'No theme found in localStorage',
+                suggestion: 'Select and save a theme in the preferences page'
             };
         }
 
         // 2. Verificar que el tema guardado sea válido
         const validThemes = ['dark', 'blue', 'purple', 'forest'];
         if (!validThemes.includes(savedTheme)) {
-            logFix(`Tema guardado "${savedTheme}" no es válido`, 'error');
+            logFix(`Saved theme "${savedTheme}" is not valid`, 'error');
             return {
                 issue: 'invalid_theme',
-                description: `El tema "${savedTheme}" no es válido`,
-                suggestion: 'Seleccione un tema válido en la página de preferencias'
+                description: `Theme "${savedTheme}" is not valid`,
+                suggestion: 'Select a valid theme in the preferences page'
             };
         }
 
         // 3. Verificar que el tema esté aplicado en la página actual
         const themeClass = `theme-${savedTheme}`;
         if (!document.body.classList.contains(themeClass)) {
-            logFix(`El tema no está aplicado correctamente. Se esperaba: ${themeClass}`, 'error', {
+            logFix(`Theme is not correctly applied. Expected: ${themeClass}`, 'error', {
                 currentClasses: document.body.className,
                 expectedClass: themeClass
             });
             return {
                 issue: 'theme_not_applied',
-                description: `El tema "${savedTheme}" no está aplicado correctamente`,
-                suggestion: 'Puede intentar recargar la página o forzar la aplicación del tema',
+                description: `Theme "${savedTheme}" is not correctly applied`,
+                suggestion: 'You can try reloading the page or forcing theme application',
                 fixable: true
             };
         }
@@ -101,13 +100,13 @@ const ThemeFix = {
         }
 
         // 5. Sin problemas detectados
-        logFix('No se encontraron problemas con el tema', 'success', {
+        logFix('Theme is correctly configured and applied', 'success', {
             theme: savedTheme,
             appliedClass: themeClass
         });
         return {
             issue: 'none',
-            description: 'El tema está correctamente configurado y aplicado'
+            description: 'Theme is correctly configured and applied'
         };
     },
 
@@ -117,16 +116,16 @@ const ThemeFix = {
 
         // Verificar si el body está disponible
         if (!document.body) {
-            logFix('document.body no disponible, no se pueden aplicar reparaciones', 'error');
+            logFix('document.body not available, cannot repair', 'error');
             return {
                 fixed: false,
-                message: 'No se puede reparar hasta que document.body esté disponible'
+                message: 'Cannot repair until document.body is available'
             };
         }
 
         // Verificar si hay problemas
         const diagnosis = this.checkThemeIssues();
-        logFix('Diagnóstico de tema:', 'info', diagnosis);
+        logFix('Theme diagnosis:', 'info', diagnosis);
 
         // Si no hay problemas, no hacer nada
         if (diagnosis.issue === 'none') {
@@ -142,7 +141,7 @@ const ThemeFix = {
             logFix('No se puede reparar sin acceso a document.body', 'error');
             return {
                 fixed: false,
-                message: 'Espere a que la página termine de cargarse e intente nuevamente'
+                message: 'Wait for the page to finish loading and try again'
             };
         }
 
@@ -151,20 +150,19 @@ const ThemeFix = {
             case 'no_theme_stored':
                 // Establecer un tema por defecto
                 localStorage.setItem('theme', 'dark');
-                logFix('Se estableció "dark" como tema por defecto', 'info');
+                logFix('Set "dark" as default theme', 'info');
                 break;
 
             case 'invalid_theme':
                 // Corregir el tema a uno válido
                 localStorage.setItem('theme', 'dark');
-                logFix('Se corrigió el tema inválido a "dark"', 'info');
+                logFix('Fixed invalid theme to "dark"', 'info');
                 break;
 
             case 'theme_not_applied':
                 // Forzar la aplicación del tema
                 const savedTheme = localStorage.getItem('theme');
                 logFix(`Aplicando tema "${savedTheme}" forzadamente`, 'info');
-
 
                 document.body.classList.remove('theme-dark', 'theme-blue', 'theme-purple', 'theme-forest');
                 document.body.classList.add(`theme-${savedTheme}`);
@@ -181,7 +179,7 @@ const ThemeFix = {
                     styleLink.setAttribute('href', href + '?reload=' + Date.now());
                     logFix('Hoja de estilo recargada', 'info');
                 } else {
-                    logFix('No se encontró la hoja de estilo para recargar', 'error');
+                    logFix('Style sheet not found for reloading', 'error');
                 }
                 break;
 
@@ -205,7 +203,7 @@ const ThemeFix = {
             logFix('No se pudo reparar completamente el problema', 'warning', newDiagnosis);
             return {
                 fixed: false,
-                message: 'Se intentó reparar el problema pero persiste. Puede ser necesario reiniciar la aplicación.'
+                message: 'Attempted to fix the problem but it persists. Application restart may be necessary.'
             };
         }
     },
@@ -220,7 +218,7 @@ const ThemeFix = {
         // Verificar que sea un tema válido
         const validThemes = ['dark', 'blue', 'purple', 'forest'];
         if (!validThemes.includes(themeName)) {
-            logFix(`El tema "${themeName}" no es válido`, 'error');
+            logFix(`Theme "${themeName}" is not valid`, 'error');
             return false;
         }
 

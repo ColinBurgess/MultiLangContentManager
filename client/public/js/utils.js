@@ -22,7 +22,7 @@ async function copyToClipboard(text) {
 function showCopyNotification(success) {
     const notification = document.createElement('div');
     notification.className = `copy-notification ${success ? 'success' : 'error'}`;
-    notification.textContent = success ? '¡Copiado!' : 'Error al copiar';
+    notification.textContent = success ? 'Copied!' : 'Error copying';
     document.body.appendChild(notification);
 
     // Remove the notification after a short delay
@@ -167,27 +167,27 @@ function generateSampleDataIfNeeded() {
         }
     }
 
-    console.log('Generando datos de ejemplo para demostración...');
+    console.log('Generating sample data for demonstration...');
 
     const contentData = [];
     const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear() - 1, 0, 1); // Inicio del año anterior
+    const startDate = new Date(currentDate.getFullYear() - 1, 0, 1); // Start of previous year
 
-    // Generar contenido aleatorio para el último año
+    // Generate random content for the last year
     for (let i = 0; i < 150; i++) {
         // Fecha aleatoria entre startDate y currentDate
         const randomDays = Math.floor(Math.random() * ((currentDate - startDate) / (1000 * 60 * 60 * 24)));
         const createdAt = new Date(startDate.getTime() + randomDays * 24 * 60 * 60 * 1000);
 
-        // Estado de publicación aleatorio
+        // Random publication status
         const publishedEs = Math.random() > 0.3;
         const publishedEn = Math.random() > 0.6;
 
-        // Fecha de publicación (si está publicado)
+        // Publication date (if published)
         let publishedDate = null;
         if (publishedEs || publishedEn) {
-            // Fecha de publicación aleatoria después de la fecha de creación
-            const daysAfterCreation = Math.floor(Math.random() * 14) + 1; // 1-14 días después
+            // Random publication date after creation date
+            const daysAfterCreation = Math.floor(Math.random() * 14) + 1; // 1-14 days after
             publishedDate = new Date(createdAt.getTime() + daysAfterCreation * 24 * 60 * 60 * 1000);
         }
 
@@ -197,7 +197,7 @@ function generateSampleDataIfNeeded() {
 
         // Etiquetas aleatorias
         const allTags = ['Tutorial', 'Explicación', 'Review', 'Consejos', 'Unboxing', 'Viaje', 'Cocina', 'Tecnología', 'Gaming', 'Música'];
-        const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 etiquetas
+        const numTags = Math.floor(Math.random() * 4) + 1; // 1-4 tags
         const tags = [];
 
         for (let j = 0; j < numTags; j++) {

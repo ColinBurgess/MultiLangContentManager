@@ -88,17 +88,17 @@ function copyApiKey() {
 
     navigator.clipboard.writeText(apiKey)
         .then(() => {
-            showNotification('API Key copiada al portapapeles', 'success');
+            showNotification('API Key copied to clipboard', 'success');
         })
         .catch(err => {
-            console.error('Error al copiar: ', err);
-            showNotification('Error al copiar API Key', 'error');
+            console.error('Error copying: ', err);
+            showNotification('Error copying API Key', 'error');
         });
 }
 
 // Regenerar API Key
 function regenerateApiKey() {
-    if (confirm('¿Estás seguro? Regenerar la API Key invalidará todas las integraciones existentes.')) {
+    if (confirm('Are you sure? Regenerating the API Key will invalidate all existing integrations.')) {
         const newApiKey = generateRandomApiKey();
         localStorage.setItem('apiKey', newApiKey);
 
@@ -118,7 +118,7 @@ function regenerateApiKey() {
             document.getElementById('showApiKeyBtn').addEventListener('click', toggleApiKeyVisibility);
         }
 
-        showNotification('API Key regenerada exitosamente', 'success');
+        showNotification('API Key regenerated successfully', 'success');
     }
 }
 
@@ -128,11 +128,11 @@ function copyWebhookUrl() {
 
     navigator.clipboard.writeText(webhookUrl)
         .then(() => {
-            showNotification('Webhook URL copiada al portapapeles', 'success');
+            showNotification('Webhook URL copied to clipboard', 'success');
         })
         .catch(err => {
-            console.error('Error al copiar: ', err);
-            showNotification('Error al copiar Webhook URL', 'error');
+            console.error('Error copying: ', err);
+            showNotification('Error copying Webhook URL', 'error');
         });
 }
 
@@ -141,12 +141,12 @@ function configureIntegration(event) {
     const integrationCard = event.target.closest('.integration-card');
     const integrationTitle = integrationCard.querySelector('h5').textContent;
 
-    showNotification(`Configurando: ${integrationTitle}`, 'info');
+    showNotification(`Configuring: ${integrationTitle}`, 'info');
 
     // Aquí iría la lógica para abrir un modal de configuración
     // Por ahora solo simulamos que se está configurando
     setTimeout(() => {
-        showNotification(`${integrationTitle} configurado exitosamente`, 'success');
+        showNotification(`${integrationTitle} configured successfully`, 'success');
     }, 1500);
 }
 
@@ -158,11 +158,11 @@ function connectIntegration(event) {
     const statusIcon = statusIndicator.querySelector('i');
     const connectBtn = event.target;
 
-    showNotification(`Conectando con: ${integrationTitle}`, 'info');
+    showNotification(`Connecting with: ${integrationTitle}`, 'info');
 
     // Simulamos un proceso de conexión
     connectBtn.disabled = true;
-    connectBtn.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i> Conectando...';
+    connectBtn.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i> Connecting...';
 
     setTimeout(() => {
         // Cambiar estado a conectado
@@ -171,7 +171,7 @@ function connectIntegration(event) {
         statusIcon.className = 'bi bi-check-circle-fill';
 
         // Cambiar botón
-        connectBtn.innerHTML = 'Configurar';
+        connectBtn.innerHTML = 'Configure';
         connectBtn.classList.remove('btn-primary');
         connectBtn.classList.add('btn-outline-light');
         connectBtn.disabled = false;
@@ -180,7 +180,7 @@ function connectIntegration(event) {
         connectBtn.removeEventListener('click', connectIntegration);
         connectBtn.addEventListener('click', configureIntegration);
 
-        showNotification(`${integrationTitle} conectado exitosamente`, 'success');
+        showNotification(`${integrationTitle} connected successfully`, 'success');
     }, 2000);
 }
 
