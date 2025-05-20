@@ -1,2 +1,4 @@
-# No external dependencies required for the basic parser
-# The parser uses only standard library modules (json, re)
+# Dependencies for the parser and related tools
+# Basic parser uses standard library modules (json, re)
+# Auto-detection script uses requests for API calls
+requests>=2.28.0

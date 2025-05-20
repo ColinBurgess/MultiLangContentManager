@@ -11,16 +11,67 @@ const logger = require('../utils/logger');
 
 const app = express();
 
+// Configuración de CORS segura pero flexible para desarrollo
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+        ? (process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : 'http://localhost:3000')
+        : '*', // En desarrollo, permitir cualquier origen
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    maxAge: 86400 // 24 horas en segundos
+};
+
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '1mb' })); // Limitar tamaño del payload
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// Headers de seguridad
+app.use((req, res, next) => {
+    // Prevenir clickjacking
+    res.setHeader('X-Frame-Options', 'DENY');
+    // Proteger contra XSS
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    // Evitar MIME sniffing
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+        // Política de seguridad de contenido compatible con CDNs y recursos externos
+    if (process.env.NODE_ENV === 'production') {
+        // CSP más restrictiva para producción
+        const cspValue = "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+            "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; " +
+            "img-src 'self' data:; " +
+            "connect-src 'self'";
+        res.setHeader('Content-Security-Policy', cspValue);
+    }
+    // En desarrollo, no aplicamos restricciones CSP
+    // No cachetear datos sensibles
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+});
+
 app.use(express.static(path.join(__dirname, '../client/public')));
 
 // MongoDB Connection
 async function connectToMongoDB() {
     try {
         const uri = getMongoDBUri();
-        await mongoose.connect(uri);
+
+        // Opciones seguras para la conexión MongoDB
+        const mongooseOptions = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000, // Timeout después de 5 segundos
+            socketTimeoutMS: 45000, // Se cierra el socket si está inactivo por 45 segundos
+            family: 4 // Usar IPv4, skip IPv6
+        };
+
+        // Configuración global de mongoose para evitar inyecciones
+        mongoose.set('strictQuery', true); // Solo permite campos definidos en el esquema
+
+        await mongoose.connect(uri, mongooseOptions);
         logger.success('✅ Successfully connected to MongoDB');
     } catch (error) {
         logger.error('❌ Error connecting to MongoDB', error);
@@ -95,8 +146,32 @@ app.get('/api/tasks', async (req, res, next) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+    // Log completo del error para diagnóstico interno
     logger.error('Unhandled error', err);
-    res.status(500).json({ message: 'Internal server error' });
+
+    // Determinar código de estado HTTP apropiado
+    let statusCode = 500;
+    if (err.name === 'ValidationError') {
+        statusCode = 400;
+    } else if (err.name === 'CastError') {
+        statusCode = 400;
+    } else if (err.name === 'MongoServerError' && err.code === 11000) {
+        statusCode = 409; // Conflicto - clave duplicada
+    }
+
+    // Respuesta genérica para el cliente sin detalles específicos del error
+    const errorResponse = {
+        message: 'Internal server error',
+        errorId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+    };
+
+    // En desarrollo podemos incluir más detalles
+    if (process.env.NODE_ENV === 'development') {
+        errorResponse.details = err.message;
+        errorResponse.stack = err.stack;
+    }
+
+    res.status(statusCode).json(errorResponse);
 });
 
 const PORT = process.env.PORT || 3000;

@@ -5,7 +5,7 @@ Command-line interface for the wordexporter parser.
 import argparse
 import json
 import sys
-from wordexporter import parse_word_text, generate_curl_command
+from wordexporter import parse_word_text, generate_curl_command, generate_update_curl_command
 
 def main():
     parser = argparse.ArgumentParser(description="Parse structured text from Word documents to JSON format")
@@ -22,12 +22,29 @@ def main():
         help="Generate curl command with the given API URL"
     )
     parser.add_argument(
+        "--update", "-u",
+        action="store_true",
+        help="Generate UPDATE curl command (requires --id)"
+    )
+    parser.add_argument(
+        "--id",
+        help="ID of the content to update (required with --update)"
+    )
+    parser.add_argument(
         "--pretty", "-p",
         action="store_true",
         help="Pretty-print the JSON output"
     )
 
     args = parser.parse_args()
+
+    # Validate arguments
+    if args.update and not args.id:
+        print("Error: --update requires --id to be specified", file=sys.stderr)
+        sys.exit(1)
+
+    if args.id and not args.update:
+        print("Warning: --id provided but --update not specified. ID will be ignored.", file=sys.stderr)
 
     # Read input
     if args.input_file:
@@ -54,7 +71,12 @@ def main():
 
     # Generate curl command if requested
     if args.curl:
-        curl_cmd = generate_curl_command(parsed_data, args.curl)
+        if args.update:
+            curl_cmd = generate_update_curl_command(parsed_data, args.curl, args.id)
+            command_type = "UPDATE"
+        else:
+            curl_cmd = generate_curl_command(parsed_data, args.curl)
+            command_type = "CREATE"
 
     # Write output
     if args.output_file:
@@ -62,7 +84,7 @@ def main():
             with open(args.output_file, 'w', encoding='utf-8') as f:
                 f.write(json_output)
                 if args.curl:
-                    f.write("\n\n# curl command:\n")
+                    f.write(f"\n\n# curl command for {command_type}:\n")
                     f.write(curl_cmd)
         except Exception as e:
             print(f"Error writing output file: {e}", file=sys.stderr)
@@ -70,7 +92,7 @@ def main():
     else:
         print(json_output)
         if args.curl:
-            print("\n# curl command:")
+            print(f"\n# curl command for {command_type}:")
             print(curl_cmd)
 
 if __name__ == "__main__":

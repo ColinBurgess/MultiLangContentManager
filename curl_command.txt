@@ -1,0 +1,26 @@
+curl -X POST http://localhost:3000/api/contents \
+  -H "Content-Type: application/json" \
+  -d '{
+  "title": "💸 OpenAI COMPRA Windsurf: ¿El Futuro de la Programación con IA? 🤖",
+  "publishedEs": false,
+  "publishedEn": false,
+  "publishedDateEs": null,
+  "publishedDateEn": null,
+  "publishedUrlEs": "",
+  "publishedUrlEn": "",
+  "teleprompterEs": "",
+  "teleprompterEn": "Imagine if the next revolution in programming doesn'\''t come from a new language, but from an AI that learns from your own mistakes? Well, buckle up, because OpenAI just bought Windsurf for $3 billion, and this could change everything! 🚀\n\nOpenAI, the brains behind ChatGPT, has made a bold move by acquiring Windsurf, a sophisticated code editor that uses artificial intelligence to help you program at lightning speed. But why spend so much on an editor when they already have AIs that generate code?\n\nThe key is in the data. When you use ChatGPT to program, OpenAI only sees your question and the answer it gives you. But what really matters is what you do next: how you correct, adapt, or improve that code. That'\''s pure gold for training better models!",
+  "videoDescriptionEs": "🚨 ¡Noticia BOMBA en el mundo de la IA! 🚨 OpenAI, los creadores de ChatGPT, acaban de adquirir Windsurf por ¡3.000 millones de dólares! 🤯 ¿Es este el futuro de la programación asistida por IA? 🤔\n\nEn este video, analizamos a fondo:\n\n💸 Por qué OpenAI ha hecho esta compra millonaria.\n🤖 Qué es Windsurf y cómo su IA puede revolucionar la forma en que programamos.\n#OpenAI #Windsurf #IA #InteligenciaArtificial",
+  "videoDescriptionEn": "",
+  "tagsListEs": "",
+  "tagsListEn": "",
+  "pinnedCommentEs": "",
+  "pinnedCommentEn": "",
+  "tiktokDescriptionEs": "",
+  "tiktokDescriptionEn": "",
+  "twitterPostEs": "",
+  "twitterPostEn": "",
+  "facebookDescriptionEs": "",
+  "facebookDescriptionEn": "",
+  "tags": []
+}'

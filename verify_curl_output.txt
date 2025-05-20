@@ -1,0 +1,26 @@
+curl -X POST http://localhost:3000/api/contents \
+  -H "Content-Type: application/json" \
+  -d '{
+  "title": "Prueba de escapes '\''apostrofes'\'' y \"comillas\"",
+  "publishedEs": false,
+  "publishedEn": false,
+  "publishedDateEs": null,
+  "publishedDateEn": null,
+  "publishedUrlEs": "",
+  "publishedUrlEn": "",
+  "teleprompterEs": "",
+  "teleprompterEn": "This is a test script that'\''s got some quotes like isn'\''t and doesn'\''t.\nIt also has emojis like 🚀 and 🤖.",
+  "videoDescriptionEs": "",
+  "videoDescriptionEn": "",
+  "tagsListEs": "",
+  "tagsListEn": "",
+  "pinnedCommentEs": "",
+  "pinnedCommentEn": "",
+  "tiktokDescriptionEs": "",
+  "tiktokDescriptionEn": "",
+  "twitterPostEs": "",
+  "twitterPostEn": "",
+  "facebookDescriptionEs": "",
+  "facebookDescriptionEn": "",
+  "tags": []
+}'

@@ -1,9 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Task = require('../models/Task');
 const Content = require('../models/Content');
 const logger = require('../../utils/logger');
-const mongoose = require('mongoose');
 
 // Get all tasks
 router.get('/', async (req, res) => {

@@ -338,33 +338,27 @@ The project implements several security measures:
 
 ## Word Document Parser 📄
 
-The project includes a Python module to parse structured content from Word documents into the JSON format required by the API.
+The project includes a Python module to parse structured text (like that exported from Word) and transform it into the JSON format required for the API.
 
-### Parser Features
+### Key Features
 
-- Convert formatted text into structured JSON
-- Extract bilingual content (Spanish/English)
-- Support for multiple content types (teleprompter, descriptions, tags, etc.)
-- Generate curl commands for API submission
+- Parses structured text in two different formats
+- Extracts bilingual content (Spanish/English)
+- Generates curl commands for the API
+- Supports creation and updating of content
+- Allows automatic detection of existing content by title
 
-### Using the Parser
+### Usage Methods
 
-```bash
-# Basic parsing (reads from stdin, outputs to stdout)
-cd parser
-python cli.py
+1. **Basic CLI (cli.py)** - For text analysis and curl command generation
+2. **Automatic Detection (auto_detect_update.py)** - To automatically decide between creating or updating
+3. **wordexporter.py Module** - Basic module-level functionality
 
-# Parse from file with pretty-printed output
-python cli.py -i input_file.txt -p
-
-# Parse and generate curl command for API submission
-python cli.py -i input_file.txt -c http://localhost:3000/api/contents -o output.json
-```
-
-For more details, see the [Parser Documentation](./parser/README.md).
+**For detailed documentation**, including usage examples, supported formats, and available options, see the [Parser Documentation](./parser/README.md).
 
 ## Recent Updates 🆕
 
+- **Automatic Content Detection**: Added functionality to automatically detect existing content by title and decide between creation or update
 - **GitHub-Style Publication Calendar**: Added an interactive visualization similar to GitHub's contribution calendar to show publication activity by date
 - **Language-Specific Publication Dates**: Updated the system to track and display separate publication dates for Spanish and English content
 - **Activity Log Enhancement**: Improved the chronological activity log with language indicators and direct access to published content

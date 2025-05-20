@@ -24,6 +24,17 @@ def parse_word_text(text_block):
     # Limpiar el texto y dividirlo en líneas
     lines = text_block.strip().split('\n')
 
+    # Detectar si es el nuevo formato numerado
+    if lines and re.match(r'^\d+\.\s', lines[0]):
+        return parse_numbered_format(text_block, data)
+    else:
+        # Usar el formato original
+        return parse_original_format(text_block, data)
+
+def parse_original_format(text_block, data):
+    # Limpiar el texto y dividirlo en líneas
+    lines = text_block.strip().split('\n')
+
     # Extrae el título (primera línea no vacía)
     for i, line in enumerate(lines):
         if line.strip():
@@ -402,6 +413,125 @@ def parse_word_text(text_block):
 
     return data
 
+def parse_numbered_format(text_block, data):
+    # Limpiar el texto y dividirlo en líneas
+    lines = text_block.strip().split('\n')
+
+    # Inicializar variables para almacenar secciones
+    section_num = 0
+    section_content = ""
+    current_section = None
+    i = 0
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Verificar si es una nueva sección numerada
+        section_match = re.match(r'^(\d+)\.\s+(.+)$', line)
+
+        if section_match:
+            # Guardar la sección anterior si existe
+            if current_section:
+                process_numbered_section(data, current_section, section_content)
+
+            section_num = int(section_match.group(1))
+            section_title = section_match.group(2)
+            current_section = section_title
+            section_content = ""
+            i += 1
+
+            # Capturar el contenido hasta la siguiente sección numerada
+            start_index = i
+            while i < len(lines) and not re.match(r'^\d+\.\s+', lines[i].strip()):
+                i += 1
+
+            if i > start_index:
+                section_content = "\n".join(lines[start_index:i])
+        else:
+            i += 1
+
+    # Procesar la última sección
+    if current_section:
+        process_numbered_section(data, current_section, section_content)
+
+    # Derivar tags a partir de tagsListEs si existe
+    if data["tagsListEs"]:
+        # Intentar encontrar una separación por comas
+        tags_text = data["tagsListEs"]
+        if "," in tags_text:
+            # Limitar a solo los 3 primeros tags
+            all_tags = [tag.strip() for tag in tags_text.split(',') if tag.strip()]
+            data["tags"] = all_tags[:3]  # Tomar solo los primeros 3
+        else:
+            # Si no hay comas, usar el texto completo como un solo tag
+            data["tags"] = [tags_text.strip()][:1]  # Máximo 1 tag si no hay comas
+
+    return data
+
+def process_numbered_section(data, section_title, content):
+    """Procesa las secciones numeradas del nuevo formato"""
+    section_title_lower = section_title.lower()
+
+    # Script de Teleprompter (Inglés)
+    if "script de teleprompter" in section_title_lower or "teleprompter script" in section_title_lower:
+        if "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["teleprompterEn"] = content.strip()
+        else:
+            data["teleprompterEs"] = content.strip()
+
+    # Título Atractivo (SEO)
+    elif "título" in section_title_lower or "title" in section_title_lower:
+        # Buscar las líneas específicas de español e inglés
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith("Español:"):
+                data["title"] = line.replace("Español:", "").strip()
+            elif line.startswith("Inglés:"):
+                # También podríamos almacenar el título en inglés si se necesita
+                pass
+
+    # Descripción para YouTube
+    elif "descripción para youtube" in section_title_lower or "youtube description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["videoDescriptionEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["videoDescriptionEn"] = content.strip()
+
+    # Tags para YouTube
+    elif "tags para youtube" in section_title_lower or "youtube tags" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["tagsListEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["tagsListEn"] = content.strip()
+
+    # Comentario para Pinear
+    elif "comentario para pinear" in section_title_lower or "pinned comment" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["pinnedCommentEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["pinnedCommentEn"] = content.strip()
+
+    # Descripción para TikTok
+    elif "descripción para tiktok" in section_title_lower or "tiktok description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["tiktokDescriptionEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["tiktokDescriptionEn"] = content.strip()
+
+    # Descripción para X/Twitter
+    elif "descripción para x" in section_title_lower or "x description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["twitterPostEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["twitterPostEn"] = content.strip()
+
+    # Descripción para Facebook
+    elif "descripción para facebook" in section_title_lower or "facebook description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["facebookDescriptionEs"] = content.strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["facebookDescriptionEn"] = content.strip()
+
 def is_new_section(line):
     """Determina si una línea marca el inicio de una nueva sección"""
     section_markers = [
@@ -470,16 +600,58 @@ def generate_curl_command(parsed_data, api_url):
         "tags": parsed_data.get("tags", [])
     }
 
-    # Escape single quotes in string values for bash compatibility when -d '...' is used
-    for key, value in payload.items():
-        if isinstance(value, str):
-            payload[key] = value.replace("'", "'\\''") # Bash escape: ' -> '\''
-
+    # Primero generamos el JSON sin escapar comillas
     json_payload_str = json.dumps(payload, indent=2, ensure_ascii=False)
 
-    # The entire -d argument is wrapped in single quotes.
-    # JSON strings use double quotes. Single quotes *within* the JSON values were handled above.
-    curl_command = f"curl -X POST {api_url} \\\n  -H \"Content-Type: application/json\" \\\n  -d '{json_payload_str}'"
+    # Luego escapamos todas las comillas simples en el JSON final
+    # El escape en bash para una comilla simple es: ' -> '\''
+    escaped_json = json_payload_str.replace("'", "'\\''")
+
+    # El comando curl con formato consistente
+    curl_command = f"curl -X POST {api_url} \\\n  -H \"Content-Type: application/json\" \\\n  -d '{escaped_json}'"
+
+    return curl_command
+
+def generate_update_curl_command(parsed_data, api_url, content_id):
+    """
+    Genera un comando curl para actualizar un contenido existente.
+
+    Args:
+        parsed_data (dict): Datos parseados del documento
+        api_url (str): URL base de la API
+        content_id (str): ID del contenido a actualizar
+
+    Returns:
+        str: Comando curl para actualizar la entrada
+    """
+    payload = {
+        "title": parsed_data.get("title", "Título no especificado"),
+        "teleprompterEs": parsed_data.get("teleprompterEs", ""),
+        "teleprompterEn": parsed_data.get("teleprompterEn", ""),
+        "videoDescriptionEs": parsed_data.get("videoDescriptionEs", ""),
+        "videoDescriptionEn": parsed_data.get("videoDescriptionEn", ""),
+        "tagsListEs": parsed_data.get("tagsListEs", ""),
+        "tagsListEn": parsed_data.get("tagsListEn", ""),
+        "pinnedCommentEs": parsed_data.get("pinnedCommentEs", ""),
+        "pinnedCommentEn": parsed_data.get("pinnedCommentEn", ""),
+        "tiktokDescriptionEs": parsed_data.get("tiktokDescriptionEs", ""),
+        "tiktokDescriptionEn": parsed_data.get("tiktokDescriptionEn", ""),
+        "twitterPostEs": parsed_data.get("twitterPostEs", ""),
+        "twitterPostEn": parsed_data.get("twitterPostEn", ""),
+        "facebookDescriptionEs": parsed_data.get("facebookDescriptionEs", ""),
+        "facebookDescriptionEn": parsed_data.get("facebookDescriptionEn", ""),
+        "tags": parsed_data.get("tags", [])
+    }
+
+    # Generamos el JSON sin escapar comillas
+    json_payload_str = json.dumps(payload, indent=2, ensure_ascii=False)
+
+    # Escapamos todas las comillas simples en el JSON final
+    escaped_json = json_payload_str.replace("'", "'\\''")
+
+    # El comando curl con formato consistente usando PUT para actualizar
+    update_url = f"{api_url}/{content_id}"
+    curl_command = f"curl -X PUT {update_url} \\\n  -H \"Content-Type: application/json\" \\\n  -d '{escaped_json}'"
 
     return curl_command
 
