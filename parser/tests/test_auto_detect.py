@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 """
-Script de prueba para demostrar la función de detección automática.
+Test script to demonstrate the automatic detection functionality.
 """
 import os
 import tempfile
 import subprocess
 
-# Crear un archivo temporal con texto de ejemplo
+# Create a temporary file with example text
 with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as temp:
-    temp.write("""1. Script de Teleprompter (Inglés)
+    temp.write("""1. Teleprompter Script (English)
 This is a test script for the auto detection feature.
 We're testing automatic content detection to decide between creation and update.
 
-2. Título Atractivo (SEO)
-Español: 🔍 Prueba de Detección Automática
-Inglés: 🔍 Auto Detection Test
+2. Attractive Title (SEO)
+Spanish: 🔍 Auto Detection Test
+English: 🔍 Auto Detection Test
 
-3. Descripción para YouTube (Español)
-Este script prueba la capacidad de detectar automáticamente si un contenido ya existe
-basándose en el título, y decidir si crear uno nuevo o actualizar el existente.
+3. YouTube Description (Spanish)
+This script tests the ability to automatically detect whether content already exists
+based on the title, and decide whether to create a new one or update the existing one.
 """)
     temp_filename = temp.name
 
-print("=== Prueba de Detección Automática ===")
-print("Este script simula la interacción del usuario para decidir entre crear o actualizar.")
-print("Tenga en cuenta que la API debe estar disponible para buscar contenidos existentes.")
-print("\nEscenario 1: Simulando que NO existe contenido con ese título (forzando creación):")
+print("=== Auto Detection Test ===")
+print("This script simulates user interaction to decide between creating or updating.")
+print("Note that the API must be available to search for existing content.")
+print("\nScenario 1: Simulating that NO content exists with that title (forcing creation):")
 
-# Ejecutar el script con --force-create para simular que no hay coincidencias
+# Run the script with --force-create to simulate no matches
 cmd = [
     "python3",
     "auto_detect_update.py",

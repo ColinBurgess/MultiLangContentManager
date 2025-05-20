@@ -24,6 +24,7 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     --shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
     --tag-bg: #2D3748;
+    --tag-text: #FFFFFF;
 }
 
 /* Theme Definitions - Moved from themes.html */
@@ -42,6 +43,7 @@
     --border-color: #2D3748;
     --table-border-color: #2D3748;
     --tag-bg: #2D3748;
+    --tag-text: #FFFFFF;
 }
 
 .theme-blue {
@@ -59,6 +61,7 @@
     --border-color: #234367;
     --table-border-color: #234367;
     --tag-bg: #234367;
+    --tag-text: #FFFFFF;
 }
 
 .theme-purple {
@@ -76,6 +79,7 @@
     --border-color: #3D2E58;
     --table-border-color: #3D2E58;
     --tag-bg: #3D2E58;
+    --tag-text: #FFFFFF;
 }
 
 .theme-forest {
@@ -92,7 +96,8 @@
     --accent-hover: #059669;
     --border-color: #4B5563;
     --table-border-color: #4B5563;
-    --tag-bg: #4B5563;
+    --tag-bg: #10B981;
+    --tag-text: #FFFFFF;
 }
 
 /* Global Styles */
@@ -668,7 +673,7 @@ body {
 /* Tags */
 .tag {
     background-color: var(--tag-bg);
-    color: var(--text-primary);
+    color: var(--tag-text);
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
     font-size: 0.75rem;
@@ -848,4 +853,75 @@ textarea::-webkit-scrollbar-thumb {
 .log-badge-both {
   background-color: #8B5CF6;
   color: white;
+}
+
+/* Styles for Prompt Functionality */
+.prompt-content-box {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-family: monospace;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.prompt-row {
+    cursor: pointer;
+}
+
+.prompt-row .prompt-title {
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.prompt-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Styling for the prompt box scrollbar */
+.prompt-content-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.prompt-content-box::-webkit-scrollbar-track {
+    background: var(--bg-card);
+}
+
+.prompt-content-box::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+    border: 2px solid var(--bg-card);
+}
+
+/* Custom Styles for Tag Badges in Prompt Page */
+.badge.bg-secondary {
+    background-color: var(--accent-color) !important;
+    color: #FFFFFF !important;
+    font-weight: 500;
+}
+
+/* Fix para badges especiales en la interfaz */
+[class*="badge"], .badge {
+    background-color: var(--accent-color) !important;
+    color: #FFFFFF !important;
+    font-weight: 500;
+}
+
+/* Fix específico para los tags en la vista de detalle del prompt */
+#viewPromptTags .tag,
+#viewPromptTags span {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+/* Fix para la etiqueta "Tags:" que precede a las etiquetas */
+.modal-body .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
 }

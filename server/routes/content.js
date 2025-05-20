@@ -42,7 +42,7 @@ router.get('/kanban', async (req, res) => {
 
         if (!contents || contents.length === 0) {
             // Si no hay contenidos, devolver array vacío
-            logger.info('No contents available for kanban board');
+            logger.success('No contents available for kanban board');
             return res.json([]);
         }
 

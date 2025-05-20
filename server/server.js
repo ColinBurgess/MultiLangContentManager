@@ -7,6 +7,7 @@ const { getMongoDBUri } = require('../utils/credentials');
 const contentRoutes = require('./routes/content');
 const taskRoutes = require('./routes/task');
 const logRoutes = require('./routes/logs');
+const promptRoutes = require('./routes/prompt');
 const logger = require('../utils/logger');
 
 const app = express();
@@ -85,6 +86,7 @@ connectToMongoDB();
 app.use('/api/contents', contentRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/prompts', promptRoutes);
 
 // Add diagnostics endpoint to check routes
 app.get('/api/system/routes', (req, res) => {

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script para buscar si un contenido existe por título y decidir si crear uno nuevo o actualizar uno existente.
+Script to search for existing content by title and decide whether to create a new one or update an existing one.
 """
 import json
 import sys
@@ -10,67 +10,67 @@ from parser.wordexporter import parse_word_text, generate_curl_command, generate
 
 def search_content_by_title(api_url, title):
     """
-    Busca contenido existente con un título igual o similar
+    Search for existing content with an exact or similar title
 
     Args:
-        api_url: URL base de la API
-        title: Título a buscar
+        api_url: Base API URL
+        title: Title to search for
 
     Returns:
-        dict: Contenido encontrado o None si no se encuentra
+        dict: Found content or None if not found
     """
-    # Definir la URL de búsqueda
+    # Define search URL
     search_url = f"{api_url}?title={requests.utils.quote(title)}"
 
     try:
-        # Realizar la solicitud GET
+        # Make GET request
         response = requests.get(search_url)
 
-        # Verificar si la solicitud fue exitosa
+        # Check if request was successful
         if response.status_code == 200:
             contents = response.json()
 
-            # Si hay resultados que coinciden exactamente con el título
+            # If there are results that exactly match the title
             for content in contents:
                 if content.get('title') == title:
                     return content
 
-            # Si no hay coincidencias exactas pero hay resultados similares
+            # If there are no exact matches but there are similar results
             if contents and len(contents) > 0:
-                # Devolver el primer resultado como la mejor coincidencia
+                # Return the first result as the best match
                 return contents[0]
 
         return None
 
     except Exception as e:
-        print(f"Error al buscar contenidos: {e}", file=sys.stderr)
+        print(f"Error searching for contents: {e}", file=sys.stderr)
         return None
 
 def main():
-    parser = argparse.ArgumentParser(description="Detecta automáticamente si crear o actualizar contenido")
+    parser = argparse.ArgumentParser(description="Automatically detect whether to create or update content")
     parser.add_argument(
         "--input-file", "-i",
         required=True,
-        help="Archivo de entrada con texto estructurado"
+        help="Input file with structured text"
     )
     parser.add_argument(
         "--api-url", "-a",
         required=True,
-        help="URL base de la API"
+        help="Base API URL"
     )
     parser.add_argument(
         "--force-create", "-c",
         action="store_true",
-        help="Forzar la creación de un nuevo contenido aunque exista uno similar"
+        help="Force creation of new content even if a similar one exists"
     )
     parser.add_argument(
         "--force-update", "-u",
-        help="ID del contenido a actualizar, ignorando la búsqueda por título"
+        help="ID of the content to update, ignoring title search"
     )
 
     args = parser.parse_args()
 
-    # Leer el archivo de entrada
+    # Read input file
     try:
         with open(args.input_file, 'r', encoding='utf-8') as f:
             text = f.read()

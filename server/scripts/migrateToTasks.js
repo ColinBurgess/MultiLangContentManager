@@ -22,7 +22,7 @@ async function migrateContentToTasks() {
 
         // Get all contents
         const contents = await Content.find();
-        logger.info(`Found ${contents.length} contents to migrate`);
+        logger.success(`Found ${contents.length} contents to migrate`);
 
         // Process each content
         for (const content of contents) {
@@ -42,7 +42,7 @@ async function migrateContentToTasks() {
             const existingTask = await Task.findOne({ contentId: content._id });
 
             if (existingTask) {
-                logger.info(`Task already exists for content: ${content.title} (${content._id})`);
+                logger.success(`Task already exists for content: ${content.title} (${content._id})`);
                 continue;
             }
 
@@ -79,7 +79,7 @@ async function migrateContentToTasks() {
     } finally {
         // Disconnect from MongoDB
         await mongoose.disconnect();
-        logger.info('Disconnected from MongoDB');
+        logger.success('Disconnected from MongoDB');
     }
 }
 
