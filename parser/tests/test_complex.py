@@ -7,26 +7,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from wordexporter import parse_word_text, generate_curl_command
 
 # El texto complejo proporcionado por el usuario
-complex_text = """¿Trump + IA? El Proyecto Stargate de $500 Mil Millones que Cambiará TODO 🚀
-Guion
-Teleprompter
-Español:
-¿Te imaginas medio billón de dólares invertidos en inteligencia artificial? Y no solo eso, ¿qué pasaría si te dijera que este proyecto está directamente relacionado con el regreso de Donald Trump a la Casa Blanca? Pues agárrate, porque lo que te voy a contar hoy va a cambiar el panorama de la IA para siempre.
-¡Qué tal! Soy Colin de The IT Guy, y te voy a  hablar del Proyecto Stargate, si a mi ese nombre tambien me suena, una mega inversión de 500 mil millones de dólares en infraestructura de inteligencia artificial en Estados Unidos. Pero lo más interesante es cómo este proyecto está vinculado con el regreso de Donald Trump como presidente.
-Aunque Elon Musk haya comentado en X que el cree que no tienen el dinero para hacerlo…..el Proyecto Stargate ya está en marcha en Texas y planea expandirse por todo el país. Este megaproyecto es una colaboración histórica entre gigantes tecnológicos como OpenAI, SoftBank, Oracle, Microsoft y NVIDIA. Pero lo que lo hace único es que fue anunciado por Trump en su segundo día como presidente, destacando su intención de posicionar a Estados Unidos como líder mundial en inteligencia artificial.
-En mi opinión, este proyecto no solo es ambicioso, sino también estratégico. Estados Unidos enfrenta una competencia feroz con China en el desarrollo de inteligencia artificial, y Stargate podría ser la clave para mantener el liderazgo tecnológico. Además, la colaboración entre empresas como OpenAI y SoftBank promete avances en áreas como la medicina y la sostenibilidad.
-Sin embargo, me preocupa la falta de regulación tras la eliminación de la orden ejecutiva de Biden. ¿Podría esto abrir la puerta a un desarrollo descontrolado de la IA? Es un tema que merece nuestra atención.
-¿Pero  tú qué opinas? ¿Crees que la eliminación de regulaciones en IA es un paso necesario para la innovación o un riesgo para el desarrollo ético? ¿Qué impacto crees que tendrá Stargate en la competencia global con China? Déjame un comentario y no olvides darle a like y suscribirte a mi canal para más noticias sobre tecnología e inteligencia artificial. Yo soy Colin, esto ha sido The IT Guy y nos vemos en la próxima.
+complex_text = """Trump + AI? The $500 Billion Stargate Project that Will Change EVERYTHING 🚀
 
-Ingles:
-Can you imagine half a trillion dollars invested in artificial intelligence? And not only that—what if I told you this project is directly tied to Donald Trump's return to the White House? Buckle up, because what I'm about to share with you today is going to change the AI landscape forever.
-What's up! I'm Colin from The IT Guy, and today I'm going to talk to you about Project Stargate—yes, the name sounds familiar to me too—a massive $500 billion investment in AI infrastructure in the United States. But the most interesting part is how this project is connected to Donald Trump's return as president.
-Even though Elon Musk commented on X that he doesn't think they have the money to pull it off… Project Stargate is already underway in Texas and plans to expand across the country. This megaproject is a historic collaboration between tech giants like OpenAI, SoftBank, Oracle, Microsoft, and NVIDIA. But what makes it unique is that it was announced by Trump on his second day as president, highlighting his intention to position the United States as the global leader in artificial intelligence.
-Trump presented this project as a "declaration of confidence" in America's potential under his administration. According to Masayoshi Son, CEO of SoftBank, Stargate wouldn't have been possible without Trump's victory. Additionally, the president repealed an executive order on AI oversight established by Joe Biden, sparking debate about the lack of regulation in this sector. Is this a boost for innovation or a risk to the ethical development of AI?
-In my opinion, this project is not only ambitious but also strategic. The United States is facing fierce competition with China in AI development, and Stargate could be the key to maintaining technological leadership. Furthermore, the collaboration between companies like OpenAI and SoftBank promises advancements in areas such as medicine and sustainability.
-However, I'm concerned about the lack of regulation following Biden's executive order repeal. Could this open the door to uncontrolled AI development? It's a topic that deserves our attention.
-This project could be the push we need to see revolutionary advancements in AI in the coming years. The collaboration between these tech giants, driven by the Trump administration, promises to transform not only the industry but also our daily lives.
-But what about you? Do you think removing AI regulations is a necessary step for innovation or a risk to ethical development? What impact do you think Stargate will have on the global competition with China? Leave me a comment, and don't forget to like and subscribe to my channel for more news on technology and artificial intelligence. I'm Colin, this has been The IT Guy, and I'll see you in the next one
+Spanish:
+Can you imagine half a trillion dollars invested in artificial intelligence? And not only that, what if I told you that this project is directly related to Donald Trump's return to the White House? Well, hold on tight, because what I'm going to tell you today will change the AI landscape forever.
+
+Hey there! I'm Colin from The IT Guy, and I'm going to tell you about the Stargate Project, if that name sounds familiar to me too, a mega investment of 500 billion dollars in artificial intelligence infrastructure in the United States. But what's most interesting is how this project is linked to Donald Trump's return as president.
+
+Although Elon Musk commented on X that he believes they don't have the money to do it…..the Stargate Project is already underway in Texas and plans to expand across the country. This megaproject is a historic collaboration between tech giants like OpenAI, SoftBank, Oracle, Microsoft, and NVIDIA. But what makes it unique is that it was announced by Trump on his second day as president, highlighting his intention to position the United States as a world leader in artificial intelligence.
+
+English:
+[English version of the content]
 
 Description (Spanish)
 🌌 ¿500 mil millones de dólares en IA y el regreso de Trump?

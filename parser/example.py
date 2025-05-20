@@ -14,47 +14,46 @@ def main():
     # Simple example text
     example_text = """Example Video Title
 Teleprompter
-Español:
-Este es un ejemplo de teleprompter en español.
-Ingles:
+Spanish:
+This is a teleprompter example in Spanish.
+English:
 This is an example of teleprompter in English.
 
-Descripcion Video
-Español:
-Descripción de video en español.
-Ingles:
+Video Description
+Spanish:
+Video description in Spanish.
+English:
 Video description in English.
 
-Lista de tags
-Español:
+Tag List
+Spanish:
 tag1_es, tag2_es, tag3_es, tag4_es
-Ingles:
+English:
 tag1_en, tag2_en, tag3_en, tag4_en
 
-Comentario Pineado
-Español:
-Comentario en español para pinear.
-Ingles:
+Pinned Comment
+Spanish:
+Pinned comment in Spanish.
+English:
 Comment in English to pin.
 
-Descripción simplificada para TikTok
-Español:
-TikTok en español #ejemplo
-Ingles:
+Simplified TikTok Description
+Spanish:
+TikTok in Spanish #example
+English:
 TikTok in English #example
 
-Post para X
-Español:
-Post para X en español #ejemplo
-Ingles:
+X Post
+Spanish:
+X post in Spanish #example
+English:
 X post in English #example
 
-Descripción para un post en Facebook
-Español:
-Post para Facebook en español.
-Ingles:
-Facebook post in English.
-"""
+Facebook Post Description
+Spanish:
+Facebook post in Spanish.
+English:
+Facebook post in English."""
 
     # Parse the text
     parsed_data = parse_word_text(example_text)

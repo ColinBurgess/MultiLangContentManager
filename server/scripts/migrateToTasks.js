@@ -8,9 +8,9 @@ const logger = require('../../utils/logger');
 // Map the old status values to new ones
 const statusMap = {
     'draft': 'draft',
-    'castellano': 'in-progress',
-    'ingles': 'in-progress',
-    'finalizado': 'done'
+    'spanish': 'in-progress',
+    'english': 'in-progress',
+    'completed': 'done'
 };
 
 async function migrateContentToTasks() {
@@ -31,11 +31,11 @@ async function migrateContentToTasks() {
             if (!content.publishedEs && !content.publishedEn) {
                 oldStatus = 'draft';
             } else if (content.publishedEs && content.publishedEn) {
-                oldStatus = 'finalizado';
+                oldStatus = 'completed';
             } else if (content.publishedEs) {
-                oldStatus = 'castellano';
+                oldStatus = 'spanish';
             } else {
-                oldStatus = 'ingles';
+                oldStatus = 'english';
             }
 
             // Check if task already exists for this content
@@ -49,13 +49,13 @@ async function migrateContentToTasks() {
             // Create description based on the content status
             let taskDescription;
             if (oldStatus === 'draft') {
-                taskDescription = 'Preparar y grabar el contenido en ambos idiomas.';
-            } else if (oldStatus === 'castellano') {
-                taskDescription = 'Contenido ya publicado en Español. Pendiente grabar versión en Inglés.';
-            } else if (oldStatus === 'ingles') {
-                taskDescription = 'Contenido ya publicado en Inglés. Pendiente grabar versión en Español.';
+                taskDescription = 'Prepare and record content in both languages.';
+            } else if (oldStatus === 'spanish') {
+                taskDescription = 'Content already published in Spanish. Pending English version recording.';
+            } else if (oldStatus === 'english') {
+                taskDescription = 'Content already published in English. Pending Spanish version recording.';
             } else {
-                taskDescription = 'Revisar y verificar la calidad de ambas versiones publicadas.';
+                taskDescription = 'Review and verify the quality of both published versions.';
             }
 
             // Create a new task for this content

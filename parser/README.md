@@ -5,8 +5,8 @@ This Python module allows parsing structured text (like that exported from Word)
 ## Features
 
 - Parses structured text with two supported formats:
-  - Original format with sections: "Teleprompter", "Descripción Video", etc.
-  - Numbered format: "1. Script de Teleprompter", "2. Título Atractivo", etc.
+  - Original format with sections: "Teleprompter", "Video Description", etc.
+  - Numbered format: "1. Teleprompter Script", "2. Attractive Title", etc.
 - Extracts bilingual content (Spanish/English)
 - Generates curl commands for the API
 - Supports both creating new content and updating existing content
@@ -94,18 +94,18 @@ When run directly, wordexporter.py:
 
 ```
 Teleprompter
-Español:
-[Teleprompter text in Spanish]
+Spanish:
+[Your Spanish script here]
 
-Ingles:
-[Teleprompter text in English]
+English:
+[Your English script here]
 
-Descripción Video
-Español:
-[Video description in Spanish]
+Video Description
+Spanish:
+[Your Spanish description here]
 
-Inglés:
-[Video description in English]
+English:
+[Your English description here]
 
 ...
 ```
@@ -113,15 +113,15 @@ Inglés:
 ### Numbered Format
 
 ```
-1. Script de Teleprompter (Inglés)
-[Teleprompter text in English]
+1. Teleprompter Script (English)
+[Your English script here]
 
-2. Título Atractivo (SEO)
-Español: [Title in Spanish]
-Inglés: [Title in English]
+2. Attractive Title (SEO)
+Spanish: [Title in Spanish]
+English: [Title in English]
 
-3. Descripción para YouTube (Español)
-[YouTube description in Spanish]
+3. YouTube Description (Spanish)
+[Your Spanish description here]
 
 ...
 ```

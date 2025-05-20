@@ -87,7 +87,7 @@ def main():
 
     title = parsed_data.get("title", "")
     if not title:
-        print("ADVERTENCIA: No se encontró un título en el texto analizado.", file=sys.stderr)
+        print("WARNING: No title found in analyzed text.", file=sys.stderr)
 
     # Determinar si crear o actualizar
     content_id = None
@@ -98,32 +98,33 @@ def main():
         content_id = args.force_update
         action = "UPDATE"
     elif not args.force_create and title:
-        # Buscar si existe un contenido con ese título
-        print(f"Buscando contenido con título: {title}")
+        # Search for existing content with that title
+        print(f"Searching for content with title: {title}")
         existing_content = search_content_by_title(args.api_url, title)
 
         if existing_content:
             content_id = existing_content.get("_id")
-            print(f"Se encontró un contenido existente con ID: {content_id}")
-            print(f"Título existente: {existing_content.get('title')}")
+            print(f"Found existing content with ID: {content_id}")
+            print(f"Existing title: {existing_content.get('title')}")
 
-            # Preguntar al usuario si desea actualizar
-            response = input("¿Desea actualizar este contenido? (s/n): ").lower()
-            if response == 's' or response == 'si' or response == 'y' or response == 'yes':
+            # Ask the user if they want to update
+            response = input("Would you like to update this content? (y/n): ").lower()
+            if response == 'y' or response == 'yes':
                 action = "UPDATE"
             else:
-                print("Se creará un nuevo contenido.")
+                print("A new content will be created.")
                 action = "CREATE"
 
+    # Generate the appropriate curl command
     # Generar el comando curl adecuado
     if action == "UPDATE" and content_id:
-        print(f"\nGenerando comando para ACTUALIZAR contenido con ID: {content_id}")
+        print(f"\nGenerating command to UPDATE content with ID: {content_id}")
         curl_command = generate_update_curl_command(parsed_data, args.api_url, content_id)
     else:
-        print("\nGenerando comando para CREAR nuevo contenido")
+        print("\nGenerating command to CREATE new content")
         curl_command = generate_curl_command(parsed_data, args.api_url)
 
-    print("\n=== Comando curl generado ===")
+    print("\n=== Generated curl command ===")
     print(curl_command)
 
     # Guardar el comando en un archivo
@@ -136,8 +137,8 @@ def main():
     import os
     os.chmod(output_filename, 0o755)
 
-    print(f"\nEl comando se ha guardado en '{output_filename}' y se ha hecho ejecutable.")
-    print(f"Puede ejecutarlo con: ./{output_filename}")
+    print(f"\nThe command has been saved to '{output_filename}' and made executable.")
+    print(f"You can run it with: ./{output_filename}")
 
 if __name__ == "__main__":
     main()

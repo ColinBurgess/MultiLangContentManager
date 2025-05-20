@@ -1,46 +1,42 @@
 import json
 from parser.wordexporter import parse_word_text, generate_update_curl_command
 
-# Ejemplo de uso para actualizar un contenido existente
-print("== Ejemplo de actualización de contenido existente ==")
+# Example usage to update existing content
+print("== Example of updating existing content ==")
 
-# ID del contenido que deseas actualizar
-content_id = "64a7c2e5f1b5e3d2c1a9b8f7"  # Reemplaza con el ID real del contenido
+# ID of the content you want to update
+content_id = "64a7c2e5f1b5e3d2c1a9b8f7"  # Replace with the actual content ID
 
-# Texto con nuevo contenido
-update_text = """1. Script de Teleprompter (Inglés)
+# Text with new content
+update_text = """1. Teleprompter Script (English)
 This is an updated version of the script with some new information.
 We're demonstrating how to update existing content.
 
-2. Título Atractivo (SEO)
-Español: 🔄 Contenido Actualizado: Nueva Versión del Artículo
-Inglés: 🔄 Updated Content: New Version of the Article
+2. Attractive Title (SEO)
+English: Updated Content: New Version of the Article
 
-3. Descripción para YouTube (Español)
-Esta es una versión actualizada de nuestra descripción anterior.
-Hemos añadido nueva información y corregido algunos errores.
+3. YouTube Description (English)
+This is an updated version of our previous description.
+We've added new information and corrected some errors.
 """
 
-# Analizar el texto con el parser
+# Analyze the text with the parser
 parsed_data = parse_word_text(update_text)
 
 # URL base de la API
 api_url = "http://localhost:3000/api/contents"
 
-# Generar comando cURL para actualización
+# Generate cURL command for update
 curl_command = generate_update_curl_command(parsed_data, api_url, content_id)
 
-print("\nComando curl para actualizar un contenido existente:")
+print("\nCurl command to update existing content:")
 print(curl_command)
 
-print("\n== Instrucciones de uso ==")
-print("1. Reemplaza el ID '64a7c2e5f1b5e3d2c1a9b8f7' con el ID real de tu contenido")
-print("2. Si es necesario, actualiza la URL de la API según tu entorno")
-print("3. Ejecuta el comando curl en tu terminal para actualizar el contenido")
-print("4. También puedes guardar el comando en un archivo .sh y ejecutarlo:")
-print("   echo '{curl_command}' > update_content.sh")
-print("   chmod +x update_content.sh")
-print("   ./update_content.sh")
+print("\n== Instructions for use ==")
+print("1. Replace the ID '64a7c2e5f1b5e3d2c1a9b8f7' with the actual ID of your content")
+print("2. If needed, update the API URL according to your environment")
+print("3. Execute the curl command in your terminal to update the content")
+print("4. You can also save the command in a .sh file and execute it:")
 
 # Guardar el comando en un archivo para facilitar su uso
 with open("update_curl_command.txt", "w", encoding="utf-8") as f:

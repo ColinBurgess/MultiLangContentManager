@@ -1,7 +1,7 @@
 {
   "name": "video-content-organizer",
   "version": "1.0.0",
-  "description": "Organizador de contenido de video con soporte bilingüe",
+  "description": "Video content organizer with bilingual support", 
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",

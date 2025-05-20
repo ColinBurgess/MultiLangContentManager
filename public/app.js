@@ -137,7 +137,7 @@ class UI {
             this.contentForm.reset();
             this.renderContentList();
         } catch (error) {
-            alert('Error al guardar el contenido. Por favor, inténtalo de nuevo.');
+            alert('Error saving content. Please try again.');
         }
     }
 
@@ -168,18 +168,18 @@ class UI {
                 ${content.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
             <div class="mt-2">
-                <button class="btn btn-sm btn-danger delete-btn">Eliminar</button>
+                <button class="btn btn-sm btn-danger delete-btn">Delete</button>
             </div>
         `;
 
         element.querySelector('.delete-btn').addEventListener('click', async (e) => {
             e.stopPropagation();
-            if (confirm('¿Estás seguro de que quieres eliminar este contenido?')) {
+            if (confirm('Are you sure you want to delete this content?')) {
                 try {
                     await this.contentManager.deleteContent(content.id);
                     this.renderContentList();
                 } catch (error) {
-                    alert('Error al eliminar el contenido. Por favor, inténtalo de nuevo.');
+                    alert('Error deleting content. Please try again.');
                 }
             }
         });
@@ -195,13 +195,13 @@ class UI {
         modalTitle.textContent = content.title;
         modalBody.innerHTML = `
             <div class="content-details">
-                <h6>Guion (Español)</h6>
+                <h6>Script (Spanish)</h6>
                 <pre class="bg-light p-3">${content.scriptEs}</pre>
 
                 <h6>Script (English)</h6>
                 <pre class="bg-light p-3">${content.scriptEn}</pre>
 
-                <h6>Descripción (Español)</h6>
+                <h6>Description (Spanish)</h6>
                 <p>${content.descriptionEs}</p>
 
                 <h6>Description (English)</h6>
@@ -212,7 +212,7 @@ class UI {
                     ${content.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                 </div>
 
-                <h6>Enlaces Sociales</h6>
+                <h6>Social Links</h6>
                 <div class="social-links">
                     ${content.socialLinks.split('\n').map(link => `<div>${link}</div>`).join('')}
                 </div>

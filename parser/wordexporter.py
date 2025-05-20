@@ -21,28 +21,28 @@ def parse_word_text(text_block):
         "tags": [] # This will be derived from tagsListEs
     }
 
-    # Limpiar el texto y dividirlo en líneas
+    # Clean text and split into lines
     lines = text_block.strip().split('\n')
 
-    # Detectar si es el nuevo formato numerado
+    # Detect if it's the new numbered format
     if lines and re.match(r'^\d+\.\s', lines[0]):
         return parse_numbered_format(text_block, data)
     else:
-        # Usar el formato original
+        # Use original format
         return parse_original_format(text_block, data)
 
 def parse_original_format(text_block, data):
-    # Limpiar el texto y dividirlo en líneas
+    # Clean text and split into lines
     lines = text_block.strip().split('\n')
 
-    # Extrae el título (primera línea no vacía)
+    # Extract title (first non-empty line)
     for i, line in enumerate(lines):
         if line.strip():
             data["title"] = line.strip()
             lines = lines[i+1:]
             break
 
-    # Encontrar secciones principales
+    # Find main sections
     i = 0
     section_content = {}
     current_section = None
@@ -51,9 +51,9 @@ def parse_original_format(text_block, data):
         line = lines[i].strip()
         line_lower = line.lower()
 
-        # Determinar si esta línea indica un cambio de sección principal
+        # Determine if this line indicates a change of main section
         if line_lower == "teleprompter" or line_lower.startswith("teleprompter "):
-            # Guardar sección anterior si existe
+            # Save previous section if it exists
             if current_section:
                 save_section_content(data, current_section, section_content)
 
@@ -68,31 +68,85 @@ def parse_original_format(text_block, data):
             current_section = "video_description"
             section_content = {"es": "", "en": ""}
 
-            # Si ya incluye el idioma, asignar directamente
-            if line_lower == "description (spanish)":
+            # If it already includes the language, assign directly
+            if "español" in line_lower or "spanish" in line_lower:
+                current_section = "es"
+            elif "inglés" in line_lower or "english" in line_lower:
+                current_section = "en"
+
+            # Capture content until the next section or "Description (English)"
+            content = []
+            while i < len(lines) and not lines[i].strip().lower().startswith("description (english)"):
+                if lines[i].strip():
+                    content.append(lines[i].strip())
                 i += 1
-                # Capturar contenido hasta la siguiente sección o hasta "Description (English)"
-                start_index = i
-                while i < len(lines) and not lines[i].lower() == "description (english)" and not is_new_section(lines[i].lower()):
-                    i += 1
 
-                # Guardar contenido
-                if i > start_index:
-                    section_content["es"] = "\n".join(lines[start_index:i])
+            # Save content
+            if content:
+                section_content["es"] = "\n".join(content)
 
-                # Si el siguiente es "Description (English)", procesarlo
-                if i < len(lines) and lines[i].lower() == "description (english)":
-                    i += 1
-                    start_index = i
-                    while i < len(lines) and not is_new_section(lines[i].lower()):
-                        i += 1
-
-                    if i > start_index:
-                        section_content["en"] = "\n".join(lines[start_index:i])
-
-                continue
-            else:
+            # If the next is "Description (English)", process it
+            if i < len(lines) and lines[i].strip().lower().startswith("description (english)"):
+                content = []
                 i += 1
+                while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
+                    if lines[i].strip():
+                        content.append(lines[i].strip())
+                    i += 1
+                if content:
+                    section_content["en"] = "\n".join(content)
+
+            # Capture content until the next section
+            content = []
+            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
+                if lines[i].strip():
+                    content.append(lines[i].strip())
+                i += 1
+
+            # Save content
+            if content:
+                section_content["es"] = "\n".join(content)
+
+            # Capture content until "Tags (English)" or new section
+            content = []
+            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
+                if lines[i].strip():
+                    content.append(lines[i].strip())
+                i += 1
+
+            # Save content
+            if content:
+                section_content["en"] = "\n".join(content)
+
+            # If the next is "Tags (English)", process it
+            if i < len(lines) and lines[i].strip().lower().startswith("tags (english)"):
+                content = []
+                i += 1
+                while i < len(lines) and not lines[i].strip().lower().startswith("pinned comment (english)"):
+                    if lines[i].strip():
+                        content.append(lines[i].strip())
+                    i += 1
+                if content:
+                    section_content["en"] = "\n".join(content)
+
+            # Process directly if it includes the language
+            if "español" in line_lower or "spanish" in line_lower:
+                current_section = "es"
+            elif "inglés" in line_lower or "english" in line_lower:
+                current_section = "en"
+
+            # If the next is "Pinned Comment (English)", process it
+            if i < len(lines) and lines[i].strip().lower().startswith("pinned comment (english)"):
+                content = []
+                i += 1
+                while i < len(lines) and not lines[i].strip().lower().startswith("tiktok (english)"):
+                    if lines[i].strip():
+                        content.append(lines[i].strip())
+                    i += 1
+                if content:
+                    section_content["en"] = "\n".join(content)
+
+            continue
 
         elif line_lower == "description (english)":
             if current_section != "video_description":
@@ -102,12 +156,12 @@ def parse_original_format(text_block, data):
                 section_content = {"es": "", "en": ""}
 
             i += 1
-            # Capturar contenido hasta la siguiente sección
+            # Capture content until the next section
             start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
+            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
                 i += 1
 
-            # Guardar contenido
+            # Save content
             if i > start_index:
                 section_content["en"] = "\n".join(lines[start_index:i])
 
@@ -121,20 +175,20 @@ def parse_original_format(text_block, data):
             section_content = {"es": "", "en": ""}
 
             i += 1
-            # Capturar contenido hasta "Tags (English)" o nueva sección
+            # Capture content until "Tags (English)" or new section
             start_index = i
-            while i < len(lines) and not lines[i].lower() == "tags (english)" and not is_new_section(lines[i].lower()):
+            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
                 i += 1
 
-            # Guardar contenido
+            # Save content
             if i > start_index:
                 section_content["es"] = "\n".join(lines[start_index:i])
 
-            # Si el siguiente es "Tags (English)", procesarlo
-            if i < len(lines) and lines[i].lower() == "tags (english)":
+            # If the next is "Tags (English)", process it
+            if i < len(lines) and lines[i].strip().lower().startswith("tags (english)"):
                 i += 1
                 start_index = i
-                while i < len(lines) and not is_new_section(lines[i].lower()):
+                while i < len(lines) and not lines[i].strip().lower().startswith("pinned comment (english)"):
                     i += 1
 
                 if i > start_index:
@@ -409,67 +463,64 @@ def parse_original_format(text_block, data):
             data["tags"] = all_tags[:3]  # Tomar solo los primeros 3
         else:
             # Si no hay comas, usar el texto completo como un solo tag
-            data["tags"] = [tags_text.strip()][:1]  # Máximo 1 tag si no hay comas
 
     return data
 
 def parse_numbered_format(text_block, data):
-    # Limpiar el texto y dividirlo en líneas
+    # Clean text and split into lines
     lines = text_block.strip().split('\n')
 
-    # Inicializar variables para almacenar secciones
-    section_num = 0
-    section_content = ""
+    # Initialize variables to store sections
     current_section = None
-    i = 0
+    section_content = {}
+    section_number = 0
 
     while i < len(lines):
         line = lines[i].strip()
+        line_lower = line.lower()
 
-        # Verificar si es una nueva sección numerada
-        section_match = re.match(r'^(\d+)\.\s+(.+)$', line)
-
-        if section_match:
-            # Guardar la sección anterior si existe
+        # Check if it's a new numbered section
+        if re.match(r'^\d+\.\s', line):
+            # Save previous section if it exists
             if current_section:
-                process_numbered_section(data, current_section, section_content)
+                save_section_content(data, current_section, section_content)
 
-            section_num = int(section_match.group(1))
-            section_title = section_match.group(2)
-            current_section = section_title
-            section_content = ""
+            # Extract section number
+            section_number = int(re.match(r'(\d+)\.\s', line).group(1))
+            current_section = f"section_{section_number}"
+            section_content = {"es": "", "en": ""}
             i += 1
 
-            # Capturar el contenido hasta la siguiente sección numerada
-            start_index = i
-            while i < len(lines) and not re.match(r'^\d+\.\s+', lines[i].strip()):
-                i += 1
-
-            if i > start_index:
-                section_content = "\n".join(lines[start_index:i])
-        else:
+        # Capture content until the next numbered section
+        content = []
+        while i < len(lines) and not re.match(r'^\d+\.\s', lines[i]):
+            if lines[i].strip():
+                content.append(lines[i].strip())
             i += 1
 
-    # Procesar la última sección
+        # Save content
+        if content:
+            section_content["es"] = "\n".join(content)
+
+    # Process the last section
     if current_section:
-        process_numbered_section(data, current_section, section_content)
+        save_section_content(data, current_section, section_content)
 
-    # Derivar tags a partir de tagsListEs si existe
-    if data["tagsListEs"]:
-        # Intentar encontrar una separación por comas
-        tags_text = data["tagsListEs"]
-        if "," in tags_text:
-            # Limitar a solo los 3 primeros tags
-            all_tags = [tag.strip() for tag in tags_text.split(',') if tag.strip()]
-            data["tags"] = all_tags[:3]  # Tomar solo los primeros 3
+    # Derive tags from tagsListEs if it exists
+    if data.get("tagsListEs"):
+        # Try to find a comma separator
+        if "," in data["tagsListEs"]:
+            # Limit to only the first 3 tags
+            all_tags = [tag.strip() for tag in data["tagsListEs"].split(",")]
+            data["tags"] = all_tags[:3]  # Take only the first 3
         else:
-            # Si no hay comas, usar el texto completo como un solo tag
-            data["tags"] = [tags_text.strip()][:1]  # Máximo 1 tag si no hay comas
+            # If no commas, use the full text as a single tag
+            data["tags"] = [data["tagsListEs"].strip()][:1]  # Maximum 1 tag if no commas
 
     return data
 
 def process_numbered_section(data, section_title, content):
-    """Procesa las secciones numeradas del nuevo formato"""
+    """Process numbered sections of the new format"""
     section_title_lower = section_title.lower()
 
     # Script de Teleprompter (Inglés)

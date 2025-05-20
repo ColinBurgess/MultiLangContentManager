@@ -10,33 +10,33 @@ const rl = readline.createInterface({
 
 async function initializeDatabase() {
     try {
-        // Conectar a MongoDB sin autenticación
+        // Connect to MongoDB without authentication
         const client = await MongoClient.connect('mongodb://localhost:27017/admin');
         const adminDb = client.db('admin');
 
-        // Verificar si ya existe un usuario administrador
+        // Check if admin user already exists
         const users = await adminDb.command({ usersInfo: 1 });
         if (users.users.length > 0) {
-            console.log('⚠️  Ya existe un usuario administrador en la base de datos.');
-            console.log('Si necesitas restablecer el usuario, primero debes eliminar el usuario existente.');
+            console.log('⚠️  Admin user already exists in the database.');
+            console.log('If you need to reset the user, you must first delete the existing user.');
             await client.close();
             process.exit(0);
         }
 
-        // Solicitar credenciales de manera segura
+        // Request credentials securely
         const username = await new Promise(resolve => {
-            rl.question('Ingresa el nombre de usuario administrador: ', resolve);
+            rl.question('Enter admin username: ', resolve);
         });
 
         const password = await new Promise(resolve => {
-            rl.question('Ingresa la contraseña del administrador: ', resolve);
+            rl.question('Enter admin password: ', resolve);
         });
 
-        // Generar un salt aleatorio
+        // Generate random salt
         const salt = crypto.randomBytes(16).toString('hex');
         const hashedPassword = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
 
-        // Crear usuario administrador
+        // Create admin user
         await adminDb.command({
             createUser: username,
             pwd: password,
@@ -46,23 +46,23 @@ async function initializeDatabase() {
             ]
         });
 
-        console.log('✅ Usuario administrador creado exitosamente');
-        console.log('\nPara actualizar tu archivo .env, usa esta URI de conexión:');
+        console.log('✅ Admin user created successfully');
+        console.log('\nTo update your .env file, use this connection URI:');
         console.log(`MONGODB_URI=mongodb://${username}:${password}@localhost:27017/video-content-organizer?authSource=admin`);
 
-        // Crear la base de datos y colección para la aplicación
+        // Create database and collection for the application
         const appDb = client.db('video-content-organizer');
         await appDb.createCollection('contents');
-        console.log('\n✅ Base de datos y colección creadas exitosamente');
+        console.log('\n✅ Database and collection created successfully');
 
-        // Crear índices para búsqueda
+        // Create search indexes
         await appDb.collection('contents').createIndex({ title: 'text', tags: 'text', descriptionEs: 'text', descriptionEn: 'text' });
-        console.log('✅ Índices creados exitosamente');
+        console.log('✅ Indexes created successfully');
 
         await client.close();
-        console.log('\n🎉 Inicialización completada!');
+        console.log('\n🎉 Initialization completed!');
 
-        // Guardar el salt en un archivo seguro
+        // Save salt in a secure file
         const fs = require('fs');
         const configDir = './config';
         if (!fs.existsSync(configDir)) {
@@ -71,7 +71,7 @@ async function initializeDatabase() {
         fs.writeFileSync('./config/auth.json', JSON.stringify({ salt }, null, 2));
 
     } catch (error) {
-        console.error('❌ Error durante la inicialización:', error);
+        console.error('❌ Error during initialization:', error);
     } finally {
         rl.close();
     }

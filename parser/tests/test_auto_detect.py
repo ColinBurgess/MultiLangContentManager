@@ -24,7 +24,7 @@ based on the title, and decide whether to create a new one or update the existin
 
 print("=== Auto Detection Test ===")
 print("This script simulates user interaction to decide between creating or updating.")
-print("Note that the API must be available to search for existing content.")
+print("Note: The API must be available to search for existing content.")
 print("\nScenario 1: Simulating that NO content exists with that title (forcing creation):")
 
 # Run the script with --force-create to simulate no matches
