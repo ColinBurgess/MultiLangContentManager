@@ -31,8 +31,15 @@ def parse_word_text(text_block):
         # Use original format
         return parse_original_format(text_block, data)
 
+def truncate_twitter_post(text, max_length=180):
+    """Truncates text to not exceed Twitter's limit, trying to cut at a space."""
+    if len(text) <= max_length:
+        return text
+    # Truncate at the last space before the limit
+    truncated = text[:max_length].rsplit(' ', 1)[0]
+    return truncated
+
 def parse_original_format(text_block, data):
-    # Clean text and split into lines
     lines = text_block.strip().split('\n')
 
     # Extract title (first non-empty line)
@@ -42,428 +49,122 @@ def parse_original_format(text_block, data):
             lines = lines[i+1:]
             break
 
-    # Find main sections
     i = 0
-    section_content = {}
-    current_section = None
-
     while i < len(lines):
         line = lines[i].strip()
         line_lower = line.lower()
 
-        # Determine if this line indicates a change of main section
-        if line_lower == "teleprompter" or line_lower.startswith("teleprompter "):
-            # Save previous section if it exists
-            if current_section:
-                save_section_content(data, current_section, section_content)
+        # Dictionary of sections and their fields
+        section_map = {
+            "descripción optimizada": ("videoDescriptionEs", "videoDescriptionEn"),
+            "description optimized": ("videoDescriptionEs", "videoDescriptionEn"),
+            "comentario para pinear": ("pinnedCommentEs", "pinnedCommentEn"),
+            "pinned comment": ("pinnedCommentEs", "pinnedCommentEn"),
+            "descripción simplificada": ("tiktokDescriptionEs", "tiktokDescriptionEn"),
+            "simplified description": ("tiktokDescriptionEs", "tiktokDescriptionEn"),
+            "descripción para x": ("twitterPostEs", "twitterPostEn"),
+            "description for x": ("twitterPostEs", "twitterPostEn"),
+            "descripción para facebook": ("facebookDescriptionEs", "facebookDescriptionEn"),
+            "description for facebook": ("facebookDescriptionEs", "facebookDescriptionEn"),
+            "lista de tags": ("tagsListEs", "tagsListEn"),
+            "tags list": ("tagsListEs", "tagsListEn"),
+            "teleprompter": ("teleprompterEs", "teleprompterEn"),
+            "tags": ("tags", "tags"),
+            "etiquetas": ("tags", "tags")
+        }
 
-            current_section = "teleprompter"
-            section_content = {"es": "", "en": ""}
+        matched_section = None
+        for key in section_map.keys():
+            if line_lower.startswith(key):
+                matched_section = key
+                break
+
+        if matched_section:
+            # Detect language in header
+            campo_es, campo_en = section_map[matched_section]
+            is_es = any(x in line_lower for x in ["español", "(español"])
+            is_en = any(x in line_lower for x in ["inglés", "(inglés", "english", "(english"])
             i += 1
-
-        elif line_lower == "description (spanish)" or line_lower == "descripcion video" or line_lower == "descripción video":
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "video_description"
-            section_content = {"es": "", "en": ""}
-
-            # If it already includes the language, assign directly
-            if "español" in line_lower or "spanish" in line_lower:
-                current_section = "es"
-            elif "inglés" in line_lower or "english" in line_lower:
-                current_section = "en"
-
-            # Capture content until the next section or "Description (English)"
             content = []
-            while i < len(lines) and not lines[i].strip().lower().startswith("description (english)"):
-                if lines[i].strip():
-                    content.append(lines[i].strip())
-                i += 1
+            current_lang = None
+            es_content = []
+            en_content = []
 
-            # Save content
-            if content:
-                section_content["es"] = "\n".join(content)
-
-            # If the next is "Description (English)", process it
-            if i < len(lines) and lines[i].strip().lower().startswith("description (english)"):
-                content = []
-                i += 1
-                while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
-                    if lines[i].strip():
-                        content.append(lines[i].strip())
+            # Find the start of the next section
+            while i < len(lines) and not any(lines[i].strip().lower().startswith(k) for k in section_map.keys()):
+                line = lines[i].strip()
+                if not line:
                     i += 1
-                if content:
-                    section_content["en"] = "\n".join(content)
+                    continue
 
-            # Capture content until the next section
-            content = []
-            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
-                if lines[i].strip():
-                    content.append(lines[i].strip())
-                i += 1
-
-            # Save content
-            if content:
-                section_content["es"] = "\n".join(content)
-
-            # Capture content until "Tags (English)" or new section
-            content = []
-            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
-                if lines[i].strip():
-                    content.append(lines[i].strip())
-                i += 1
-
-            # Save content
-            if content:
-                section_content["en"] = "\n".join(content)
-
-            # If the next is "Tags (English)", process it
-            if i < len(lines) and lines[i].strip().lower().startswith("tags (english)"):
-                content = []
-                i += 1
-                while i < len(lines) and not lines[i].strip().lower().startswith("pinned comment (english)"):
-                    if lines[i].strip():
-                        content.append(lines[i].strip())
+                # Detect language change
+                if line.lower().startswith("español:"):
+                    current_lang = "es"
                     i += 1
-                if content:
-                    section_content["en"] = "\n".join(content)
-
-            # Process directly if it includes the language
-            if "español" in line_lower or "spanish" in line_lower:
-                current_section = "es"
-            elif "inglés" in line_lower or "english" in line_lower:
-                current_section = "en"
-
-            # If the next is "Pinned Comment (English)", process it
-            if i < len(lines) and lines[i].strip().lower().startswith("pinned comment (english)"):
-                content = []
-                i += 1
-                while i < len(lines) and not lines[i].strip().lower().startswith("tiktok (english)"):
-                    if lines[i].strip():
-                        content.append(lines[i].strip())
+                    continue
+                elif line.lower().startswith("inglés:") or line.lower().startswith("ingles:"):
+                    current_lang = "en"
                     i += 1
-                if content:
-                    section_content["en"] = "\n".join(content)
+                    continue
 
-            continue
-
-        elif line_lower == "description (english)":
-            if current_section != "video_description":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "video_description"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            # Capture content until the next section
-            start_index = i
-            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
-                i += 1
-
-            # Save content
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "tags (spanish)" or line_lower.startswith("lista de tags"):
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "tags"
-            section_content = {"es": "", "en": ""}
-
-            i += 1
-            # Capture content until "Tags (English)" or new section
-            start_index = i
-            while i < len(lines) and not lines[i].strip().lower().startswith("tags (english)"):
-                i += 1
-
-            # Save content
-            if i > start_index:
-                section_content["es"] = "\n".join(lines[start_index:i])
-
-            # If the next is "Tags (English)", process it
-            if i < len(lines) and lines[i].strip().lower().startswith("tags (english)"):
-                i += 1
-                start_index = i
-                while i < len(lines) and not lines[i].strip().lower().startswith("pinned comment (english)"):
-                    i += 1
-
-                if i > start_index:
-                    section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "tags (english)":
-            if current_section != "tags":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "tags"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            # Capturar contenido hasta la siguiente sección
-            start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
-                i += 1
-
-            # Guardar contenido
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "pinned comment (spanish)" or line_lower.startswith("comentario") or line_lower.startswith("pinned comment"):
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "pinned_comment"
-            section_content = {"es": "", "en": ""}
-
-            # Procesar directamente si incluye el idioma
-            if line_lower == "pinned comment (spanish)":
-                i += 1
-                start_index = i
-                while i < len(lines) and not lines[i].lower() == "pinned comment (english)" and not is_new_section(lines[i].lower()):
-                    i += 1
-
-                if i > start_index:
-                    section_content["es"] = "\n".join(lines[start_index:i])
-
-                # Si el siguiente es "Pinned Comment (English)", procesarlo
-                if i < len(lines) and lines[i].lower() == "pinned comment (english)":
-                    i += 1
-                    start_index = i
-                    while i < len(lines) and not is_new_section(lines[i].lower()):
-                        i += 1
-
-                    if i > start_index:
-                        section_content["en"] = "\n".join(lines[start_index:i])
-
-                continue
-            else:
-                i += 1
-
-        elif line_lower == "pinned comment (english)":
-            if current_section != "pinned_comment":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "pinned_comment"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
-                i += 1
-
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "tiktok description (spanish)" or line_lower.startswith("descripción simplificada para tiktok") or line_lower.startswith("descripcion simplificada para tiktok"):
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "tiktok"
-            section_content = {"es": "", "en": ""}
-
-            if line_lower == "tiktok description (spanish)":
-                i += 1
-                start_index = i
-                while i < len(lines) and not lines[i].lower() == "tiktok description (english)" and not is_new_section(lines[i].lower()):
-                    i += 1
-
-                if i > start_index:
-                    section_content["es"] = "\n".join(lines[start_index:i])
-
-                if i < len(lines) and lines[i].lower() == "tiktok description (english)":
-                    i += 1
-                    start_index = i
-                    while i < len(lines) and not is_new_section(lines[i].lower()):
-                        i += 1
-
-                    if i > start_index:
-                        section_content["en"] = "\n".join(lines[start_index:i])
-
-                continue
-            else:
-                i += 1
-
-        elif line_lower == "tiktok description (english)":
-            if current_section != "tiktok":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "tiktok"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
-                i += 1
-
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "x post (spanish)" or line_lower.startswith("post para x") or line_lower.startswith("descripción para x"):
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "twitter"
-            section_content = {"es": "", "en": ""}
-
-            if line_lower == "x post (spanish)":
-                i += 1
-                start_index = i
-                while i < len(lines) and not lines[i].lower() == "x post (english)" and not is_new_section(lines[i].lower()):
-                    i += 1
-
-                if i > start_index:
-                    section_content["es"] = "\n".join(lines[start_index:i])
-
-                if i < len(lines) and lines[i].lower() == "x post (english)":
-                    i += 1
-                    start_index = i
-                    while i < len(lines) and not is_new_section(lines[i].lower()):
-                        i += 1
-
-                    if i > start_index:
-                        section_content["en"] = "\n".join(lines[start_index:i])
-
-                continue
-            else:
-                i += 1
-
-        elif line_lower == "x post (english)":
-            if current_section != "twitter":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "twitter"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
-                i += 1
-
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        elif line_lower == "facebook post (spanish)" or line_lower.startswith("descripción para un post en facebook") or line_lower.startswith("descripcion para un post en facebook"):
-            if current_section:
-                save_section_content(data, current_section, section_content)
-
-            current_section = "facebook"
-            section_content = {"es": "", "en": ""}
-
-            if line_lower == "facebook post (spanish)":
-                i += 1
-                start_index = i
-                while i < len(lines) and not lines[i].lower() == "facebook post (english)" and not is_new_section(lines[i].lower()):
-                    i += 1
-
-                if i > start_index:
-                    section_content["es"] = "\n".join(lines[start_index:i])
-
-                if i < len(lines) and lines[i].lower() == "facebook post (english)":
-                    i += 1
-                    start_index = i
-                    while i < len(lines) and not is_new_section(lines[i].lower()):
-                        i += 1
-
-                    if i > start_index:
-                        section_content["en"] = "\n".join(lines[start_index:i])
-
-                continue
-            else:
-                i += 1
-
-        elif line_lower == "facebook post (english)":
-            if current_section != "facebook":
-                if current_section:
-                    save_section_content(data, current_section, section_content)
-                current_section = "facebook"
-                section_content = {"es": "", "en": ""}
-
-            i += 1
-            start_index = i
-            while i < len(lines) and not is_new_section(lines[i].lower()):
-                i += 1
-
-            if i > start_index:
-                section_content["en"] = "\n".join(lines[start_index:i])
-
-            continue
-
-        # Detectar marcadores de idioma dentro de una sección
-        elif current_section and (line_lower == "español:" or line_lower.startswith("español:")):
-            # Extraer contenido que puede estar en la misma línea
-            content_after_marker = line[line.lower().find("español:") + 8:].strip()
-
-            # Buscar el contenido en español hasta el siguiente marcador de idioma o sección
-            start_index = i + 1
-            while start_index < len(lines) and not lines[start_index].lower().startswith("ingles:") and \
-                  not lines[start_index].lower().startswith("inglés:") and not is_new_section(lines[start_index].lower()):
-                start_index += 1
-
-            # Solo agregar el contenido después del marcador si hay
-            if content_after_marker:
-                if start_index > i + 1:
-                    section_content["es"] = content_after_marker + "\n" + "\n".join(lines[i+1:start_index])
+                # Assign content according to current language
+                if current_lang == "es":
+                    es_content.append(line)
+                elif current_lang == "en":
+                    en_content.append(line)
                 else:
-                    section_content["es"] = content_after_marker
+                    # If no language detected, use heuristics
+                    if any(x in line for x in ["¿", "á", "é", "í", "ó", "ú", "ñ"]):
+                        es_content.append(line)
+                    else:
+                        en_content.append(line)
+                i += 1
+
+            # Process content according to section type
+            if campo_es == "tags" and campo_en == "tags":
+                # For specific tags section, take only the first 3
+                all_tags = []
+                # Process Spanish content
+                if es_content:
+                    es_tags = [tag.strip() for tag in ", ".join(es_content).split(",") if tag.strip()]
+                    all_tags.extend(es_tags)
+                # Process English content
+                if en_content:
+                    en_tags = [tag.strip() for tag in ", ".join(en_content).split(",") if tag.strip()]
+                    all_tags.extend(en_tags)
+                # Remove duplicates and take first 3
+                data["tags"] = list(dict.fromkeys(all_tags))[:3]
+            elif campo_es == "tagsListEs" or campo_en == "tagsListEn":
+                # For tags, join with commas and clean
+                if es_content:
+                    data["tagsListEs"] = ", ".join(es_content).strip()
+                if en_content:
+                    data["tagsListEn"] = ", ".join(en_content).strip()
+                # Also update tags field with first 3 unique tags
+                all_tags = []
+                if es_content:
+                    es_tags = [tag.strip() for tag in ", ".join(es_content).split(",") if tag.strip()]
+                    all_tags.extend(es_tags)
+                if en_content:
+                    en_tags = [tag.strip() for tag in ", ".join(en_content).split(",") if tag.strip()]
+                    all_tags.extend(en_tags)
+                data["tags"] = list(dict.fromkeys(all_tags))[:3]
             else:
-                if start_index > i + 1:
-                    section_content["es"] = "\n".join(lines[i+1:start_index])
+                # For other sections, join with line breaks
+                if es_content:
+                    data[campo_es] = "\n".join(es_content)
+                if en_content:
+                    data[campo_en] = "\n".join(en_content)
 
-            i = start_index
+            # Truncate if it's a Twitter post
+            if campo_es == "twitterPostEs" and data[campo_es]:
+                data[campo_es] = truncate_twitter_post(data[campo_es])
+            if campo_en == "twitterPostEn" and data[campo_en]:
+                data[campo_en] = truncate_twitter_post(data[campo_en])
 
-        elif current_section and (line_lower.startswith("ingles:") or line_lower.startswith("inglés:")):
-            # Extraer contenido que puede estar en la misma línea
-            marker = "ingles:" if "ingles:" in line_lower else "inglés:"
-            content_after_marker = line[line.lower().find(marker) + len(marker):].strip()
-
-            # Buscar el contenido en inglés hasta la siguiente sección
-            start_index = i + 1
-            while start_index < len(lines) and not is_new_section(lines[start_index].lower()):
-                start_index += 1
-
-            # Solo agregar el contenido después del marcador si hay
-            if content_after_marker:
-                if start_index > i + 1:
-                    section_content["en"] = content_after_marker + "\n" + "\n".join(lines[i+1:start_index])
-                else:
-                    section_content["en"] = content_after_marker
-            else:
-                if start_index > i + 1:
-                    section_content["en"] = "\n".join(lines[i+1:start_index])
-
-            i = start_index
-
+            continue
         else:
             i += 1
-
-    # Guardar la última sección procesada
-    if current_section:
-        save_section_content(data, current_section, section_content)
-
-    # Derivar tags a partir de tagsListEs si existe
-    if data["tagsListEs"]:
-        # Intentar encontrar una separación por comas
-        tags_text = data["tagsListEs"]
-        if "," in tags_text:
-            # Limitar a solo los 3 primeros tags
-            all_tags = [tag.strip() for tag in tags_text.split(',') if tag.strip()]
-            data["tags"] = all_tags[:3]  # Tomar solo los primeros 3
-        else:
-            # Si no hay comas, usar el texto completo como un solo tag
-
     return data
 
 def parse_numbered_format(text_block, data):
@@ -474,6 +175,7 @@ def parse_numbered_format(text_block, data):
     current_section = None
     section_content = {}
     section_number = 0
+    i = 0  # Initialize the counter
 
     while i < len(lines):
         line = lines[i].strip()
@@ -485,22 +187,37 @@ def parse_numbered_format(text_block, data):
             if current_section:
                 save_section_content(data, current_section, section_content)
 
-            # Extract section number
-            section_number = int(re.match(r'(\d+)\.\s', line).group(1))
-            current_section = f"section_{section_number}"
-            section_content = {"es": "", "en": ""}
+            # Extract section number and title
+            match = re.match(r'(\d+)\.\s*(.*)', line)
+            if match:
+                section_number = int(match.group(1))
+                section_title = match.group(2).strip()
+                current_section = section_title
+                section_content = {"es": "", "en": ""}
             i += 1
+            continue
 
         # Capture content until the next numbered section
-        content = []
-        while i < len(lines) and not re.match(r'^\d+\.\s', lines[i]):
-            if lines[i].strip():
-                content.append(lines[i].strip())
-            i += 1
-
-        # Save content
-        if content:
-            section_content["es"] = "\n".join(content)
+        if current_section:
+            if not section_content.get("es") and not section_content.get("en"):
+                # If no content yet, add to the first available language
+                if "(español)" in current_section.lower() or "(spanish)" in current_section.lower():
+                    section_content["es"] = line
+                elif "(inglés)" in current_section.lower() or "(english)" in current_section.lower():
+                    section_content["en"] = line
+                else:
+                    # If no language specified, use heuristics
+                    if any(x in line for x in ["¿", "á", "é", "í", "ó", "ú", "ñ"]):
+                        section_content["es"] = line
+                    else:
+                        section_content["en"] = line
+            else:
+                # Append to existing content
+                if section_content.get("es"):
+                    section_content["es"] += "\n" + line
+                elif section_content.get("en"):
+                    section_content["en"] += "\n" + line
+        i += 1
 
     # Process the last section
     if current_section:
@@ -523,25 +240,25 @@ def process_numbered_section(data, section_title, content):
     """Process numbered sections of the new format"""
     section_title_lower = section_title.lower()
 
-    # Script de Teleprompter (Inglés)
+    # Teleprompter Script (English)
     if "script de teleprompter" in section_title_lower or "teleprompter script" in section_title_lower:
         if "(inglés)" in section_title_lower or "(english)" in section_title_lower:
             data["teleprompterEn"] = content.strip()
         else:
             data["teleprompterEs"] = content.strip()
 
-    # Título Atractivo (SEO)
+    # Attractive Title (SEO)
     elif "título" in section_title_lower or "title" in section_title_lower:
-        # Buscar las líneas específicas de español e inglés
+        # Look for specific Spanish and English lines
         for line in content.split('\n'):
             line = line.strip()
             if line.startswith("Español:"):
                 data["title"] = line.replace("Español:", "").strip()
             elif line.startswith("Inglés:"):
-                # También podríamos almacenar el título en inglés si se necesita
+                # We could also store the English title if needed
                 pass
 
-    # Descripción para YouTube
+    # YouTube Description
     elif "descripción para youtube" in section_title_lower or "youtube description" in section_title_lower:
         if "(español)" in section_title_lower or "spanish" in section_title_lower:
             data["videoDescriptionEs"] = content.strip()
@@ -584,7 +301,7 @@ def process_numbered_section(data, section_title, content):
             data["facebookDescriptionEn"] = content.strip()
 
 def is_new_section(line):
-    """Determina si una línea marca el inicio de una nueva sección"""
+    """Determines if a line marks the start of a new section"""
     section_markers = [
         "teleprompter",
         "description (spanish)", "description (english)",
@@ -601,33 +318,88 @@ def is_new_section(line):
 
     return any(line.startswith(marker) or line == marker for marker in section_markers)
 
-def save_section_content(data, section, content):
-    """Guarda el contenido en el diccionario de datos según la sección"""
-    if section == "teleprompter":
-        data["teleprompterEs"] = content.get("es", "")
-        data["teleprompterEn"] = content.get("en", "")
-    elif section == "video_description":
-        data["videoDescriptionEs"] = content.get("es", "")
-        data["videoDescriptionEn"] = content.get("en", "")
-    elif section == "tags":
-        data["tagsListEs"] = content.get("es", "")
-        data["tagsListEn"] = content.get("en", "")
-    elif section == "pinned_comment":
-        data["pinnedCommentEs"] = content.get("es", "")
-        data["pinnedCommentEn"] = content.get("en", "")
-    elif section == "tiktok":
-        data["tiktokDescriptionEs"] = content.get("es", "")
-        data["tiktokDescriptionEn"] = content.get("en", "")
-    elif section == "twitter":
-        data["twitterPostEs"] = content.get("es", "")
-        data["twitterPostEn"] = content.get("en", "")
-    elif section == "facebook":
-        data["facebookDescriptionEs"] = content.get("es", "")
-        data["facebookDescriptionEn"] = content.get("en", "")
+def extract_tags(text):
+    """Extracts hashtags and keywords from text"""
+    # First extract hashtags
+    hashtags = re.findall(r'#\w+', text)
+    
+    # Then extract keywords (words that are not hashtags)
+    words = text.split()
+    keywords = [word for word in words if not word.startswith('#') and len(word) > 2]
+    
+    # Combine both lists and remove duplicates
+    all_tags = list(set(hashtags + keywords))
+    
+    # Return first 20 tags to avoid length issues
+    return all_tags[:20]
+
+def save_section_content(data, section_title, section_content):
+    section_title_lower = section_title.lower()
+
+    # Teleprompter Script
+    if "script de teleprompter" in section_title_lower or "teleprompter script" in section_title_lower:
+        if "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["teleprompterEn"] = section_content.get("en", "").strip()
+        else:
+            data["teleprompterEs"] = section_content.get("es", "").strip()
+
+    # Attractive Title (SEO)
+    elif "título" in section_title_lower or "title" in section_title_lower:
+        # Look for specific Spanish and English lines
+        content = section_content.get("es", "") + "\n" + section_content.get("en", "")
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith("Español:"):
+                data["title"] = line.replace("Español:", "").strip()
+            elif line.startswith("Inglés:"):
+                # We could also store the English title if needed
+                pass
+
+    # YouTube Description
+    elif "descripción para youtube" in section_title_lower or "youtube description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["videoDescriptionEs"] = section_content.get("es", "").strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["videoDescriptionEn"] = section_content.get("en", "").strip()
+
+    # Tags List
+    elif "lista de tags" in section_title_lower or "tags list" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["tagsListEs"] = section_content.get("es", "").strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["tagsListEn"] = section_content.get("en", "").strip()
+
+    # Pinned Comment
+    elif "comentario pineado" in section_title_lower or "pinned comment" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["pinnedCommentEs"] = section_content.get("es", "").strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["pinnedCommentEn"] = section_content.get("en", "").strip()
+
+    # TikTok Description
+    elif "descripción para tiktok" in section_title_lower or "tiktok description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["tiktokDescriptionEs"] = section_content.get("es", "").strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["tiktokDescriptionEn"] = section_content.get("en", "").strip()
+
+    # X/Twitter Post
+    elif "post para x" in section_title_lower or "x post" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["twitterPostEs"] = truncate_twitter_post(section_content.get("es", "").strip())
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["twitterPostEn"] = truncate_twitter_post(section_content.get("en", "").strip())
+
+    # Facebook Description
+    elif "descripción para facebook" in section_title_lower or "facebook description" in section_title_lower:
+        if "(español)" in section_title_lower or "spanish" in section_title_lower:
+            data["facebookDescriptionEs"] = section_content.get("es", "").strip()
+        elif "(inglés)" in section_title_lower or "(english)" in section_title_lower:
+            data["facebookDescriptionEn"] = section_content.get("en", "").strip()
 
 def generate_curl_command(parsed_data, api_url):
     payload = {
-        "title": parsed_data.get("title", "Título no especificado"),
+        "title": parsed_data.get("title", "Unspecified Title"),
         "publishedEs": False,
         "publishedEn": False,
         "publishedDateEs": None,
@@ -651,32 +423,32 @@ def generate_curl_command(parsed_data, api_url):
         "tags": parsed_data.get("tags", [])
     }
 
-    # Primero generamos el JSON sin escapar comillas
+    # First generate JSON without escaping quotes
     json_payload_str = json.dumps(payload, indent=2, ensure_ascii=False)
 
-    # Luego escapamos todas las comillas simples en el JSON final
-    # El escape en bash para una comilla simple es: ' -> '\''
+    # Then escape all single quotes in the final JSON
+    # The bash escape for a single quote is: ' -> '\''
     escaped_json = json_payload_str.replace("'", "'\\''")
 
-    # El comando curl con formato consistente
+    # The curl command with consistent formatting
     curl_command = f"curl -X POST {api_url} \\\n  -H \"Content-Type: application/json\" \\\n  -d '{escaped_json}'"
 
     return curl_command
 
 def generate_update_curl_command(parsed_data, api_url, content_id):
     """
-    Genera un comando curl para actualizar un contenido existente.
+    Generates a curl command to update an existing content.
 
     Args:
-        parsed_data (dict): Datos parseados del documento
-        api_url (str): URL base de la API
-        content_id (str): ID del contenido a actualizar
+        parsed_data (dict): Parsed document data
+        api_url (str): Base API URL
+        content_id (str): ID of the content to update
 
     Returns:
-        str: Comando curl para actualizar la entrada
+        str: Curl command to update the entry
     """
     payload = {
-        "title": parsed_data.get("title", "Título no especificado"),
+        "title": parsed_data.get("title", "Unspecified Title"),
         "teleprompterEs": parsed_data.get("teleprompterEs", ""),
         "teleprompterEn": parsed_data.get("teleprompterEn", ""),
         "videoDescriptionEs": parsed_data.get("videoDescriptionEs", ""),
@@ -694,13 +466,13 @@ def generate_update_curl_command(parsed_data, api_url, content_id):
         "tags": parsed_data.get("tags", [])
     }
 
-    # Generamos el JSON sin escapar comillas
+    # Generate JSON without escaping quotes
     json_payload_str = json.dumps(payload, indent=2, ensure_ascii=False)
 
-    # Escapamos todas las comillas simples en el JSON final
+    # Escape all single quotes in the final JSON
     escaped_json = json_payload_str.replace("'", "'\\''")
 
-    # El comando curl con formato consistente usando PUT para actualizar
+    # The curl command with consistent formatting using PUT for update
     update_url = f"{api_url}/{content_id}"
     curl_command = f"curl -X PUT {update_url} \\\n  -H \"Content-Type: application/json\" \\\n  -d '{escaped_json}'"
 
@@ -710,7 +482,7 @@ def generate_update_curl_command(parsed_data, api_url, content_id):
 if __name__ == "__main__":
     api_url = "http://localhost:3000/api/contents" # Or your actual API endpoint
 
-    print("Pega el texto completo de Word aquí (Ctrl+D o Ctrl+Z y Enter para finalizar en Unix/Windows):")
+    print("Paste the complete Word text here (Ctrl+D or Ctrl+Z and Enter to finish in Unix/Windows):")
     word_text_input = []
     while True:
         try:
@@ -722,7 +494,7 @@ if __name__ == "__main__":
     full_text = "\n".join(word_text_input)
 
     if not full_text.strip():
-        print("\nNo se ingresó texto. Usando texto de ejemplo para demostración.")
+        print("\nNo text entered. Using example text for demonstration.")
         # Example text for the Super Bowl content provided by the user
         full_text = """
 ¿Es la Inteligencia Artificial el Último Gran Invento? 🤖 OpenAI Revoluciona la Super Bowl
