@@ -78,16 +78,20 @@ function loadContentData(contentId) {
             document.getElementById('facebookDescriptionEs').value = content.facebookDescriptionEs || '';
             document.getElementById('facebookDescriptionEn').value = content.facebookDescriptionEn || '';
 
-            // Manejar tags (puede ser un array o string)
+            // Handle tags (can be array or string)
             if (Array.isArray(content.tags)) {
                 document.getElementById('tags').value = content.tags.join(', ');
             } else {
                 document.getElementById('tags').value = content.tags || '';
             }
 
-            // Set publication status
-            document.getElementById('publishedEs').checked = content.publishedEs || false;
-            document.getElementById('publishedEn').checked = content.publishedEn || false;
+            // Set status fields
+            document.getElementById('statusEs').value = content.statusEs || 'pending';
+            document.getElementById('statusEn').value = content.statusEn || 'pending';
+
+            // Update language indicators
+            updateLanguageIndicator('Es');
+            updateLanguageIndicator('En');
 
             // Set publication dates if they exist
             if (content.publishedDateEs) {
@@ -139,13 +143,28 @@ function saveContent(contentId) {
         facebookDescriptionEs: document.getElementById('facebookDescriptionEs').value,
         facebookDescriptionEn: document.getElementById('facebookDescriptionEn').value,
         tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-        publishedEs: document.getElementById('publishedEs').checked,
-        publishedEn: document.getElementById('publishedEn').checked,
         publishedDateEs: document.getElementById('publishedDateEs').value || null,
         publishedDateEn: document.getElementById('publishedDateEn').value || null,
         publishedUrlEs: document.getElementById('publishedUrlEs').value,
         publishedUrlEn: document.getElementById('publishedUrlEn').value
     };
+
+    // Capturar explícitamente los valores de status desde los selectores
+    const statusEs = document.getElementById('statusEs').value;
+    const statusEn = document.getElementById('statusEn').value;
+    
+    // Establecer los campos de status y published según los valores seleccionados
+    formData.statusEs = statusEs;
+    formData.statusEn = statusEn;
+    formData.publishedEs = (statusEs === 'published');
+    formData.publishedEn = (statusEn === 'published');
+    
+    console.log('Guardando contenido con estados:', {
+        statusEs: formData.statusEs,
+        statusEn: formData.statusEn,
+        publishedEs: formData.publishedEs,
+        publishedEn: formData.publishedEn
+    });
 
     // API URL and method
     let url = '/api/contents';
@@ -172,6 +191,16 @@ function saveContent(contentId) {
         return response.json();
     })
     .then(data => {
+        console.log('Respuesta del servidor:', data);
+        
+        // Verificar que los estados se hayan actualizado correctamente
+        if (data.statusEs !== formData.statusEs || data.statusEn !== formData.statusEn) {
+            console.warn('Advertencia: Los estados devueltos por el servidor difieren de los enviados:', {
+                enviado: {statusEs: formData.statusEs, statusEn: formData.statusEn},
+                recibido: {statusEs: data.statusEs, statusEn: data.statusEn}
+            });
+        }
+        
         // Show success message and redirect
         alert(contentId ? 'Content updated successfully!' : 'Content added successfully!');
         window.location.href = '/';

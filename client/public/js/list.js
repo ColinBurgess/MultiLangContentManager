@@ -181,17 +181,31 @@ function displayContents(contents) {
     contentList.innerHTML = '';
 
     contents.forEach(content => {
+        // Compatibilidad: fallback a publishedEs/publishedEn si no existen statusEs/statusEn
+        let statusEs = content.statusEs;
+        let statusEn = content.statusEn;
+        if (!statusEs) {
+            if (typeof content.publishedEs === 'boolean') {
+                statusEs = content.publishedEs ? 'published' : 'pending';
+            } else {
+                statusEs = 'pending';
+            }
+        }
+        if (!statusEn) {
+            if (typeof content.publishedEn === 'boolean') {
+                statusEn = content.publishedEn ? 'published' : 'pending';
+            } else {
+                statusEn = 'pending';
+            }
+        }
         const row = document.createElement('tr');
-        // Hacer que toda la fila sea clickeable
         row.style.cursor = 'pointer';
         row.dataset.id = content._id || content.id;
         row.addEventListener('click', function(e) {
-            // Si se hizo clic en un botón, no activar el viewContent
             if (!e.target.closest('button')) {
                 viewContent(this.dataset.id);
             }
         });
-
         // Title column
         const titleCell = document.createElement('td');
         titleCell.innerHTML = `
@@ -199,22 +213,19 @@ function displayContents(contents) {
                 <span>${content.title}</span>
             </div>
         `;
-
         // Status column
         const statusCell = document.createElement('td');
         statusCell.innerHTML = `
             <div class="d-flex align-items-center">
-                ${getLanguageIndicator('ES', content.publishedEs, content.publishedUrlEs)}
-                ${getLanguageIndicator('EN', content.publishedEn, content.publishedUrlEn)}
+                ${getLanguageIndicator('ES', statusEs, content.publishedUrlEs)}
+                ${getLanguageIndicator('EN', statusEn, content.publishedUrlEn)}
             </div>
         `;
-
         // Tags column
         const tagsCell = document.createElement('td');
         const tagsList = Array.isArray(content.tags) ? content.tags : content.tags.split(',').map(tag => tag.trim());
         const tagsHtml = tagsList.map(tag => `<span class="tag">${tag}</span>`).join('');
         tagsCell.innerHTML = tagsHtml;
-
         // Actions column
         const actionsCell = document.createElement('td');
         actionsCell.className = 'text-end';
@@ -231,14 +242,10 @@ function displayContents(contents) {
                 </button>
             </div>
         `;
-
-        // Add cells to row
         row.appendChild(titleCell);
         row.appendChild(statusCell);
         row.appendChild(tagsCell);
         row.appendChild(actionsCell);
-
-        // Add row to table
         contentList.appendChild(row);
     });
 
@@ -268,15 +275,17 @@ function displayContents(contents) {
     });
 }
 
-function getLanguageIndicator(lang, isPublished, url) {
-    const statusClass = isPublished ? 'published' : 'not-published';
+function getLanguageIndicator(lang, status, url) {
+    let statusClass = 'pending';
+    if (status === 'in-progress') statusClass = 'in-progress';
+    if (status === 'published') statusClass = 'published';
 
-    if (isPublished && url) {
+    if (status === 'published' && url) {
         return `<a href="${url}" target="_blank" class="language-indicator ${statusClass}" title="${lang} content is published">
             ${lang}
         </a>`;
     } else {
-        return `<span class="language-indicator ${statusClass}" title="${lang} content is not published">
+        return `<span class="language-indicator ${statusClass}" title="${lang} content status: ${status}">
             ${lang}
         </span>`;
     }

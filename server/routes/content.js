@@ -22,8 +22,26 @@ router.get('/', async (req, res) => {
         }
 
         const contents = await Content.find(filter).sort({ createdAt: -1 });
-        logger.success(`Contents retrieved successfully. Count: ${contents.length}`);
-        res.json(contents);
+        
+        // Asegurarse de que todos los contenidos tengan statusEs y statusEn
+        const processedContents = contents.map(content => {
+            const contentObj = content.toObject();
+            
+            // Si no existe statusEs, derivarlo de publishedEs
+            if (!contentObj.statusEs) {
+                contentObj.statusEs = contentObj.publishedEs ? 'published' : 'pending';
+            }
+            
+            // Si no existe statusEn, derivarlo de publishedEn
+            if (!contentObj.statusEn) {
+                contentObj.statusEn = contentObj.publishedEn ? 'published' : 'pending';
+            }
+            
+            return contentObj;
+        });
+        
+        logger.success(`Contents retrieved successfully. Count: ${processedContents.length}`);
+        res.json(processedContents);
     } catch (error) {
         logger.error('Error retrieving contents', error);
         // Incluir detalles en desarrollo
@@ -232,8 +250,21 @@ router.get('/:id', async (req, res) => {
             logger.error(`Content not found. ID: ${req.params.id}`);
             return res.status(404).json({ message: 'Content not found' });
         }
+        
+        // Convertir a objeto para poder modificar
+        const contentObj = content.toObject();
+        
+        // Asegurar que statusEs y statusEn están establecidos
+        if (!contentObj.statusEs) {
+            contentObj.statusEs = contentObj.publishedEs ? 'published' : 'pending';
+        }
+        
+        if (!contentObj.statusEn) {
+            contentObj.statusEn = contentObj.publishedEn ? 'published' : 'pending';
+        }
+        
         logger.success(`Content retrieved successfully. ID: ${req.params.id}`);
-        res.json(content);
+        res.json(contentObj);
     } catch (error) {
         logger.error(`Error retrieving content. ID: ${req.params.id}`, error);
         // Mantener el mensaje de error para facilitar depuración
@@ -260,7 +291,8 @@ router.post('/', async (req, res) => {
             'publishedUrlEs', 'publishedUrlEn', 'teleprompterEs', 'teleprompterEn',
             'videoDescriptionEs', 'videoDescriptionEn', 'tagsListEs', 'tagsListEn',
             'pinnedCommentEs', 'pinnedCommentEn', 'tiktokDescriptionEs', 'tiktokDescriptionEn',
-            'twitterPostEs', 'twitterPostEn', 'facebookDescriptionEs', 'facebookDescriptionEn'
+            'twitterPostEs', 'twitterPostEn', 'facebookDescriptionEs', 'facebookDescriptionEn',
+            'statusEs', 'statusEn'
         ];
 
         // Copiar solo los campos permitidos después de santizarlos
@@ -271,6 +303,18 @@ router.post('/', async (req, res) => {
                     sanitizedInput[field] = Boolean(req.body[field]);
                 } else if (field.includes('Date') && !isNaN(new Date(req.body[field]))) {
                     sanitizedInput[field] = new Date(req.body[field]);
+                } else if (field === 'statusEs' || field === 'statusEn') {
+                    // Validar que el valor esté entre los permitidos
+                    const validStatuses = ['pending', 'in-progress', 'published'];
+                    const status = String(req.body[field]);
+                    sanitizedInput[field] = validStatuses.includes(status) ? status : 'pending';
+                    
+                    // Actualizar publishedEs/publishedEn en función del status
+                    if (field === 'statusEs') {
+                        sanitizedInput.publishedEs = (status === 'published');
+                    } else if (field === 'statusEn') {
+                        sanitizedInput.publishedEn = (status === 'published');
+                    }
                 } else {
                     sanitizedInput[field] = String(req.body[field]);
                 }
@@ -314,6 +358,10 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Content not found' });
         }
 
+        // Log detallado de la solicitud para debug
+        logger.success(`PUT request received for ID: ${req.params.id}`);
+        logger.success(`Request body: ${JSON.stringify(req.body)}`);
+
         // Sanitizar campos de entrada
         const sanitizedInput = {};
 
@@ -328,16 +376,83 @@ router.put('/:id', async (req, res) => {
             'publishedUrlEs', 'publishedUrlEn', 'teleprompterEs', 'teleprompterEn',
             'videoDescriptionEs', 'videoDescriptionEn', 'tagsListEs', 'tagsListEn',
             'pinnedCommentEs', 'pinnedCommentEn', 'tiktokDescriptionEs', 'tiktokDescriptionEn',
-            'twitterPostEs', 'twitterPostEn', 'facebookDescriptionEs', 'facebookDescriptionEn'
+            'twitterPostEs', 'twitterPostEn', 'facebookDescriptionEs', 'facebookDescriptionEn',
+            'statusEs', 'statusEn'
         ];
 
-        // Copiar solo los campos permitidos después de santizarlos
+        // Guardar valores originales para comparación
+        const originalValues = {
+            publishedEs: content.publishedEs,
+            publishedEn: content.publishedEn,
+            statusEs: content.statusEs,
+            statusEn: content.statusEn
+        };
+
+        // Procesar primero los campos de status para garantizar la correcta sincronización
+        if (req.body.statusEs !== undefined) {
+            const validStatuses = ['pending', 'in-progress', 'published'];
+            const statusEs = String(req.body.statusEs);
+            sanitizedInput.statusEs = validStatuses.includes(statusEs) ? statusEs : 'pending';
+            
+            // Actualizar publishedEs en función del status
+            sanitizedInput.publishedEs = (statusEs === 'published');
+            
+            // Si está publicado y no tiene fecha, actualizar la fecha de publicación
+            if (statusEs === 'published' && !content.publishedDateEs) {
+                sanitizedInput.publishedDateEs = new Date();
+            }
+            
+            logger.success(`Procesando statusEs: ${statusEs} -> published=${sanitizedInput.publishedEs}`);
+        }
+        
+        if (req.body.statusEn !== undefined) {
+            const validStatuses = ['pending', 'in-progress', 'published'];
+            const statusEn = String(req.body.statusEn);
+            sanitizedInput.statusEn = validStatuses.includes(statusEn) ? statusEn : 'pending';
+            
+            // Actualizar publishedEn en función del status
+            sanitizedInput.publishedEn = (statusEn === 'published');
+            
+            // Si está publicado y no tiene fecha, actualizar la fecha de publicación
+            if (statusEn === 'published' && !content.publishedDateEn) {
+                sanitizedInput.publishedDateEn = new Date();
+            }
+            
+            logger.success(`Procesando statusEn: ${statusEn} -> published=${sanitizedInput.publishedEn}`);
+        }
+        
+        // Si se especificó explícitamente publishedEs/En, usar ese valor (más prioritario que el derivado del status)
+        if (typeof req.body.publishedEs === 'boolean') {
+            sanitizedInput.publishedEs = Boolean(req.body.publishedEs);
+            
+            // Sincronizar el status si published cambia pero status no fue especificado
+            if (req.body.statusEs === undefined) {
+                sanitizedInput.statusEs = sanitizedInput.publishedEs ? 'published' : 
+                                         (content.statusEs === 'published' ? 'pending' : content.statusEs || 'pending');
+            }
+        }
+        
+        if (typeof req.body.publishedEn === 'boolean') {
+            sanitizedInput.publishedEn = Boolean(req.body.publishedEn);
+            
+            // Sincronizar el status si published cambia pero status no fue especificado
+            if (req.body.statusEn === undefined) {
+                sanitizedInput.statusEn = sanitizedInput.publishedEn ? 'published' : 
+                                         (content.statusEn === 'published' ? 'pending' : content.statusEn || 'pending');
+            }
+        }
+
+        // Copiar el resto de los campos permitidos después de santizarlos
         allowedFields.forEach(field => {
+            // Saltar los campos de status y published que ya se procesaron
+            if (field === 'statusEs' || field === 'statusEn' || 
+                field === 'publishedEs' || field === 'publishedEn') {
+                return;
+            }
+            
             if (req.body[field] !== undefined) {
-                // Convertir a String solo si no es un booleano o fecha
-                if (field.startsWith('published') && typeof req.body[field] === 'boolean') {
-                    sanitizedInput[field] = Boolean(req.body[field]);
-                } else if (field.includes('Date') && !isNaN(new Date(req.body[field]))) {
+                // Convertir a String solo si no es una fecha
+                if (field.includes('Date') && !isNaN(new Date(req.body[field]))) {
                     sanitizedInput[field] = new Date(req.body[field]);
                 } else {
                     sanitizedInput[field] = String(req.body[field]);
@@ -355,14 +470,42 @@ router.put('/:id', async (req, res) => {
             sanitizedInput.tags = rawTags.map(tag => String(tag).trim()).filter(tag => tag.length > 0);
         }
 
-        const updatedContent = await Content.findByIdAndUpdate(
-            req.params.id,
-            { $set: sanitizedInput },
-            { new: true, runValidators: true }
-        );
+        // Log de los campos que se van a actualizar
+        logger.success(`Fields to update: ${JSON.stringify(sanitizedInput)}`);
 
-        logger.success(`Content updated successfully. ID: ${req.params.id}, Title: "${updatedContent.title}"`);
-        res.json(updatedContent);
+        // Aplicar los cambios directamente al objeto encontrado
+        Object.keys(sanitizedInput).forEach(key => {
+            content[key] = sanitizedInput[key];
+        });
+        
+        // Guardar el documento usando save() para asegurar que se activen los hooks y validaciones
+        await content.save();
+        
+        // Verificar resultado de la actualización
+        logger.success(`Document saved with _id: ${content._id}`);
+
+        // Crear un log detallado de los cambios
+        let changesLog = [];
+        if (originalValues.statusEs !== content.statusEs) {
+            changesLog.push(`statusEs: ${originalValues.statusEs || 'undefined'} -> ${content.statusEs || 'undefined'}`);
+        }
+        if (originalValues.statusEn !== content.statusEn) {
+            changesLog.push(`statusEn: ${originalValues.statusEn || 'undefined'} -> ${content.statusEn || 'undefined'}`);
+        }
+        if (originalValues.publishedEs !== content.publishedEs) {
+            changesLog.push(`publishedEs: ${originalValues.publishedEs} -> ${content.publishedEs}`);
+        }
+        if (originalValues.publishedEn !== content.publishedEn) {
+            changesLog.push(`publishedEn: ${originalValues.publishedEn} -> ${content.publishedEn}`);
+        }
+        
+        if (changesLog.length > 0) {
+            logger.success(`Content updated with changes: ${changesLog.join(', ')}. ID: ${req.params.id}`);
+        } else {
+            logger.error(`⚠️ No changes detected after update! ID: ${req.params.id}`);
+        }
+
+        res.json(content);
     } catch (error) {
         logger.error(`Error updating content. ID: ${req.params.id}`, error);
 
@@ -400,8 +543,11 @@ router.patch('/:id', async (req, res) => {
         }
 
         // Lista de campos permitidos para actualización parcial
-        const allowedFields = ['publishedEs', 'publishedEn', 'publishedDateEs', 'publishedDateEn'];
+        const allowedFields = ['publishedEs', 'publishedEn', 'publishedDateEs', 'publishedDateEn', 'statusEs', 'statusEn'];
         const updateData = {};
+
+        // Log de datos recibidos para depuración
+        logger.success(`PATCH request received. ID: ${req.params.id}, Body: ${JSON.stringify(req.body)}`);
 
         // Verificar y procesar solo campos permitidos para actualización de estado
         for (const field of allowedFields) {
@@ -423,31 +569,77 @@ router.patch('/:id', async (req, res) => {
                     } else {
                         updateData[field] = null;
                     }
+                } else if (field === 'statusEs' || field === 'statusEn') {
+                    // Validar que el valor esté entre los permitidos
+                    const validStatuses = ['pending', 'in-progress', 'published'];
+                    const status = String(req.body[field]);
+                    if (!validStatuses.includes(status)) {
+                        logger.error(`Invalid status value: ${status} for field ${field}. ID: ${req.params.id}`);
+                        return res.status(400).json({ 
+                            message: 'Invalid status value',
+                            field: field,
+                            value: status, 
+                            valid: validStatuses
+                        });
+                    }
+                    
+                    updateData[field] = status;
+                    
+                    // Actualizar publishedEs/publishedEn en función del status
+                    if (field === 'statusEs') {
+                        updateData.publishedEs = (status === 'published');
+                        
+                        // Si se publica, actualizar automáticamente la fecha
+                        if (status === 'published') {
+                            updateData.publishedDateEs = new Date();
+                        }
+                    } else if (field === 'statusEn') {
+                        updateData.publishedEn = (status === 'published');
+                        
+                        // Si se publica, actualizar automáticamente la fecha
+                        if (status === 'published') {
+                            updateData.publishedDateEn = new Date();
+                        }
+                    }
                 }
             }
         }
 
         // Si no hay campos válidos para actualizar, retornar error
         if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({ message: 'No valid fields to update' });
+            logger.error(`No valid fields to update. ID: ${req.params.id}, Body: ${JSON.stringify(req.body)}`);
+            return res.status(400).json({ 
+                message: 'No valid fields to update',
+                received: req.body,
+                allowed: allowedFields
+            });
         }
 
-        const updatedContent = await Content.findByIdAndUpdate(
-            req.params.id,
-            { $set: updateData },
-            { new: true, runValidators: true }
-        );
+        // Log de los datos que se actualizarán
+        logger.success(`Updating content with: ${JSON.stringify(updateData)}. ID: ${req.params.id}`);
 
-        // Determinar el campo y estado para el registro de log
-        const statusField = Object.keys(updateData)[0];
-        const language = statusField.replace('published', '');
-        const status = updateData[statusField] ? 'published' : 'pending';
-        logger.success(`Publication status updated: ${language} - ${status}. ID: ${req.params.id}`);
+        // Usar save() en lugar de findByIdAndUpdate para asegurar que se activen hooks y validaciones
+        Object.keys(updateData).forEach(key => {
+            content[key] = updateData[key];
+        });
 
-        res.json(updatedContent);
+        await content.save();
+
+        // Log detallado de los cambios realizados
+        const changesLog = Object.keys(updateData).map(field => 
+            `${field}: ${content[field]}`
+        ).join(', ');
+
+        logger.success(`Content updated successfully. Updated fields: ${changesLog}. ID: ${req.params.id}`);
+
+        res.json(content);
     } catch (error) {
         logger.error(`Error updating publication status. ID: ${req.params.id}`, error);
-        res.status(400).json({ message: 'Error updating status' }); // No exponer el mensaje de error específico
+        res.status(400).json({ 
+            message: 'Error updating status',
+            error: error.message,
+            id: req.params.id
+        });
     }
 });
 

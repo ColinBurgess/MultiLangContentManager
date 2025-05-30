@@ -15,6 +15,17 @@ const contentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    // New status fields with enum values
+    statusEs: {
+        type: String,
+        enum: ['pending', 'in-progress', 'published'],
+        default: 'pending'
+    },
+    statusEn: {
+        type: String,
+        enum: ['pending', 'in-progress', 'published'],
+        default: 'pending'
+    },
     publishedDateEs: {
         type: Date,
         default: null
@@ -51,16 +62,16 @@ const contentSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    // Tags list (500 chars)
+    // Tags list (1000 chars)
     tagsListEs: {
         type: String,
         trim: true,
-        maxlength: 500
+        maxlength: 1000
     },
     tagsListEn: {
         type: String,
         trim: true,
-        maxlength: 500
+        maxlength: 1000
     },
     // Pinned comment
     pinnedCommentEs: {
