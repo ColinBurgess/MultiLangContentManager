@@ -62,22 +62,25 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">Contents</h5>
-                                <div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <button class="btn btn-sm btn-outline-primary" id="platformConfigBtn" title="Configure Platforms">
+                                        <i class="bi bi-gear"></i> Platforms
+                                    </button>
                                     <input type="text" class="form-control" placeholder="Search..." id="searchInput">
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="alert alert-info mb-4 alert-dismissible fade show" id="languageIndicatorInfo">
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" id="closeInfoAlert"></button>
-                                    <i class="bi bi-info-circle me-2"></i> The ES/EN indicators show publication status. Published indicators are clickable and lead to the content URL. To modify statuses, use the edit view.
+                                    <i class="bi bi-info-circle me-2"></i> Los indicadores ES/EN ahora muestran el estado por plataforma específica. Los indicadores verdes son enlaces a contenido publicado. Para modificar estados, usa la vista de edición.
                                 </div>
 
                                 <table class="card-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 40%">Title</th>
-                                            <th style="width: 15%">Status</th>
-                                            <th style="width: 30%">Tags</th>
+                                            <th style="width: 30%">Title</th>
+                                            <th style="width: 35%">Platform Status</th>
+                                            <th style="width: 20%">Tags</th>
                                             <th style="width: 15%" class="text-end">Actions</th>
                                         </tr>
                                     </thead>
@@ -111,6 +114,39 @@
                         <a href="#" class="btn btn-primary" id="editContentBtn">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Configuration Modal -->
+    <div id="platformConfigModalContainer" class="modal-container">
+        <div class="modal-backdrop" id="platformConfigModalBackdrop" style="display: none;"></div>
+        <div class="modal-wrapper" role="dialog" aria-modal="true" aria-labelledby="platformConfigModalTitle" id="platformConfigModal" style="display: none;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="platformConfigModalTitle">
+                            <i class="bi bi-gear me-2"></i>Configure Platforms
+                        </h5>
+                        <button type="button" class="btn-close" id="closePlatformConfigModal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted mb-3">Choose which platforms to display in the status indicators:</p>
+                        <div id="platformConfigList" class="platform-config-list">
+                            <!-- Platform toggles will be dynamically added here -->
+                        </div>
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Platforms are ordered by priority: High priority platforms appear first.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="resetPlatformConfig">Reset to Default</button>
+                        <button type="button" class="btn btn-primary" id="savePlatformConfig">Save Changes</button>
                     </div>
                 </div>
             </div>

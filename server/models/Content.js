@@ -6,7 +6,7 @@ const contentSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // Publication status and URLs
+    // Publication status and URLs (legacy - mantener para compatibilidad)
     publishedEs: {
         type: Boolean,
         default: false
@@ -15,7 +15,7 @@ const contentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    // New status fields with enum values
+    // New status fields with enum values (legacy - mantener para compatibilidad)
     statusEs: {
         type: String,
         enum: ['pending', 'in-progress', 'published'],
@@ -43,6 +43,160 @@ const contentSchema = new mongoose.Schema({
         type: String,
         trim: true,
         default: ''
+    },
+
+    // NEW: Platform-specific publication status
+    platformStatus: {
+        youtube: {
+            statusEs: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            statusEn: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            urlEs: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            urlEn: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            publishedDateEs: {
+                type: Date,
+                default: null
+            },
+            publishedDateEn: {
+                type: Date,
+                default: null
+            }
+        },
+        tiktok: {
+            statusEs: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            statusEn: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            urlEs: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            urlEn: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            publishedDateEs: {
+                type: Date,
+                default: null
+            },
+            publishedDateEn: {
+                type: Date,
+                default: null
+            }
+        },
+        instagram: {
+            statusEs: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            statusEn: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            urlEs: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            urlEn: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            publishedDateEs: {
+                type: Date,
+                default: null
+            },
+            publishedDateEn: {
+                type: Date,
+                default: null
+            }
+        },
+        twitter: {
+            statusEs: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            statusEn: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            urlEs: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            urlEn: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            publishedDateEs: {
+                type: Date,
+                default: null
+            },
+            publishedDateEn: {
+                type: Date,
+                default: null
+            }
+        },
+        facebook: {
+            statusEs: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            statusEn: {
+                type: String,
+                enum: ['pending', 'in-progress', 'published'],
+                default: 'pending'
+            },
+            urlEs: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            urlEn: {
+                type: String,
+                trim: true,
+                default: ''
+            },
+            publishedDateEs: {
+                type: Date,
+                default: null
+            },
+            publishedDateEn: {
+                type: Date,
+                default: null
+            }
+        }
     },
     // Teleprompter
     teleprompterEs: {

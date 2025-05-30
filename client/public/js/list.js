@@ -22,6 +22,13 @@ document.addEventListener('DOMContentLoaded', function() {
         setCookie('hideLanguageInfo', 'true', 30); // Cookie expira en 30 días
         infoAlert.classList.add('d-none');
     });
+
+    // Platform configuration modal event listeners
+    document.getElementById('platformConfigBtn').addEventListener('click', showPlatformConfigModal);
+    document.getElementById('closePlatformConfigModal').addEventListener('click', closePlatformConfigModal);
+    document.getElementById('platformConfigModalBackdrop').addEventListener('click', closePlatformConfigModal);
+    document.getElementById('resetPlatformConfig').addEventListener('click', resetPlatformConfig);
+    document.getElementById('savePlatformConfig').addEventListener('click', closePlatformConfigModal);
 });
 
 function loadContentData() {
@@ -63,8 +70,50 @@ function loadContentData() {
                         publishedUrlEs: "https://example.com/es/video1",
                         publishedUrlEn: "",
                         tags: "product, marketing, startup",
-                        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 días atrás
-                        publishedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 día atrás
+                        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                        publishedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                        platformStatus: {
+                            youtube: {
+                                statusEs: 'published',
+                                statusEn: 'in-progress',
+                                urlEs: 'https://youtube.com/watch?v=1',
+                                urlEn: '',
+                                publishedDateEs: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: null
+                            },
+                            tiktok: {
+                                statusEs: 'published',
+                                statusEn: 'pending',
+                                urlEs: 'https://tiktok.com/@user/video1',
+                                urlEn: '',
+                                publishedDateEs: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: null
+                            },
+                            instagram: {
+                                statusEs: 'in-progress',
+                                statusEn: 'pending',
+                                urlEs: '',
+                                urlEn: '',
+                                publishedDateEs: null,
+                                publishedDateEn: null
+                            },
+                            twitter: {
+                                statusEs: 'published',
+                                statusEn: 'published',
+                                urlEs: 'https://twitter.com/user/status/1',
+                                urlEn: 'https://twitter.com/user/status/2',
+                                publishedDateEs: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+                            },
+                            facebook: {
+                                statusEs: 'pending',
+                                statusEn: 'pending',
+                                urlEs: '',
+                                urlEn: '',
+                                publishedDateEs: null,
+                                publishedDateEn: null
+                            }
+                        }
                     },
                     {
                         id: 2,
@@ -80,8 +129,50 @@ function loadContentData() {
                         publishedUrlEs: "https://example.com/es/video2",
                         publishedUrlEn: "https://example.com/en/video2",
                         tags: "webdev, coding, html, css",
-                        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 días atrás
-                        publishedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 días atrás
+                        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        publishedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                        platformStatus: {
+                            youtube: {
+                                statusEs: 'published',
+                                statusEn: 'published',
+                                urlEs: 'https://youtube.com/watch?v=2es',
+                                urlEn: 'https://youtube.com/watch?v=2en',
+                                publishedDateEs: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+                            },
+                            tiktok: {
+                                statusEs: 'published',
+                                statusEn: 'in-progress',
+                                urlEs: 'https://tiktok.com/@user/video2',
+                                urlEn: '',
+                                publishedDateEs: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: null
+                            },
+                            instagram: {
+                                statusEs: 'published',
+                                statusEn: 'published',
+                                urlEs: 'https://instagram.com/p/post2es',
+                                urlEn: 'https://instagram.com/p/post2en',
+                                publishedDateEs: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+                            },
+                            twitter: {
+                                statusEs: 'pending',
+                                statusEn: 'pending',
+                                urlEs: '',
+                                urlEn: '',
+                                publishedDateEs: null,
+                                publishedDateEn: null
+                            },
+                            facebook: {
+                                statusEs: 'in-progress',
+                                statusEn: 'in-progress',
+                                urlEs: '',
+                                urlEn: '',
+                                publishedDateEs: null,
+                                publishedDateEn: null
+                            }
+                        }
                     },
                     {
                         id: 3,
@@ -97,8 +188,50 @@ function loadContentData() {
                         publishedUrlEs: "",
                         publishedUrlEn: "https://example.com/en/video3",
                         tags: "design, ux, mobile, app",
-                        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 días atrás
-                        publishedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 días atrás
+                        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                        publishedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+                        platformStatus: {
+                            youtube: {
+                                statusEs: 'pending',
+                                statusEn: 'published',
+                                urlEs: '',
+                                urlEn: 'https://youtube.com/watch?v=3en',
+                                publishedDateEs: null,
+                                publishedDateEn: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000)
+                            },
+                            tiktok: {
+                                statusEs: 'in-progress',
+                                statusEn: 'published',
+                                urlEs: '',
+                                urlEn: 'https://tiktok.com/@user/video3',
+                                publishedDateEs: null,
+                                publishedDateEn: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                            },
+                            instagram: {
+                                statusEs: 'pending',
+                                statusEn: 'in-progress',
+                                urlEs: '',
+                                urlEn: '',
+                                publishedDateEs: null,
+                                publishedDateEn: null
+                            },
+                            twitter: {
+                                statusEs: 'published',
+                                statusEn: 'published',
+                                urlEs: 'https://twitter.com/user/status/3es',
+                                urlEn: 'https://twitter.com/user/status/3en',
+                                publishedDateEs: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+                                publishedDateEn: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000)
+                            },
+                            facebook: {
+                                statusEs: 'pending',
+                                statusEn: 'published',
+                                urlEs: '',
+                                urlEn: 'https://facebook.com/posts/3',
+                                publishedDateEs: null,
+                                publishedDateEn: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+                            }
+                        }
                     },
                     {
                         id: 4,
@@ -216,9 +349,8 @@ function displayContents(contents) {
         // Status column
         const statusCell = document.createElement('td');
         statusCell.innerHTML = `
-            <div class="d-flex align-items-center">
-                ${getLanguageIndicator('ES', statusEs, content.publishedUrlEs)}
-                ${getLanguageIndicator('EN', statusEn, content.publishedUrlEn)}
+            <div class="platform-status-container">
+                ${getPlatformStatusIndicators(content)}
             </div>
         `;
         // Tags column
@@ -275,19 +407,103 @@ function displayContents(contents) {
     });
 }
 
-function getLanguageIndicator(lang, status, url) {
+// Platform configuration management
+function getPlatformConfig() {
+    const defaultConfig = {
+        youtube: { name: 'YouTube', icon: '📺', priority: 'high', active: true },
+        tiktok: { name: 'TikTok', icon: '📱', priority: 'high', active: true },
+        instagram: { name: 'Instagram', icon: '📷', priority: 'medium', active: true },
+        twitter: { name: 'X', icon: '🐦', priority: 'medium', active: true },
+        facebook: { name: 'Facebook', icon: '📘', priority: 'low', active: false }
+    };
+
+    const savedConfig = localStorage.getItem('platformConfig');
+    if (savedConfig) {
+        try {
+            return { ...defaultConfig, ...JSON.parse(savedConfig) };
+        } catch (e) {
+            console.warn('Invalid platform config in localStorage, using defaults');
+            return defaultConfig;
+        }
+    }
+    return defaultConfig;
+}
+
+function setPlatformConfig(config) {
+    localStorage.setItem('platformConfig', JSON.stringify(config));
+    // Refresh the display
+    const contentData = JSON.parse(localStorage.getItem('contentData'));
+    if (contentData) {
+        displayContents(contentData);
+    }
+}
+
+function togglePlatform(platformKey) {
+    const config = getPlatformConfig();
+    if (config[platformKey]) {
+        config[platformKey].active = !config[platformKey].active;
+        setPlatformConfig(config);
+    }
+}
+
+function getPlatformStatusIndicators(content) {
+    // Get dynamic configuration
+    const platformConfig = getPlatformConfig();
+
+    // Sort platforms by priority and filter active ones
+    const sortedPlatforms = Object.entries(platformConfig)
+        .filter(([key, config]) => config.active)
+        .sort((a, b) => {
+            const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
+            return priorityOrder[a[1].priority] - priorityOrder[b[1].priority];
+        });
+
+    let indicators = '';
+
+    sortedPlatforms.forEach(([key, config]) => {
+        // Get platform status or use fallback
+        const platformData = content.platformStatus?.[key];
+        let statusEs, statusEn, urlEs, urlEn;
+
+        if (platformData) {
+            statusEs = platformData.statusEs || 'pending';
+            statusEn = platformData.statusEn || 'pending';
+            urlEs = platformData.urlEs || '';
+            urlEn = platformData.urlEn || '';
+        } else {
+            // Fallback: use general status for backward compatibility
+            statusEs = content.statusEs || (content.publishedEs ? 'published' : 'pending');
+            statusEn = content.statusEn || (content.publishedEn ? 'published' : 'pending');
+            urlEs = content.publishedUrlEs || '';
+            urlEn = content.publishedUrlEn || '';
+        }
+
+        const priorityClass = `priority-${config.priority}`;
+
+        indicators += `<span class="platform-indicator ${priorityClass}">
+            <span class="platform-name">
+                <span class="platform-icon">${config.icon}</span>
+                ${config.name}
+            </span>
+            ${getPlatformLanguageIndicator('ES', statusEs, urlEs)}
+            ${getPlatformLanguageIndicator('EN', statusEn, urlEn)}
+        </span>`;
+    });
+
+    return indicators;
+}
+
+function getPlatformLanguageIndicator(lang, status, url) {
     let statusClass = 'pending';
     if (status === 'in-progress') statusClass = 'in-progress';
     if (status === 'published') statusClass = 'published';
 
+    const indicator = `<span class="platform-lang-indicator ${statusClass}" title="${lang} status: ${status}">${lang}</span>`;
+
     if (status === 'published' && url) {
-        return `<a href="${url}" target="_blank" class="language-indicator ${statusClass}" title="${lang} content is published">
-            ${lang}
-        </a>`;
+        return `<a href="${url}" target="_blank" class="platform-lang-link">${indicator}</a>`;
     } else {
-        return `<span class="language-indicator ${statusClass}" title="${lang} content status: ${status}">
-            ${lang}
-        </span>`;
+        return indicator;
     }
 }
 
@@ -653,6 +869,71 @@ function showCopyNotification(message, type) {
     setTimeout(() => {
         notification.remove();
     }, 2000);
+}
+
+// Platform Configuration Modal Functions
+function showPlatformConfigModal() {
+    const configList = document.getElementById('platformConfigList');
+    const config = getPlatformConfig();
+
+    configList.innerHTML = '';
+
+    // Sort platforms by priority for display
+    const sortedPlatforms = Object.entries(config).sort((a, b) => {
+        const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
+        return priorityOrder[a[1].priority] - priorityOrder[b[1].priority];
+    });
+
+    sortedPlatforms.forEach(([key, platform]) => {
+        const item = document.createElement('div');
+        item.className = 'platform-config-item';
+        item.innerHTML = `
+            <div class="platform-config-info">
+                <span class="platform-config-icon">${platform.icon}</span>
+                <div class="platform-config-details">
+                    <div class="platform-config-name">${platform.name}</div>
+                    <div class="platform-config-priority ${platform.priority}">${platform.priority} priority</div>
+                </div>
+            </div>
+            <label class="platform-toggle">
+                <input type="checkbox" ${platform.active ? 'checked' : ''} data-platform="${key}">
+                <span class="platform-toggle-slider round"></span>
+            </label>
+        `;
+        configList.appendChild(item);
+    });
+
+    // Add event listeners to toggles
+    configList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const platformKey = this.dataset.platform;
+            const config = getPlatformConfig();
+            config[platformKey].active = this.checked;
+            setPlatformConfig(config);
+        });
+    });
+
+    document.getElementById('platformConfigModalBackdrop').style.display = 'block';
+    document.getElementById('platformConfigModal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+function closePlatformConfigModal() {
+    document.getElementById('platformConfigModalBackdrop').style.display = 'none';
+    document.getElementById('platformConfigModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+function resetPlatformConfig() {
+    if (confirm('¿Estás seguro de que quieres resetear la configuración de plataformas a los valores por defecto?')) {
+        localStorage.removeItem('platformConfig');
+        closePlatformConfigModal();
+        // Refresh the display
+        const contentData = JSON.parse(localStorage.getItem('contentData'));
+        if (contentData) {
+            displayContents(contentData);
+        }
+    }
 }
 
 // Cookie functions

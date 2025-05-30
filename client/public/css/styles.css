@@ -931,3 +931,245 @@ textarea::-webkit-scrollbar-thumb {
     color: rgba(255, 255, 255, 0.8) !important;
     font-weight: 500;
 }
+
+/* Platform Status Indicators - IMPROVED */
+.platform-status-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: 0.75rem;
+    max-width: 100%;
+}
+
+.platform-indicator {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    background-color: var(--bg-card-header);
+    border-radius: 4px;
+    padding: 2px 6px;
+    border: 1px solid var(--border-color);
+    min-width: fit-content;
+}
+
+.platform-name {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.platform-icon {
+    font-size: 0.7rem;
+    margin-right: 1px;
+}
+
+.platform-lang-indicator {
+    display: inline-block;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    margin-left: 1px;
+    min-width: 16px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.platform-lang-indicator.pending {
+    background-color: #6c757d;
+    color: white;
+}
+
+.platform-lang-indicator.in-progress {
+    background-color: #ffc107;
+    color: black;
+}
+
+.platform-lang-indicator.published {
+    background-color: #10B981;
+    color: white;
+}
+
+.platform-lang-link {
+    text-decoration: none;
+}
+
+.platform-lang-link:hover .platform-lang-indicator.published {
+    background-color: #059669;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+/* Hover effect for entire platform indicator */
+.platform-indicator:hover {
+    background-color: var(--bg-table-row-hover);
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Priority platforms get different styling */
+.platform-indicator.priority-high {
+    border-color: var(--accent-color);
+    box-shadow: 0 1px 3px rgba(2, 132, 199, 0.2);
+}
+
+.platform-indicator.priority-medium {
+    border-color: var(--success-color);
+}
+
+/* Responsive adjustments for platform indicators */
+@media (max-width: 768px) {
+    .platform-status-container {
+        gap: 4px 6px;
+    }
+
+    .platform-indicator {
+        padding: 1px 4px;
+    }
+
+    .platform-name {
+        font-size: 0.6rem;
+    }
+
+    .platform-lang-indicator {
+        font-size: 0.55rem;
+        padding: 0px 2px;
+        min-width: 14px;
+    }
+
+    .platform-icon {
+        font-size: 0.65rem;
+    }
+}
+
+/* Platform Configuration Modal */
+.platform-config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.platform-config-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: var(--bg-card-header);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.platform-config-item:hover {
+    background-color: var(--bg-table-row-hover);
+    border-color: var(--accent-color);
+}
+
+.platform-config-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.platform-config-icon {
+    font-size: 1rem;
+}
+
+.platform-config-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.platform-config-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.platform-config-priority {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+.platform-config-priority.high {
+    color: var(--accent-color);
+}
+
+.platform-config-priority.medium {
+    color: var(--success-color);
+}
+
+.platform-config-priority.low {
+    color: var(--warning-color);
+}
+
+.platform-toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.platform-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.platform-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.platform-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.platform-toggle input:checked + .platform-toggle-slider {
+    background-color: var(--accent-color);
+}
+
+.platform-toggle input:checked + .platform-toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.platform-toggle-slider.round {
+    border-radius: 24px;
+}
+
+/* Quick toggle buttons */
+.btn-outline-primary {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
