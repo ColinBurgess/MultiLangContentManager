@@ -82,6 +82,16 @@ MultiLangContentManager/
 │       ├── test_parser.py # Basic parser tests
 │       ├── test_complex.py # Complex input tests
 │       └── test_curl.py   # API submission tests
+├── dev-scripts/           # Development and maintenance scripts
+│   ├── migrations/        # Database migration scripts
+│   │   ├── migrate-platform-data.js    # Platform data structure migration
+│   │   ├── migrate-statuses.js         # Status field migration
+│   │   └── safe-migrate-status.js      # Safe migration with backup
+│   ├── testing/           # Testing and data generation scripts
+│   │   ├── safe-insert-test-data.js    # Safe test data insertion
+│   │   ├── insert-test-data.js         # Quick test data insertion
+│   │   └── list-database-structure.js  # Database structure analysis
+│   └── README.md          # Development scripts documentation
 ├── utils/
 │   ├── credentials.js    # Credentials utility
 │   └── logger.js         # Logging system
@@ -90,6 +100,7 @@ MultiLangContentManager/
 │   └── README-KANBAN.md  # Kanban board documentation
 ├── scripts/
 │   └── encrypt-credentials.js # Encryption script
+├── LESSONS_LEARNED.md    # Critical lessons learned during development
 └── package.json         # Dependencies and scripts
 ```
 
@@ -124,6 +135,35 @@ MultiLangContentManager/
    node scripts/encrypt-credentials.js
    ```
    Follow the on-screen instructions to set up credentials securely.
+
+## Development Scripts 🔧
+
+The project includes a collection of development and maintenance scripts organized in the `dev-scripts/` directory:
+
+### Database Migrations
+- **Platform Data Migration**: Migrate existing content to support platform-specific status tracking
+- **Status Field Migration**: Convert boolean published fields to descriptive status fields
+- **Safe Migration**: Migration scripts with automatic backup and rollback capabilities
+
+### Testing & Data Management
+- **Test Data Insertion**: Scripts to safely insert test data for development
+- **Database Structure Analysis**: Tools to examine and understand database schema
+- **Data Cleanup**: Utilities for resetting development databases
+
+### Usage
+```bash
+# Analyze current database structure
+node dev-scripts/testing/list-database-structure.js
+
+# Insert test data safely
+node dev-scripts/testing/safe-insert-test-data.js
+
+# Migrate to new data structure (if needed)
+node dev-scripts/migrations/safe-migrate-status.js migrate
+node dev-scripts/migrations/migrate-platform-data.js
+```
+
+For detailed documentation of all available scripts, see [`dev-scripts/README.md`](dev-scripts/README.md).
 
 ## Usage 🚀
 

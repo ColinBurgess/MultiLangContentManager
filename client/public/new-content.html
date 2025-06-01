@@ -56,105 +56,115 @@
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">Teleprompter</h6>
-                                    <div class="mb-3">
-                                        <label for="teleprompterEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="teleprompterEs" rows="4"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="teleprompterEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="teleprompterEn" rows="4"></textarea>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="teleprompterEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="teleprompterEs" name="teleprompterEs" rows="8" placeholder="Texto del teleprompter en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="teleprompterEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="teleprompterEn" name="teleprompterEn" rows="8" placeholder="Teleprompter text in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">Video Description</h6>
-                                    <div class="mb-3">
-                                        <label for="videoDescriptionEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="videoDescriptionEs" rows="3"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="videoDescriptionEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="videoDescriptionEn" rows="3"></textarea>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="videoDescriptionEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="videoDescriptionEs" name="videoDescriptionEs" rows="6" placeholder="Descripción del video en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="videoDescriptionEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="videoDescriptionEn" name="videoDescriptionEn" rows="6" placeholder="Video description in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">Tags List (max 500 characters)</h6>
-                                    <div class="mb-3">
-                                        <label for="tagsListEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="tagsListEs" rows="2" maxlength="500"></textarea>
-                                        <div class="form-text mt-1">Characters remaining: <span id="tagsListEsCount">500</span></div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="tagsListEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="tagsListEn" rows="2" maxlength="500"></textarea>
-                                        <div class="form-text mt-1">Characters remaining: <span id="tagsListEnCount">500</span></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="tagsListEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <input type="text" class="form-control" id="tagsListEs" name="tagsListEs" placeholder="etiqueta1, etiqueta2, etiqueta3...">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="tagsListEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <input type="text" class="form-control" id="tagsListEn" name="tagsListEn" placeholder="tag1, tag2, tag3...">
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">Pinned Comment</h6>
-                                    <div class="mb-3">
-                                        <label for="pinnedCommentEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="pinnedCommentEs" rows="2"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="pinnedCommentEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="pinnedCommentEn" rows="2"></textarea>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="pinnedCommentEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="pinnedCommentEs" name="pinnedCommentEs" rows="3" placeholder="Comentario fijado en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="pinnedCommentEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="pinnedCommentEn" name="pinnedCommentEn" rows="3" placeholder="Pinned comment in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">TikTok Description</h6>
-                                    <div class="mb-3">
-                                        <label for="tiktokDescriptionEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="tiktokDescriptionEs" rows="2"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="tiktokDescriptionEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="tiktokDescriptionEn" rows="2"></textarea>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="tiktokDescriptionEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="tiktokDescriptionEs" name="tiktokDescriptionEs" rows="4" placeholder="Descripción para TikTok en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="tiktokDescriptionEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="tiktokDescriptionEn" name="tiktokDescriptionEn" rows="4" placeholder="TikTok description in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">X (Twitter) Post (max 180 characters)</h6>
-                                    <div class="mb-3">
-                                        <label for="twitterPostEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="twitterPostEs" rows="2" maxlength="180"></textarea>
-                                        <div class="form-text mt-1">Characters remaining: <span id="twitterPostEsCount">180</span></div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="twitterPostEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="twitterPostEn" rows="2" maxlength="180"></textarea>
-                                        <div class="form-text mt-1">Characters remaining: <span id="twitterPostEnCount">180</span></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="twitterPostEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="twitterPostEs" name="twitterPostEs" rows="3" placeholder="Post para X (Twitter) en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="twitterPostEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="twitterPostEn" name="twitterPostEn" rows="3" placeholder="X (Twitter) post in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <h6 class="mb-3 border-bottom pb-2 text-secondary">Facebook Description</h6>
-                                    <div class="mb-3">
-                                        <label for="facebookDescriptionEs" class="form-label">
-                                            <span class="language-indicator not-published">ES</span> Spanish
-                                        </label>
-                                        <textarea class="form-control" id="facebookDescriptionEs" rows="3"></textarea>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="facebookDescriptionEn" class="form-label">
-                                            <span class="language-indicator not-published">EN</span> English
-                                        </label>
-                                        <textarea class="form-control" id="facebookDescriptionEn" rows="3"></textarea>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="facebookDescriptionEs" class="form-label">
+                                                <span class="language-indicator editing">ES</span> Spanish
+                                            </label>
+                                            <textarea class="form-control" id="facebookDescriptionEs" name="facebookDescriptionEs" rows="4" placeholder="Descripción para Facebook en español..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="facebookDescriptionEn" class="form-label">
+                                                <span class="language-indicator editing">EN</span> English
+                                            </label>
+                                            <textarea class="form-control" id="facebookDescriptionEn" name="facebookDescriptionEn" rows="4" placeholder="Facebook description in English..."></textarea>
+                                        </div>
                                     </div>
 
                                     <div class="mb-4">
@@ -168,63 +178,316 @@
                                         <div class="form-text mt-1">These tags are used to categorize and search for content in the application</div>
                                     </div>
 
-                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Publication Status</h6>
-                                    <div class="row mb-4">
-                                        <div class="col-md-6">
-                                            <div class="card mb-3">
-                                                <div class="card-header">
-                                                    <h6 class="mb-0">Spanish</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="statusEs" class="form-label">Status</label>
-                                                        <select class="form-select" id="statusEs" onchange="updateLanguageIndicator('Es')">
-                                                            <option value="pending">Pendiente en Español</option>
-                                                            <option value="in-progress">In-Progress en Español</option>
-                                                            <option value="published">Publicado en Español</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="publishedDateEs" class="form-label">Publication Date</label>
-                                                        <input type="date" class="form-control" id="publishedDateEs">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="publishedUrlEs" class="form-label">URL of Spanish content</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text bg-transparent border-end-0 text-secondary">
-                                                                <i class="bi bi-link-45deg"></i>
-                                                            </span>
-                                                            <input type="url" class="form-control border-start-0" id="publishedUrlEs" placeholder="https://...">
+                                    <h6 class="mb-3 border-bottom pb-2 text-secondary">Publication Status by Platform</h6>
+                                    <div class="mb-4">
+                                        <div class="platform-status-tabs">
+                                            <!-- Platform Tabs -->
+                                            <ul class="nav nav-pills mb-3" id="platformTabs" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="youtube-tab" data-bs-toggle="pill" data-bs-target="#youtube-pane" type="button" role="tab">
+                                                        📺 YouTube
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="tiktok-tab" data-bs-toggle="pill" data-bs-target="#tiktok-pane" type="button" role="tab">
+                                                        📱 TikTok
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="instagram-tab" data-bs-toggle="pill" data-bs-target="#instagram-pane" type="button" role="tab">
+                                                        📷 Instagram
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="twitter-tab" data-bs-toggle="pill" data-bs-target="#twitter-pane" type="button" role="tab">
+                                                        🐦 X (Twitter)
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="facebook-tab" data-bs-toggle="pill" data-bs-target="#facebook-pane" type="button" role="tab">
+                                                        📘 Facebook
+                                                    </button>
+                                                </li>
+                                            </ul>
+
+                                            <!-- Platform Content Panes -->
+                                            <div class="tab-content" id="platformTabsContent">
+                                                <!-- YouTube -->
+                                                <div class="tab-pane fade show active" id="youtube-pane" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="youtube_statusEs">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="youtube_publishedDateEs">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">YouTube URL (ES)</label>
+                                                                        <input type="url" class="form-control" id="youtube_urlEs" placeholder="https://youtube.com/watch?v=...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇺🇸 English</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="youtube_statusEn">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="youtube_publishedDateEn">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">YouTube URL (EN)</label>
+                                                                        <input type="url" class="form-control" id="youtube_urlEn" placeholder="https://youtube.com/watch?v=...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h6 class="mb-0">English</h6>
+
+                                                <!-- TikTok -->
+                                                <div class="tab-pane fade" id="tiktok-pane" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="tiktok_statusEs">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="tiktok_publishedDateEs">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">TikTok URL (ES)</label>
+                                                                        <input type="url" class="form-control" id="tiktok_urlEs" placeholder="https://tiktok.com/@user/video/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇺🇸 English</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="tiktok_statusEn">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="tiktok_publishedDateEn">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">TikTok URL (EN)</label>
+                                                                        <input type="url" class="form-control" id="tiktok_urlEn" placeholder="https://tiktok.com/@user/video/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="statusEn" class="form-label">Status</label>
-                                                        <select class="form-select" id="statusEn" onchange="updateLanguageIndicator('En')">
-                                                            <option value="pending">Pending in English</option>
-                                                            <option value="in-progress">In-Progress in English</option>
-                                                            <option value="published">Published in English</option>
-                                                        </select>
+
+                                                <!-- Instagram -->
+                                                <div class="tab-pane fade" id="instagram-pane" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="instagram_statusEs">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="instagram_publishedDateEs">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Instagram URL (ES)</label>
+                                                                        <input type="url" class="form-control" id="instagram_urlEs" placeholder="https://instagram.com/p/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇺🇸 English</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="instagram_statusEn">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="instagram_publishedDateEn">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Instagram URL (EN)</label>
+                                                                        <input type="url" class="form-control" id="instagram_urlEn" placeholder="https://instagram.com/p/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label for="publishedDateEn" class="form-label">Publication Date</label>
-                                                        <input type="date" class="form-control" id="publishedDateEn">
+                                                </div>
+
+                                                <!-- Twitter/X -->
+                                                <div class="tab-pane fade" id="twitter-pane" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="twitter_statusEs">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="twitter_publishedDateEs">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">X/Twitter URL (ES)</label>
+                                                                        <input type="url" class="form-control" id="twitter_urlEs" placeholder="https://twitter.com/user/status/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇺🇸 English</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="twitter_statusEn">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="twitter_publishedDateEn">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">X/Twitter URL (EN)</label>
+                                                                        <input type="url" class="form-control" id="twitter_urlEn" placeholder="https://twitter.com/user/status/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label for="publishedUrlEn" class="form-label">URL of English content</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text bg-transparent border-end-0 text-secondary">
-                                                                <i class="bi bi-link-45deg"></i>
-                                                            </span>
-                                                            <input type="url" class="form-control border-start-0" id="publishedUrlEn" placeholder="https://...">
+                                                </div>
+
+                                                <!-- Facebook -->
+                                                <div class="tab-pane fade" id="facebook-pane" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="facebook_statusEs">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="facebook_publishedDateEs">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Facebook URL (ES)</label>
+                                                                        <input type="url" class="form-control" id="facebook_urlEs" placeholder="https://facebook.com/post/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h6 class="mb-0">🇺🇸 English</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Status</label>
+                                                                        <select class="form-select" id="facebook_statusEn">
+                                                                            <option value="pending">Pending</option>
+                                                                            <option value="in-progress">In Progress</option>
+                                                                            <option value="published">Published</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Publication Date</label>
+                                                                        <input type="date" class="form-control" id="facebook_publishedDateEn">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Facebook URL (EN)</label>
+                                                                        <input type="url" class="form-control" id="facebook_urlEn" placeholder="https://facebook.com/post/...">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

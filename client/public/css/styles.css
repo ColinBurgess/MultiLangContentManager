@@ -498,6 +498,12 @@ body {
     color: white;
 }
 
+.language-indicator.editing {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
 /* Alert Styling */
 .alert {
     border-radius: 6px;
@@ -557,6 +563,62 @@ body {
     15% { opacity: 1; transform: translateY(0); }
     85% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Save Notification */
+.save-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 1050;
+    animation: slideInOut 3s ease-in-out;
+    box-shadow: var(--shadow-md);
+    min-width: 300px;
+    border-left: 4px solid;
+}
+
+.save-notification.success {
+    background-color: var(--success-color);
+    border-left-color: #059669;
+}
+
+.save-notification.error {
+    background-color: var(--danger-color);
+    border-left-color: #C53030;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.notification-content i {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+@keyframes slideInOut {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
 }
 
 /* Content Fields */
@@ -936,9 +998,12 @@ textarea::-webkit-scrollbar-thumb {
 .platform-status-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 12px;
+    gap: 6px 8px;
     font-size: 0.75rem;
     max-width: 100%;
+    max-height: 3.2rem; /* Limit to approximately 2 lines */
+    overflow: hidden;
+    align-content: flex-start;
 }
 
 .platform-indicator {
@@ -948,41 +1013,92 @@ textarea::-webkit-scrollbar-thumb {
     white-space: nowrap;
     background-color: var(--bg-card-header);
     border-radius: 4px;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border: 1px solid var(--border-color);
     min-width: fit-content;
+    height: 1.4rem; /* Fixed height for consistency */
+    flex: 0 0 auto;
+}
+
+/* Status-based border colors (takes precedence over priority) */
+.platform-indicator.has-published {
+    border-color: var(--success-color);
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
+}
+
+.platform-indicator.has-pending {
+    border-color: #6c757d;
+    box-shadow: 0 1px 3px rgba(108, 117, 125, 0.2);
+}
+
+.platform-indicator.has-in-progress {
+    border-color: var(--warning-color);
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2);
+}
+
+.platform-indicator.no-data {
+    border-color: var(--border-color);
+}
+
+/* Priority classes for secondary styling */
+.platform-indicator.priority-high.has-published {
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}
+
+.platform-indicator.priority-medium.has-published {
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+}
+
+.platform-indicator.priority-high.has-pending {
+    box-shadow: 0 1px 3px rgba(108, 117, 125, 0.3);
+}
+
+.platform-indicator.priority-high.has-in-progress {
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
+}
+
+.platform-indicator.priority-medium.has-pending {
+    box-shadow: 0 1px 3px rgba(108, 117, 125, 0.15);
+}
+
+.platform-indicator.priority-medium.has-in-progress {
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.15);
 }
 
 .platform-name {
     font-weight: 500;
     color: var(--text-secondary);
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     display: flex;
     align-items: center;
     gap: 2px;
+    max-width: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .platform-icon {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     margin-right: 1px;
+    flex-shrink: 0;
 }
 
 .platform-lang-indicator {
     display: inline-block;
     padding: 1px 3px;
     border-radius: 2px;
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 600;
     margin-left: 1px;
-    min-width: 16px;
+    min-width: 15px;
     text-align: center;
     text-decoration: none;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 .platform-lang-indicator.pending {
-    background-color: #6c757d;
-    color: white;
+    background-color: #6c757d !important;
+    color: white !important;
 }
 
 .platform-lang-indicator.in-progress {
@@ -1008,44 +1124,27 @@ textarea::-webkit-scrollbar-thumb {
 /* Hover effect for entire platform indicator */
 .platform-indicator:hover {
     background-color: var(--bg-table-row-hover);
-    border-color: var(--accent-color);
     transform: translateY(-1px);
     transition: all 0.2s ease;
 }
 
-/* Priority platforms get different styling */
-.platform-indicator.priority-high {
-    border-color: var(--accent-color);
-    box-shadow: 0 1px 3px rgba(2, 132, 199, 0.2);
-}
-
-.platform-indicator.priority-medium {
+.platform-indicator.has-published:hover {
     border-color: var(--success-color);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
-/* Responsive adjustments for platform indicators */
-@media (max-width: 768px) {
-    .platform-status-container {
-        gap: 4px 6px;
-    }
+.platform-indicator.has-pending:hover {
+    border-color: #6c757d;
+    box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+}
 
-    .platform-indicator {
-        padding: 1px 4px;
-    }
+.platform-indicator.has-in-progress:hover {
+    border-color: var(--warning-color);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
 
-    .platform-name {
-        font-size: 0.6rem;
-    }
-
-    .platform-lang-indicator {
-        font-size: 0.55rem;
-        padding: 0px 2px;
-        min-width: 14px;
-    }
-
-    .platform-icon {
-        font-size: 0.65rem;
-    }
+.platform-indicator.no-data:hover {
+    border-color: var(--text-secondary);
 }
 
 /* Platform Configuration Modal */
@@ -1172,4 +1271,114 @@ textarea::-webkit-scrollbar-thumb {
     background-color: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
+}
+
+/* Bulk Operations Styles */
+.bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: var(--bg-card-header);
+    border-radius: 6px;
+    border: 1px solid var(--accent-color);
+    transition: all 0.3s ease;
+}
+
+.bulk-actions.d-none {
+    display: none !important;
+}
+
+.bulk-column {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.bulk-column.d-none {
+    display: none;
+}
+
+.item-checkbox, #selectAll {
+    cursor: pointer;
+    margin: 0;
+    transform: scale(1.1);
+}
+
+.item-checkbox:checked, #selectAll:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.bulk-mode-row {
+    position: relative;
+}
+
+.bulk-mode-row.selected {
+    background-color: rgba(2, 132, 199, 0.1) !important;
+    border-left: 3px solid var(--accent-color);
+}
+
+.bulk-actions select {
+    min-width: 180px;
+}
+
+.bulk-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Animation for bulk mode toggle */
+.bulk-column {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+}
+
+.bulk-column:not(.d-none) {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Responsive adjustments for bulk operations */
+@media (max-width: 768px) {
+    .bulk-actions {
+        flex-direction: column;
+        gap: 6px;
+        padding: 6px 8px;
+    }
+
+    .bulk-actions select {
+        min-width: 140px;
+        font-size: 0.875rem;
+    }
+
+    .bulk-actions button {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+    }
+}
+
+/* Responsive adjustments for platform indicators */
+@media (max-width: 768px) {
+    .platform-status-container {
+        gap: 4px 6px;
+    }
+
+    .platform-indicator {
+        padding: 1px 4px;
+    }
+
+    .platform-name {
+        font-size: 0.6rem;
+    }
+
+    .platform-lang-indicator {
+        font-size: 0.55rem;
+        padding: 0px 2px;
+        min-width: 14px;
+    }
+
+    .platform-icon {
+        font-size: 0.65rem;
+    }
 }

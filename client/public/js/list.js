@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Bulk selection state
+    let bulkMode = false;
+    let selectedItems = new Set();
+
     // Fetch data from the API
     loadContentData();
 
@@ -29,6 +33,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('platformConfigModalBackdrop').addEventListener('click', closePlatformConfigModal);
     document.getElementById('resetPlatformConfig').addEventListener('click', resetPlatformConfig);
     document.getElementById('savePlatformConfig').addEventListener('click', closePlatformConfigModal);
+
+    // Bulk operations event listeners
+    document.getElementById('bulkModeBtn').addEventListener('click', toggleBulkMode);
+    document.getElementById('cancelBulkMode').addEventListener('click', exitBulkMode);
+    document.getElementById('applyBulkAction').addEventListener('click', applyBulkAction);
+    document.getElementById('selectAll').addEventListener('change', selectAllItems);
 });
 
 function loadContentData() {
@@ -339,6 +349,14 @@ function displayContents(contents) {
                 viewContent(this.dataset.id);
             }
         });
+
+        // Checkbox column (for bulk operations)
+        const checkboxCell = document.createElement('td');
+        checkboxCell.className = 'bulk-column d-none';
+        checkboxCell.innerHTML = `
+            <input type="checkbox" class="form-check-input item-checkbox" data-id="${content._id || content.id}">
+        `;
+
         // Title column
         const titleCell = document.createElement('td');
         titleCell.innerHTML = `
@@ -374,6 +392,8 @@ function displayContents(contents) {
                 </button>
             </div>
         `;
+
+        row.appendChild(checkboxCell);
         row.appendChild(titleCell);
         row.appendChild(statusCell);
         row.appendChild(tagsCell);
@@ -403,6 +423,14 @@ function displayContents(contents) {
             e.stopPropagation(); // Evitar que se propague al clic de la fila
             const contentId = this.dataset.id;
             deleteContent(contentId);
+        });
+    });
+
+    // Add event listeners for bulk selection checkboxes
+    document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            e.stopPropagation(); // Prevent row click
+            handleItemSelection(this);
         });
     });
 }
@@ -461,26 +489,43 @@ function getPlatformStatusIndicators(content) {
     let indicators = '';
 
     sortedPlatforms.forEach(([key, config]) => {
-        // Get platform status or use fallback
+        // Get platform status with improved logic
         const platformData = content.platformStatus?.[key];
         let statusEs, statusEn, urlEs, urlEn;
 
         if (platformData) {
-            statusEs = platformData.statusEs || 'pending';
-            statusEn = platformData.statusEn || 'pending';
+            // Use platform-specific data if available, but fallback to pending if platform data is undefined
+            statusEs = platformData.statusEs !== undefined ? platformData.statusEs : 'pending';
+            statusEn = platformData.statusEn !== undefined ? platformData.statusEn : 'pending';
             urlEs = platformData.urlEs || '';
             urlEn = platformData.urlEn || '';
         } else {
-            // Fallback: use general status for backward compatibility
-            statusEs = content.statusEs || (content.publishedEs ? 'published' : 'pending');
-            statusEn = content.statusEn || (content.publishedEn ? 'published' : 'pending');
-            urlEs = content.publishedUrlEs || '';
-            urlEn = content.publishedUrlEn || '';
+            // Each platform should be independent - default to pending if no platform-specific data
+            statusEs = 'pending';
+            statusEn = 'pending';
+            urlEs = '';
+            urlEn = '';
+        }
+
+        // IMPROVED: Determine container status based on actual publication state
+        const hasPublishedContent = statusEs === 'published' || statusEn === 'published';
+        const hasPendingContent = statusEs === 'pending' || statusEn === 'pending';
+        const hasInProgressContent = statusEs === 'in-progress' || statusEn === 'in-progress';
+
+        let containerStatusClass;
+        if (hasPublishedContent) {
+            containerStatusClass = 'has-published';
+        } else if (hasInProgressContent) {
+            containerStatusClass = 'has-in-progress';
+        } else if (hasPendingContent) {
+            containerStatusClass = 'has-pending';
+        } else {
+            containerStatusClass = 'no-data';
         }
 
         const priorityClass = `priority-${config.priority}`;
 
-        indicators += `<span class="platform-indicator ${priorityClass}">
+        indicators += `<span class="platform-indicator ${priorityClass} ${containerStatusClass}">
             <span class="platform-name">
                 <span class="platform-icon">${config.icon}</span>
                 ${config.name}
@@ -491,6 +536,44 @@ function getPlatformStatusIndicators(content) {
     });
 
     return indicators;
+}
+
+// NEW: Determine status based on published dates (more accurate)
+function determinePlatformStatus(publishedDate, fallbackStatus) {
+    if (publishedDate) {
+        // If there's a published date, it's definitely published
+        return 'published';
+    } else if (fallbackStatus) {
+        // Use the explicit status if available
+        return fallbackStatus;
+    } else {
+        // Default to pending if no date and no explicit status
+        return 'pending';
+    }
+}
+
+// NEW: More conservative general status determination
+function determineGeneralStatus(content, lang) {
+    const publishedField = `published${lang}`;
+    const statusField = `status${lang}`;
+    const publishedDateField = `publishedDate${lang}`;
+
+    // Check if there's a specific published date
+    if (content[publishedDateField]) {
+        return 'published';
+    }
+
+    // Check explicit status
+    if (content[statusField]) {
+        return content[statusField];
+    }
+
+    // Conservative fallback: only published if explicitly marked AND has URL
+    if (content[publishedField] && content[`publishedUrl${lang}`]) {
+        return 'published';
+    }
+
+    return 'pending';
 }
 
 function getPlatformLanguageIndicator(lang, status, url) {
@@ -956,4 +1039,222 @@ function getCookie(name) {
         if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
+}
+
+// Bulk Operations Functions
+let bulkMode = false;
+let selectedItems = new Set();
+
+function toggleBulkMode() {
+    bulkMode = !bulkMode;
+    selectedItems.clear();
+
+    const bulkColumns = document.querySelectorAll('.bulk-column');
+    const bulkActions = document.getElementById('bulkActions');
+    const bulkModeBtn = document.getElementById('bulkModeBtn');
+    const selectAll = document.getElementById('selectAll');
+
+    if (bulkMode) {
+        // Show bulk mode UI
+        bulkColumns.forEach(col => col.classList.remove('d-none'));
+        bulkActions.classList.remove('d-none');
+        bulkModeBtn.innerHTML = '<i class="bi bi-x-square"></i> Exit Select';
+        bulkModeBtn.classList.remove('btn-outline-secondary');
+        bulkModeBtn.classList.add('btn-secondary');
+        selectAll.checked = false;
+    } else {
+        // Hide bulk mode UI
+        exitBulkMode();
+    }
+}
+
+function exitBulkMode() {
+    bulkMode = false;
+    selectedItems.clear();
+
+    const bulkColumns = document.querySelectorAll('.bulk-column');
+    const bulkActions = document.getElementById('bulkActions');
+    const bulkModeBtn = document.getElementById('bulkModeBtn');
+    const selectAll = document.getElementById('selectAll');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+
+    // Hide bulk mode UI
+    bulkColumns.forEach(col => col.classList.add('d-none'));
+    bulkActions.classList.add('d-none');
+    bulkModeBtn.innerHTML = '<i class="bi bi-check2-square"></i> Select';
+    bulkModeBtn.classList.remove('btn-secondary');
+    bulkModeBtn.classList.add('btn-outline-secondary');
+
+    // Uncheck all items
+    selectAll.checked = false;
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+
+function selectAllItems() {
+    const selectAll = document.getElementById('selectAll');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+
+    selectedItems.clear();
+
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+        if (selectAll.checked) {
+            selectedItems.add(checkbox.dataset.id);
+        }
+    });
+
+    updateBulkActionButton();
+}
+
+function handleItemSelection(checkbox) {
+    const itemId = checkbox.dataset.id;
+
+    if (checkbox.checked) {
+        selectedItems.add(itemId);
+    } else {
+        selectedItems.delete(itemId);
+    }
+
+    // Update select all checkbox
+    const selectAll = document.getElementById('selectAll');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const checkedCount = Array.from(itemCheckboxes).filter(cb => cb.checked).length;
+
+    selectAll.checked = checkedCount === itemCheckboxes.length;
+    selectAll.indeterminate = checkedCount > 0 && checkedCount < itemCheckboxes.length;
+
+    updateBulkActionButton();
+}
+
+function updateBulkActionButton() {
+    const applyBtn = document.getElementById('applyBulkAction');
+    applyBtn.disabled = selectedItems.size === 0;
+    applyBtn.textContent = selectedItems.size > 0 ? `Apply (${selectedItems.size})` : 'Apply';
+}
+
+function applyBulkAction() {
+    const action = document.getElementById('bulkActionSelect').value;
+
+    if (!action || selectedItems.size === 0) {
+        alert('Por favor selecciona una acción y al menos un elemento.');
+        return;
+    }
+
+    if (action === 'delete-selected') {
+        if (!confirm(`¿Estás seguro de que quieres eliminar ${selectedItems.size} elementos seleccionados?`)) {
+            return;
+        }
+        bulkDeleteItems();
+    } else if (action === 'export-selected') {
+        exportSelectedItems();
+    } else if (action.startsWith('mark-')) {
+        bulkUpdateStatus(action);
+    }
+}
+
+function bulkUpdateStatus(action) {
+    const updates = [];
+    const [, status, lang] = action.split('-'); // mark-published-es => ['mark', 'published', 'es']
+
+    selectedItems.forEach(itemId => {
+        const update = {
+            id: itemId,
+            platformStatus: {}
+        };
+
+        // Apply to all platforms for now (could be made more specific)
+        const platforms = ['youtube', 'tiktok', 'instagram', 'twitter', 'facebook'];
+        platforms.forEach(platform => {
+            if (!update.platformStatus[platform]) {
+                update.platformStatus[platform] = {};
+            }
+
+            if (lang === 'es') {
+                update.platformStatus[platform].statusEs = status;
+                if (status === 'published') {
+                    update.platformStatus[platform].publishedDateEs = new Date();
+                }
+            } else {
+                update.platformStatus[platform].statusEn = status;
+                if (status === 'published') {
+                    update.platformStatus[platform].publishedDateEn = new Date();
+                }
+            }
+        });
+
+        updates.push(update);
+    });
+
+    // Apply updates via API
+    Promise.all(updates.map(update =>
+        fetch(`/api/contents/${update.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(update)
+        })
+    ))
+    .then(responses => {
+        if (responses.every(r => r.ok)) {
+            alert(`✅ Successfully updated ${selectedItems.size} items!`);
+            loadContentData(); // Refresh the list
+            exitBulkMode();
+        } else {
+            throw new Error('Some updates failed');
+        }
+    })
+    .catch(error => {
+        console.error('Bulk update error:', error);
+        alert('❌ Error updating some items. Please try again.');
+    });
+}
+
+function bulkDeleteItems() {
+    const deletions = Array.from(selectedItems).map(itemId =>
+        fetch(`/api/contents/${itemId}`, { method: 'DELETE' })
+    );
+
+    Promise.all(deletions)
+    .then(responses => {
+        if (responses.every(r => r.ok)) {
+            alert(`✅ Successfully deleted ${selectedItems.size} items!`);
+            loadContentData(); // Refresh the list
+            exitBulkMode();
+        } else {
+            throw new Error('Some deletions failed');
+        }
+    })
+    .catch(error => {
+        console.error('Bulk delete error:', error);
+        alert('❌ Error deleting some items. Please try again.');
+    });
+}
+
+function exportSelectedItems() {
+    const contentData = JSON.parse(localStorage.getItem('contentData'));
+    const selectedContent = contentData.filter(item =>
+        selectedItems.has(item._id || item.id.toString())
+    );
+
+    const exportData = {
+        exportDate: new Date().toISOString(),
+        totalItems: selectedContent.length,
+        items: selectedContent
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `content-export-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert(`📤 Exported ${selectedContent.length} items successfully!`);
 }

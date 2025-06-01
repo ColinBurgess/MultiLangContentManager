@@ -85,31 +85,8 @@ function loadContentData(contentId) {
                 document.getElementById('tags').value = content.tags || '';
             }
 
-            // Set status fields
-            document.getElementById('statusEs').value = content.statusEs || 'pending';
-            document.getElementById('statusEn').value = content.statusEn || 'pending';
-
-            // Update language indicators
-            updateLanguageIndicator('Es');
-            updateLanguageIndicator('En');
-
-            // Set publication dates if they exist
-            if (content.publishedDateEs) {
-                const dateEs = new Date(content.publishedDateEs);
-                document.getElementById('publishedDateEs').value = dateEs.toISOString().split('T')[0];
-            } else {
-                document.getElementById('publishedDateEs').value = '';
-            }
-
-            if (content.publishedDateEn) {
-                const dateEn = new Date(content.publishedDateEn);
-                document.getElementById('publishedDateEn').value = dateEn.toISOString().split('T')[0];
-            } else {
-                document.getElementById('publishedDateEn').value = '';
-            }
-
-            document.getElementById('publishedUrlEs').value = content.publishedUrlEs || '';
-            document.getElementById('publishedUrlEn').value = content.publishedUrlEn || '';
+            // Load platform-specific data
+            loadPlatformData(content);
 
             // Trigger counters update
             document.querySelectorAll('textarea[maxlength]').forEach(textarea => {
@@ -119,9 +96,87 @@ function loadContentData(contentId) {
         })
         .catch(error => {
             console.error('Error fetching content:', error);
-            alert('Error loading content. Please try again.');
-            window.location.href = '/';
+            showSaveNotification('Error al cargar el contenido. Por favor, inténtalo de nuevo.', 'error');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
         });
+}
+
+function loadPlatformData(content) {
+    const platforms = ['youtube', 'tiktok', 'instagram', 'twitter', 'facebook'];
+
+    platforms.forEach(platform => {
+        const platformData = content.platformStatus?.[platform];
+
+        if (platformData) {
+            // Load status
+            const statusEsElement = document.getElementById(`${platform}_statusEs`);
+            const statusEnElement = document.getElementById(`${platform}_statusEn`);
+
+            if (statusEsElement) statusEsElement.value = platformData.statusEs || 'pending';
+            if (statusEnElement) statusEnElement.value = platformData.statusEn || 'pending';
+
+            // Load publication dates
+            if (platformData.publishedDateEs) {
+                const dateEs = new Date(platformData.publishedDateEs);
+                const dateEsElement = document.getElementById(`${platform}_publishedDateEs`);
+                if (dateEsElement) dateEsElement.value = dateEs.toISOString().split('T')[0];
+            }
+
+            if (platformData.publishedDateEn) {
+                const dateEn = new Date(platformData.publishedDateEn);
+                const dateEnElement = document.getElementById(`${platform}_publishedDateEn`);
+                if (dateEnElement) dateEnElement.value = dateEn.toISOString().split('T')[0];
+            }
+
+            // Load URLs
+            const urlEsElement = document.getElementById(`${platform}_urlEs`);
+            const urlEnElement = document.getElementById(`${platform}_urlEn`);
+
+            if (urlEsElement) urlEsElement.value = platformData.urlEs || '';
+            if (urlEnElement) urlEnElement.value = platformData.urlEn || '';
+        }
+    });
+}
+
+function collectPlatformData() {
+    const platforms = ['youtube', 'tiktok', 'instagram', 'twitter', 'facebook'];
+    const platformStatus = {};
+
+    platforms.forEach(platform => {
+        const statusEs = document.getElementById(`${platform}_statusEs`)?.value || 'pending';
+        const statusEn = document.getElementById(`${platform}_statusEn`)?.value || 'pending';
+        const publishedDateEs = document.getElementById(`${platform}_publishedDateEs`)?.value || null;
+        const publishedDateEn = document.getElementById(`${platform}_publishedDateEn`)?.value || null;
+        const urlEs = document.getElementById(`${platform}_urlEs`)?.value || '';
+        const urlEn = document.getElementById(`${platform}_urlEn`)?.value || '';
+
+        platformStatus[platform] = {
+            statusEs,
+            statusEn,
+            urlEs,
+            urlEn,
+            publishedDateEs: publishedDateEs ? new Date(publishedDateEs + 'T00:00:00.000Z') : null,
+            publishedDateEn: publishedDateEn ? new Date(publishedDateEn + 'T00:00:00.000Z') : null
+        };
+
+        // Debug log for the first platform
+        if (platform === 'youtube') {
+            console.log('YouTube data collected:', {
+                statusEs,
+                statusEn,
+                publishedDateEs: publishedDateEs,
+                publishedDateEn: publishedDateEn,
+                publishedDateEsObject: platformStatus[platform].publishedDateEs,
+                publishedDateEnObject: platformStatus[platform].publishedDateEn,
+                urlEs,
+                urlEn
+            });
+        }
+    });
+
+    return platformStatus;
 }
 
 function saveContent(contentId) {
@@ -143,28 +198,23 @@ function saveContent(contentId) {
         facebookDescriptionEs: document.getElementById('facebookDescriptionEs').value,
         facebookDescriptionEn: document.getElementById('facebookDescriptionEn').value,
         tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-        publishedDateEs: document.getElementById('publishedDateEs').value || null,
-        publishedDateEn: document.getElementById('publishedDateEn').value || null,
-        publishedUrlEs: document.getElementById('publishedUrlEs').value,
-        publishedUrlEn: document.getElementById('publishedUrlEn').value
+
+        // Collect platform-specific data
+        platformStatus: collectPlatformData()
     };
 
-    // Capturar explícitamente los valores de status desde los selectores
-    const statusEs = document.getElementById('statusEs').value;
-    const statusEn = document.getElementById('statusEn').value;
-    
-    // Establecer los campos de status y published según los valores seleccionados
-    formData.statusEs = statusEs;
-    formData.statusEn = statusEn;
-    formData.publishedEs = (statusEs === 'published');
-    formData.publishedEn = (statusEn === 'published');
-    
-    console.log('Guardando contenido con estados:', {
-        statusEs: formData.statusEs,
-        statusEn: formData.statusEn,
-        publishedEs: formData.publishedEs,
-        publishedEn: formData.publishedEn
-    });
+    // For backward compatibility, set general published status based on YouTube (primary platform)
+    const youtubeStatus = formData.platformStatus.youtube;
+    formData.publishedEs = youtubeStatus.statusEs === 'published';
+    formData.publishedEn = youtubeStatus.statusEn === 'published';
+    formData.statusEs = youtubeStatus.statusEs;
+    formData.statusEn = youtubeStatus.statusEn;
+    formData.publishedDateEs = youtubeStatus.publishedDateEs;
+    formData.publishedDateEn = youtubeStatus.publishedDateEn;
+    formData.publishedUrlEs = youtubeStatus.urlEs;
+    formData.publishedUrlEn = youtubeStatus.urlEn;
+
+    console.log('Saving content with platform data:', formData);
 
     // API URL and method
     let url = '/api/contents';
@@ -191,22 +241,46 @@ function saveContent(contentId) {
         return response.json();
     })
     .then(data => {
-        console.log('Respuesta del servidor:', data);
-        
-        // Verificar que los estados se hayan actualizado correctamente
-        if (data.statusEs !== formData.statusEs || data.statusEn !== formData.statusEn) {
-            console.warn('Advertencia: Los estados devueltos por el servidor difieren de los enviados:', {
-                enviado: {statusEs: formData.statusEs, statusEn: formData.statusEn},
-                recibido: {statusEs: data.statusEs, statusEn: data.statusEn}
-            });
-        }
-        
+        console.log('Server response:', data);
+
         // Show success message and redirect
-        alert(contentId ? 'Content updated successfully!' : 'Content added successfully!');
-        window.location.href = '/';
+        showSaveNotification(contentId ? 'Contenido actualizado correctamente!' : 'Contenido agregado correctamente!', 'success');
+
+        // Redirect after a short delay to let user see the notification
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1500);
     })
     .catch(error => {
         console.error('Error saving content:', error);
-        alert('Error saving content. Please try again.');
+        showSaveNotification('Error al guardar el contenido. Por favor, inténtalo de nuevo.', 'error');
     });
+}
+
+function showSaveNotification(message, type) {
+    // Check if a notification already exists and remove it
+    const existingNotification = document.querySelector('.save-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `save-notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    // Add to document
+    document.body.appendChild(notification);
+
+    // Remove after animation completes
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
 }

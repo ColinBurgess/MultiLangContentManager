@@ -63,6 +63,26 @@
                             <div class="card-header">
                                 <h5 class="mb-0">Contents</h5>
                                 <div class="d-flex align-items-center gap-3">
+                                    <!-- Bulk Actions -->
+                                    <div class="bulk-actions d-none" id="bulkActions">
+                                        <select class="form-select form-select-sm me-2" id="bulkActionSelect" style="width: auto;">
+                                            <option value="">Bulk Actions</option>
+                                            <option value="mark-published-es">✅ Mark as Published (ES)</option>
+                                            <option value="mark-published-en">✅ Mark as Published (EN)</option>
+                                            <option value="mark-pending-es">⏳ Mark as Pending (ES)</option>
+                                            <option value="mark-pending-en">⏳ Mark as Pending (EN)</option>
+                                            <option value="mark-in-progress-es">🔄 Mark as In Progress (ES)</option>
+                                            <option value="mark-in-progress-en">🔄 Mark as In Progress (EN)</option>
+                                            <option value="export-selected">📤 Export Selected</option>
+                                            <option value="delete-selected">🗑️ Delete Selected</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-primary me-2" id="applyBulkAction">Apply</button>
+                                        <button class="btn btn-sm btn-secondary" id="cancelBulkMode">Cancel</button>
+                                    </div>
+
+                                    <button class="btn btn-sm btn-outline-secondary" id="bulkModeBtn" title="Select Multiple Items">
+                                        <i class="bi bi-check2-square"></i> Select
+                                    </button>
                                     <button class="btn btn-sm btn-outline-primary" id="platformConfigBtn" title="Configure Platforms">
                                         <i class="bi bi-gear"></i> Platforms
                                     </button>
@@ -72,16 +92,19 @@
                             <div class="card-body">
                                 <div class="alert alert-info mb-4 alert-dismissible fade show" id="languageIndicatorInfo">
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" id="closeInfoAlert"></button>
-                                    <i class="bi bi-info-circle me-2"></i> Los indicadores ES/EN ahora muestran el estado por plataforma específica. Los indicadores verdes son enlaces a contenido publicado. Para modificar estados, usa la vista de edición.
+                                    <i class="bi bi-info-circle me-2"></i> Los indicadores ES/EN muestran el estado real por plataforma. Verde = publicado con fecha, Amarillo = en progreso, Gris = pendiente. Haz clic en "Platforms" para configurar qué plataformas mostrar.
                                 </div>
 
                                 <table class="card-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 30%">Title</th>
+                                            <th style="width: 3%" class="bulk-column d-none">
+                                                <input type="checkbox" id="selectAll" class="form-check-input">
+                                            </th>
+                                            <th style="width: 37%">Title</th>
                                             <th style="width: 35%">Platform Status</th>
-                                            <th style="width: 20%">Tags</th>
-                                            <th style="width: 15%" class="text-end">Actions</th>
+                                            <th style="width: 12%">Tags</th>
+                                            <th style="width: 13%" class="text-end">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="contentList">
