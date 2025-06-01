@@ -2,6 +2,22 @@
 
 Complete record of changes and improvements to the MultiLangContentManager project.
 
+## [v2.6.1] - 2025-06-02
+
+### 🔧 GitHub Actions Modernization - "Updating deprecated GitHub Actions commands and improving workflow reliability"
+- **⚡ Workflow Modernization**: Updated GitHub Actions workflow to remove deprecated commands
+- **🛡️ Security Improvements**: Replaced deprecated `set-output` and `add-mask` commands with modern alternatives
+- **📝 Command Updates**: Migrated from `::set-output` to `$GITHUB_OUTPUT` environment file approach
+- **🔒 Token Security**: Updated sensitive data masking using modern `echo "::add-mask::" approach
+- **✅ Reliability Enhancement**: Improved workflow reliability with current GitHub Actions best practices
+- **📚 Documentation Sync**: Updated workflow documentation to reflect modernized commands
+
+### 🛠️ Workflow Improvements
+- **Standards Compliance**: Aligned with latest GitHub Actions standards and recommendations
+- **Future Compatibility**: Ensured workflow compatibility with future GitHub Actions updates
+- **Error Prevention**: Eliminated deprecation warnings and potential future failures
+- **Best Practices**: Implemented current industry best practices for CI/CD workflows
+
 ## [v2.6.0] - 2025-06-01
 
 ### 🤖 GitHub Actions Automation - "Implementing automated version management and release workflow"

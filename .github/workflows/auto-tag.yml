@@ -89,31 +89,49 @@ jobs:
           git push origin "$TAG"
           echo "✅ Successfully created and pushed tag: $TAG"
 
-      - name: Create GitHub Release (optional)
+      - name: Create GitHub Release
         if: steps.tag_check.outputs.tag_exists == 'false'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v7
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: Release v${{ steps.version.outputs.version }}
-          body: |
-            ## Release v${{ steps.version.outputs.version }}
+          script: |
+            const version = "${{ steps.version.outputs.version }}";
+            const tagName = `v${version}`;
+
+            try {
+              const release = await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: tagName,
+                name: `Release ${tagName}`,
+                body: `## Release ${tagName}
 
             This release was automatically created by GitHub Actions when version.txt was updated.
 
             ### Changes
-            - Version updated to ${{ steps.version.outputs.version }}
+            - Version updated to ${version}
             - Auto-tagged from commit ${{ github.sha }}
 
             ### Installation
-            ```bash
-            git checkout v${{ steps.version.outputs.version }}
-            ```
+            \`\`\`bash
+            git checkout ${tagName}
+            \`\`\`
 
             For detailed changes, see [CHANGELOG.md](CHANGELOG.md)
-          draft: false
-          prerelease: false
+
+            ### Automation Details
+            - **Triggered by**: ${{ github.actor }}
+            - **Workflow**: ${{ github.workflow }}
+            - **Commit**: ${{ github.sha }}
+            - **Branch**: ${{ github.ref_name }}`,
+                draft: false,
+                prerelease: false
+              });
+
+              console.log(`✅ Successfully created release: ${release.data.html_url}`);
+            } catch (error) {
+              console.error('❌ Failed to create release:', error.message);
+              throw error;
+            }
 
       - name: Summary
         if: always()
@@ -127,6 +145,7 @@ jobs:
 
           if [ "${{ steps.tag_check.outputs.tag_exists }}" == "false" ]; then
             echo "- **Action**: ✅ Tag created and pushed" >> $GITHUB_STEP_SUMMARY
+            echo "- **Release**: ✅ GitHub Release created" >> $GITHUB_STEP_SUMMARY
           else
             echo "- **Action**: ⏭️ Tag already exists, skipped" >> $GITHUB_STEP_SUMMARY
           fi
