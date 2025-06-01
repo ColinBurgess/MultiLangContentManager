@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug YouTube URL ES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .event-log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>🔍 Debug: YouTube URL (ES) Field</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Campo de Prueba</h3>
+                <div class="mb-3">
+                    <label class="form-label">YouTube URL (ES)</label>
+                    <input type="url" class="form-control" id="youtube_urlEs"
+                           placeholder="https://youtube.com/watch?v=..."
+                           autocomplete="off">
+                </div>
+
+                <div class="debug-info">
+                    <h5>Estado del Campo:</h5>
+                    <p><strong>Valor:</strong> <span id="field-value">vacío</span></p>
+                    <p><strong>Disabled:</strong> <span id="field-disabled">false</span></p>
+                    <p><strong>ReadOnly:</strong> <span id="field-readonly">false</span></p>
+                    <p><strong>Focused:</strong> <span id="field-focused">false</span></p>
+                </div>
+
+                <button class="btn btn-primary" onclick="testActions()">Probar Acciones</button>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Log de Eventos</h3>
+                <div id="event-log" class="event-log">
+                    <!-- Los eventos aparecerán aquí -->
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="clearLog()">Limpiar Log</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const field = document.getElementById('youtube_urlEs');
+        const eventLog = document.getElementById('event-log');
+
+        // Función para añadir al log
+        function logEvent(message) {
+            const time = new Date().toLocaleTimeString();
+            eventLog.innerHTML += `[${time}] ${message}\n`;
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        // Función para limpiar el log
+        function clearLog() {
+            eventLog.innerHTML = '';
+        }
+
+        // Función para actualizar estado del campo
+        function updateFieldStatus() {
+            document.getElementById('field-value').textContent = field.value || 'vacío';
+            document.getElementById('field-disabled').textContent = field.disabled;
+            document.getElementById('field-readonly').textContent = field.readOnly;
+            document.getElementById('field-focused').textContent = document.activeElement === field;
+        }
+
+        // Agregar listeners para todos los eventos posibles
+        const events = [
+            'input', 'change', 'keydown', 'keyup', 'keypress',
+            'focus', 'blur', 'click', 'mousedown', 'mouseup',
+            'paste', 'cut', 'copy', 'beforeinput'
+        ];
+
+        events.forEach(eventType => {
+            field.addEventListener(eventType, (e) => {
+                logEvent(`🎯 ${eventType.toUpperCase()}: "${e.target.value}" | preventDefault: ${e.defaultPrevented}`);
+                updateFieldStatus();
+
+                // Si el evento fue prevenido, mostrar advertencia
+                if (e.defaultPrevented) {
+                    logEvent(`⚠️ EVENTO ${eventType.toUpperCase()} FUE PREVENIDO!`);
+                }
+            });
+        });
+
+        // Monitor de cambios en el DOM
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.target === field) {
+                    logEvent(`🔧 Atributo cambiado: ${mutation.attributeName} = "${field.getAttribute(mutation.attributeName)}"`);
+                    updateFieldStatus();
+                }
+            });
+        });
+
+        observer.observe(field, {
+            attributes: true,
+            attributeOldValue: true
+        });
+
+        // Función para probar acciones
+        function testActions() {
+            logEvent('🧪 Iniciando pruebas...');
+
+            // Probar focus
+            field.focus();
+            logEvent('✅ Focus aplicado');
+
+            // Probar escribir por código
+            field.value = 'https://youtube.com/test';
+            logEvent('✅ Valor asignado por código');
+
+            // Simular evento input
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            logEvent('✅ Evento input simulado');
+
+            updateFieldStatus();
+        }
+
+        // Inicializar
+        logEvent('🚀 Debug iniciado');
+        updateFieldStatus();
+
+        // Verificar si hay otros scripts que puedan interferir
+        window.addEventListener('load', () => {
+            logEvent('📄 Página cargada completamente');
+
+            // Listar todos los event listeners (si es posible)
+            const allListeners = getEventListeners && getEventListeners(field);
+            if (allListeners) {
+                Object.keys(allListeners).forEach(eventType => {
+                    logEvent(`🎧 Listener encontrado: ${eventType} (${allListeners[eventType].length} handlers)`);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

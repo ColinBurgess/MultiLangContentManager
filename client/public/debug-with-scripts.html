@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug YouTube URL ES con Scripts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <style>
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .event-log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>🔍 Debug: YouTube URL (ES) con Todos los Scripts</h1>
+
+        <div class="alert alert-info">
+            <strong>Instrucciones:</strong> Intenta escribir en el campo YouTube URL (ES) y observa el log de eventos.
+        </div>
+
+        <form id="contentForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Formulario Simulado</h3>
+
+                    <!-- Campos requeridos por form.js (ocultos) -->
+                    <div style="display: none;">
+                        <input type="text" id="title" value="Test Title">
+                        <textarea id="teleprompterEs">Test</textarea>
+                        <textarea id="teleprompterEn">Test</textarea>
+                        <textarea id="videoDescriptionEs">Test</textarea>
+                        <textarea id="videoDescriptionEn">Test</textarea>
+                        <textarea id="tagsListEs">Test</textarea>
+                        <textarea id="tagsListEn">Test</textarea>
+                        <textarea id="pinnedCommentEs">Test</textarea>
+                        <textarea id="pinnedCommentEn">Test</textarea>
+                        <textarea id="tiktokDescriptionEs">Test</textarea>
+                        <textarea id="tiktokDescriptionEn">Test</textarea>
+                        <textarea id="twitterPostEs">Test</textarea>
+                        <textarea id="twitterPostEn">Test</textarea>
+                        <textarea id="facebookDescriptionEs">Test</textarea>
+                        <textarea id="facebookDescriptionEn">Test</textarea>
+                        <input type="text" id="tags" value="test">
+                    </div>
+
+                    <!-- Campo básico para comparación -->
+                    <div class="mb-3">
+                        <label class="form-label">Campo Normal (prueba)</label>
+                        <input type="text" class="form-control" id="test_field" placeholder="Escribe aquí para probar">
+                    </div>
+
+                    <!-- Tab navigation como en la página real -->
+                    <ul class="nav nav-tabs" id="platformTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="youtube-tab" data-bs-toggle="tab" data-bs-target="#youtube-pane" type="button" role="tab">
+                                YouTube
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="platformTabContent">
+                        <div class="tab-pane fade show active" id="youtube-pane" role="tabpanel">
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">🇪🇸 Spanish</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Status</label>
+                                                <select class="form-select" id="youtube_statusEs">
+                                                    <option value="pending">Pending</option>
+                                                    <option value="in-progress">In Progress</option>
+                                                    <option value="published">Published</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Publication Date</label>
+                                                <input type="date" class="form-control" id="youtube_publishedDateEs">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">YouTube URL (ES) - CAMPO PROBLEMA</label>
+                                                <input type="url" class="form-control" id="youtube_urlEs" placeholder="https://youtube.com/watch?v=...">
+                                                <div class="text-danger mt-1" id="youtube_urlEs_error" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos adicionales de plataforma necesarios -->
+                    <div style="display: none;">
+                        <!-- YouTube EN -->
+                        <select id="youtube_statusEn"><option value="pending" selected>pending</option></select>
+                        <input type="date" id="youtube_publishedDateEn">
+                        <input type="url" id="youtube_urlEn">
+
+                        <!-- TikTok -->
+                        <select id="tiktok_statusEs"><option value="pending" selected>pending</option></select>
+                        <select id="tiktok_statusEn"><option value="pending" selected>pending</option></select>
+                        <input type="date" id="tiktok_publishedDateEs">
+                        <input type="date" id="tiktok_publishedDateEn">
+                        <input type="url" id="tiktok_urlEs">
+                        <input type="url" id="tiktok_urlEn">
+
+                        <!-- Instagram -->
+                        <select id="instagram_statusEs"><option value="pending" selected>pending</option></select>
+                        <select id="instagram_statusEn"><option value="pending" selected>pending</option></select>
+                        <input type="date" id="instagram_publishedDateEs">
+                        <input type="date" id="instagram_publishedDateEn">
+                        <input type="url" id="instagram_urlEs">
+                        <input type="url" id="instagram_urlEn">
+
+                        <!-- Twitter -->
+                        <select id="twitter_statusEs"><option value="pending" selected>pending</option></select>
+                        <select id="twitter_statusEn"><option value="pending" selected>pending</option></select>
+                        <input type="date" id="twitter_publishedDateEs">
+                        <input type="date" id="twitter_publishedDateEn">
+                        <input type="url" id="twitter_urlEs">
+                        <input type="url" id="twitter_urlEn">
+
+                        <!-- Facebook -->
+                        <select id="facebook_statusEs"><option value="pending" selected>pending</option></select>
+                        <select id="facebook_statusEn"><option value="pending" selected>pending</option></select>
+                        <input type="date" id="facebook_publishedDateEs">
+                        <input type="date" id="facebook_publishedDateEn">
+                        <input type="url" id="facebook_urlEs">
+                        <input type="url" id="facebook_urlEn">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Guardar (Simulado)</button>
+                </div>
+
+                <div class="col-md-6">
+                    <h3>Log de Eventos en Tiempo Real</h3>
+                    <div id="event-log" class="event-log">
+                        <!-- Los eventos aparecerán aquí -->
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="clearLog()">Limpiar Log</button>
+
+                    <div class="debug-info mt-3">
+                        <h5>Estado del Campo YouTube URL ES:</h5>
+                        <p><strong>Valor:</strong> <span id="field-value">vacío</span></p>
+                        <p><strong>Disabled:</strong> <span id="field-disabled">false</span></p>
+                        <p><strong>ReadOnly:</strong> <span id="field-readonly">false</span></p>
+                        <p><strong>Has Focus:</strong> <span id="field-focused">false</span></p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Los mismos scripts que en new-content.html -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme-loader.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/content-status.js"></script>
+
+    <!-- Debug script personalizado -->
+    <script>
+        const field = document.getElementById('youtube_urlEs');
+        const testField = document.getElementById('test_field');
+        const eventLog = document.getElementById('event-log');
+
+        // Función para añadir al log
+        function logEvent(message) {
+            const time = new Date().toLocaleTimeString();
+            eventLog.innerHTML += `[${time}] ${message}\n`;
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        // Función para limpiar el log
+        function clearLog() {
+            eventLog.innerHTML = '';
+        }
+
+        // Función para actualizar estado del campo
+        function updateFieldStatus() {
+            document.getElementById('field-value').textContent = field.value || 'vacío';
+            document.getElementById('field-disabled').textContent = field.disabled;
+            document.getElementById('field-readonly').textContent = field.readOnly;
+            document.getElementById('field-focused').textContent = document.activeElement === field;
+        }
+
+        // Agregar listeners para todos los eventos posibles en ambos campos
+        const events = [
+            'input', 'change', 'keydown', 'keyup', 'keypress',
+            'focus', 'blur', 'click', 'mousedown', 'mouseup',
+            'paste', 'cut', 'copy', 'beforeinput'
+        ];
+
+        // Monitor del campo problemático
+        events.forEach(eventType => {
+            field.addEventListener(eventType, (e) => {
+                logEvent(`🎯 YOUTUBE_ES ${eventType.toUpperCase()}: "${e.target.value}" | prevented: ${e.defaultPrevented} | keyCode: ${e.keyCode || 'N/A'}`);
+                updateFieldStatus();
+
+                if (e.defaultPrevented) {
+                    logEvent(`⚠️ EVENTO ${eventType.toUpperCase()} FUE PREVENIDO EN YOUTUBE_ES!`);
+                }
+            });
+        });
+
+        // Monitor del campo de prueba (para comparar)
+        events.forEach(eventType => {
+            testField.addEventListener(eventType, (e) => {
+                logEvent(`✅ TEST_FIELD ${eventType.toUpperCase()}: "${e.target.value}" | prevented: ${e.defaultPrevented}`);
+            });
+        });
+
+        // Monitor de cambios en el DOM
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target === field) {
+                    logEvent(`🔧 DOM MUTATION en YouTube_ES: ${mutation.type} - ${mutation.attributeName || 'childList'}`);
+                    updateFieldStatus();
+                }
+            });
+        });
+
+        observer.observe(field, {
+            attributes: true,
+            attributeOldValue: true,
+            childList: true,
+            subtree: true
+        });
+
+        // Intercepción de errores globales
+        window.addEventListener('error', (e) => {
+            logEvent(`❌ ERROR GLOBAL: ${e.message} en ${e.filename}:${e.lineno}`);
+        });
+
+        // Prevenir el submit del formulario para evitar errores
+        document.getElementById('contentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            logEvent('🚫 Submit del formulario prevenido para debugging');
+
+            // Probar manualmente la función collectPlatformData
+            try {
+                logEvent('🧪 Probando collectPlatformData...');
+                const platformData = window.collectPlatformData && window.collectPlatformData();
+                if (platformData) {
+                    logEvent(`✅ collectPlatformData exitoso: ${JSON.stringify(platformData.youtube)}`);
+                } else {
+                    logEvent('⚠️ collectPlatformData no está disponible');
+                }
+            } catch (error) {
+                logEvent(`❌ Error en collectPlatformData: ${error.message}`);
+            }
+        });
+
+        // Inicializar
+        logEvent('🚀 Debug iniciado con todos los scripts cargados');
+        updateFieldStatus();
+
+        // Monitor cuando la página se carga completamente
+        window.addEventListener('load', () => {
+            logEvent('📄 Página completamente cargada');
+            updateFieldStatus();
+
+            // Verificar si el campo tiene algún problema inmediato
+            setTimeout(() => {
+                logEvent('🔍 Verificación post-carga...');
+                if (field.disabled) logEvent('⚠️ Campo está DISABLED');
+                if (field.readOnly) logEvent('⚠️ Campo está READONLY');
+                if (field.style.pointerEvents === 'none') logEvent('⚠️ Campo tiene pointer-events: none');
+
+                // Verificar propiedades computadas del campo
+                const computedStyle = window.getComputedStyle(field);
+                if (computedStyle.pointerEvents === 'none') logEvent('⚠️ Campo tiene computed pointer-events: none');
+                if (computedStyle.userSelect === 'none') logEvent('⚠️ Campo tiene computed user-select: none');
+
+                // Intentar activar el campo forzadamente
+                logEvent('🔧 Intentando activar campo forzadamente...');
+                field.disabled = false;
+                field.readOnly = false;
+                field.style.pointerEvents = 'auto';
+                field.removeAttribute('readonly');
+                field.removeAttribute('disabled');
+
+                // Verificar si tiene event listeners que podrían estar interfiriendo
+                const descriptor = Object.getOwnPropertyDescriptor(field, 'value');
+                if (descriptor && descriptor.set) {
+                    logEvent('⚠️ Campo tiene setter personalizado para .value');
+                }
+
+                updateFieldStatus();
+
+                // Prueba final: intentar forzar un valor
+                setTimeout(() => {
+                    logEvent('🧪 Prueba final de escritura forzada...');
+                    const oldValue = field.value;
+
+                    // Método 1: setAttribute
+                    field.setAttribute('value', 'test1');
+                    logEvent(`📝 setAttribute: "${field.value}" (era: "${oldValue}")`);
+
+                    // Método 2: property assignment
+                    field.value = 'test2';
+                    logEvent(`📝 property assignment: "${field.value}"`);
+
+                    // Método 3: textContent (no debería funcionar en input, pero probamos)
+                    field.textContent = 'test3';
+                    logEvent(`📝 textContent: "${field.value}"`);
+
+                    // Limpiar
+                    field.value = '';
+
+                    updateFieldStatus();
+                }, 500);
+
+            }, 1000);
+        });
+
+        // Interceptar el form.js si se está cargando
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            logEvent(`🌐 FETCH interceptado: ${args[0]}`);
+            return originalFetch.apply(this, args);
+        };
+    </script>
+
+    <!-- Cargar form.js al final para replicar exactamente la página real -->
+    <script src="/js/form.js"></script>
+</body>
+</html>

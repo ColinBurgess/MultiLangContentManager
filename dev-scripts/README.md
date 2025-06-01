@@ -1,168 +1,168 @@
 # Development Scripts
 
-Este directorio contiene scripts de desarrollo para el proyecto MultiLangContentManager. Están organizados por categorías para facilitar su uso y mantenimiento.
+This directory contains development scripts for the MultiLangContentManager project. They are organized by categories to facilitate their use and maintenance.
 
-## 🗂️ Estructura
+## 🗂️ Structure
 
 ```
 dev-scripts/
-├── migrations/     # Scripts de migración de base de datos
-├── testing/        # Scripts para testing y datos de prueba
-└── README.md       # Este archivo
+├── migrations/     # Database migration scripts
+├── testing/        # Scripts for testing and test data
+└── README.md       # This file
 ```
 
-## 🔄 Migrations (Migraciones)
+## 🔄 Migrations
 
-Scripts para migrar y actualizar datos de la base de datos de manera segura.
+Scripts to migrate and update database data safely.
 
 ### `migrations/migrate-platform-data.js`
-**Propósito:** Migra contenido existente para usar la nueva estructura de `platformStatus` específica por plataforma.
+**Purpose:** Migrates existing content to use the new platform-specific `platformStatus` structure.
 
-**Cuándo usar:** Después de actualizar el modelo de datos para soportar estados específicos por plataforma.
+**When to use:** After updating the data model to support platform-specific statuses.
 
-**Uso:**
+**Usage:**
 ```bash
-cd /ruta/del/proyecto
+cd /project/path
 node dev-scripts/migrations/migrate-platform-data.js
 ```
 
-**Qué hace:**
-- Encuentra contenido sin estructura `platformStatus`
-- Migra estados existentes (`statusEs`/`statusEn`) a YouTube como plataforma principal
-- Inicializa todas las demás plataformas como `pending`
-- Mantiene compatibilidad hacia atrás
+**What it does:**
+- Finds content without `platformStatus` structure
+- Migrates existing statuses (`statusEs`/`statusEn`) to YouTube as main platform
+- Initializes all other platforms as `pending`
+- Maintains backward compatibility
 
 ### `migrations/migrate-statuses.js`
-**Propósito:** Migra campos booleanos `publishedEs`/`publishedEn` a estados más descriptivos.
+**Purpose:** Migrates boolean `publishedEs`/`publishedEn` fields to more descriptive statuses.
 
-**Uso:**
+**Usage:**
 ```bash
 node dev-scripts/migrations/migrate-statuses.js
 ```
 
-**Qué hace:**
-- Convierte `publishedEs: true` → `statusEs: 'published'`
-- Convierte `publishedEs: false` → `statusEs: 'pending'`
-- Lo mismo para campos EN
+**What it does:**
+- Converts `publishedEs: true` → `statusEs: 'published'`
+- Converts `publishedEs: false` → `statusEs: 'pending'`
+- Same for EN fields
 
 ### `migrations/safe-migrate-status.js`
-**Propósito:** Versión segura del script anterior con backup y capacidad de rollback.
+**Purpose:** Safe version of the above script with backup and rollback capability.
 
-**Uso:**
+**Usage:**
 ```bash
-# Migrar con backup
+# Migrate with backup
 node dev-scripts/migrations/safe-migrate-status.js migrate
 
-# Revertir cambios (si algo sale mal)
+# Revert changes (if something goes wrong)
 node dev-scripts/migrations/safe-migrate-status.js rollback
 ```
 
-**Características:**
-- ✅ Crea backup automático antes de migrar
-- ✅ Permite rollback completo
-- ✅ Verificaciones de seguridad
-- ✅ Confirmación del usuario
+**Features:**
+- ✅ Creates automatic backup before migrating
+- ✅ Allows complete rollback
+- ✅ Safety checks
+- ✅ User confirmation
 
-## 🧪 Testing (Pruebas)
+## 🧪 Testing
 
-Scripts para generar datos de prueba y analizar la estructura de la base de datos.
+Scripts to generate test data and analyze database structure.
 
 ### `testing/safe-insert-test-data.js`
-**Propósito:** Inserta datos de prueba de manera segura para testing.
+**Purpose:** Safely inserts test data for testing.
 
-**Uso:**
+**Usage:**
 ```bash
 node dev-scripts/testing/safe-insert-test-data.js
 ```
 
-**Características:**
-- ✅ Verifica datos existentes antes de insertar
-- ✅ Crea backup automático si hay datos
-- ✅ Pregunta confirmación al usuario
-- ✅ Opción de limpiar datos existentes
+**Features:**
+- ✅ Checks existing data before inserting
+- ✅ Creates automatic backup if data exists
+- ✅ Asks for user confirmation
+- ✅ Option to clean existing data
 
-**Datos que inserta:**
-- 4 contenidos de ejemplo con diferentes estados
-- Combinaciones de `published`/`pending` para ES/EN
-- Estados `in-progress` para testing
+**Data it inserts:**
+- 4 example contents with different statuses
+- Combinations of `published`/`pending` for ES/EN
+- `in-progress` statuses for testing
 
 ### `testing/insert-test-data.js`
-**Propósito:** Versión simple para insertar datos de prueba rápidamente.
+**Purpose:** Simple version to quickly insert test data.
 
-**Uso:**
+**Usage:**
 ```bash
 node dev-scripts/testing/insert-test-data.js
 ```
 
-**⚠️ Atención:** No hace backup, úsalo solo en bases de datos de desarrollo.
+**⚠️ Warning:** Doesn't create backup, only use on development databases.
 
 ### `testing/list-database-structure.js`
-**Propósito:** Analiza y muestra la estructura completa de la base de datos.
+**Purpose:** Analyzes and shows complete database structure.
 
-**Uso:**
+**Usage:**
 ```bash
 node dev-scripts/testing/list-database-structure.js
 ```
 
-**Qué muestra:**
-- Todas las colecciones en la base de datos
-- Número de documentos por colección
-- Estructura de campos de cada documento
-- Ejemplos de datos para entender el esquema
+**What it shows:**
+- All collections in the database
+- Number of documents per collection
+- Field structure of each document
+- Data examples to understand the schema
 
-## 🚀 Cómo Usar estos Scripts
+## 🚀 How to Use These Scripts
 
-### Prerrequisitos
-1. Node.js instalado
-2. MongoDB ejecutándose
-3. Variables de entorno configuradas (`.env`)
+### Prerequisites
+1. Node.js installed
+2. MongoDB running
+3. Environment variables configured (`.env`)
 
-### Variables de Entorno Necesarias
+### Required Environment Variables
 ```env
 MONGODB_URI=mongodb://localhost:27017/video-content-organizer
 ```
 
-### Orden Recomendado para Nuevo Setup
+### Recommended Order for New Setup
 
-1. **Analizar estructura actual:**
+1. **Analyze current structure:**
    ```bash
    node dev-scripts/testing/list-database-structure.js
    ```
 
-2. **Insertar datos de prueba (si es necesario):**
+2. **Insert test data (if needed):**
    ```bash
    node dev-scripts/testing/safe-insert-test-data.js
    ```
 
-3. **Migrar a nueva estructura (si es necesario):**
+3. **Migrate to new structure (if needed):**
    ```bash
    node dev-scripts/migrations/safe-migrate-status.js migrate
    node dev-scripts/migrations/migrate-platform-data.js
    ```
 
-### Para Desarrollo Diario
+### For Daily Development
 
-- **Limpiar y resetear datos:** Use `safe-insert-test-data.js`
-- **Verificar estructura:** Use `list-database-structure.js`
-- **Migrar cambios:** Use scripts de `migrations/`
+- **Clean and reset data:** Use `safe-insert-test-data.js`
+- **Verify structure:** Use `list-database-structure.js`
+- **Migrate changes:** Use `migrations/` scripts
 
-## ⚠️ Importante
+## ⚠️ Important
 
-- **SIEMPRE** haz backup antes de ejecutar scripts de migración en producción
-- Prueba todos los scripts en un entorno de desarrollo primero
-- Los scripts `safe-*` son más seguros pero más lentos
-- Verifica que las variables de entorno apunten a la base de datos correcta
+- **ALWAYS** backup before running migration scripts in production
+- Test all scripts in a development environment first
+- `safe-*` scripts are safer but slower
+- Verify that environment variables point to the correct database
 
-## 🔧 Mantenimiento
+## 🔧 Maintenance
 
-- Cuando agregues nuevos scripts, documéntalos aquí
-- Incluye el propósito, uso, y qué hace exactamente
-- Marca scripts obsoletos y explica las alternativas
-- Actualiza este README cuando cambien los procedimientos
+- When adding new scripts, document them here
+- Include the purpose, usage, and what it does exactly
+- Mark obsolete scripts and explain alternatives
+- Update this README when procedures change
 
 ## 📝 Logs
 
-Los scripts generan logs detallados. Revísalos si algo falla:
-- ✅ = Operación exitosa
-- ❌ = Error que requiere atención
-- ⚠️ = Advertencia, revisar pero no crítico
+Scripts generate detailed logs. Check them if something fails:
+- ✅ = Successful operation
+- ❌ = Error requiring attention
+- ⚠️ = Warning, review but not critical

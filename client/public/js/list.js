@@ -433,6 +433,20 @@ function displayContents(contents) {
             handleItemSelection(this);
         });
     });
+
+    // Add event listeners for platform indicators with links
+    document.querySelectorAll('.platform-indicator[data-clickable="true"]').forEach(indicator => {
+        indicator.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent row click
+            const contentId = this.dataset.contentId;
+            const platform = this.dataset.platform;
+            showPlatformLinksPopup(contentId, platform);
+        });
+
+        // Add visual feedback for clickable indicators
+        indicator.style.cursor = 'pointer';
+        indicator.title = 'Haz clic para ver los enlaces publicados';
+    });
 }
 
 // Platform configuration management
@@ -525,7 +539,13 @@ function getPlatformStatusIndicators(content) {
 
         const priorityClass = `priority-${config.priority}`;
 
-        indicators += `<span class="platform-indicator ${priorityClass} ${containerStatusClass}">
+        // Check if there are any URLs to show
+        const hasUrls = urlEs || urlEn;
+
+        indicators += `<span class="platform-indicator ${priorityClass} ${containerStatusClass} ${hasUrls ? 'has-links' : ''}"
+                             data-content-id="${content._id || content.id}"
+                             data-platform="${key}"
+                             ${hasUrls ? 'data-clickable="true"' : ''}>
             <span class="platform-name">
                 <span class="platform-icon">${config.icon}</span>
                 ${config.name}
@@ -1257,4 +1277,120 @@ function exportSelectedItems() {
     URL.revokeObjectURL(url);
 
     alert(`📤 Exported ${selectedContent.length} items successfully!`);
+}
+
+// Nueva función para mostrar el popup de enlaces de plataforma
+function showPlatformLinksPopup(contentId, platformKey) {
+    // Obtener los datos del contenido
+    const contentData = JSON.parse(localStorage.getItem('contentData'));
+    const content = contentData.find(item => (item._id === contentId || item.id === contentId));
+
+    if (!content) return;
+
+    const platformConfig = getPlatformConfig();
+    const config = platformConfig[platformKey];
+
+    if (!config) return;
+
+    const platformData = content.platformStatus?.[platformKey];
+
+    if (!platformData) return;
+
+    const urlEs = platformData.urlEs || '';
+    const urlEn = platformData.urlEn || '';
+
+    // Solo mostrar el popup si hay al menos un enlace
+    if (!urlEs && !urlEn) return;
+
+    // Crear el popup
+    createPlatformLinksPopup(content.title, config, urlEs, urlEn);
+}
+
+function createPlatformLinksPopup(contentTitle, platformConfig, urlEs, urlEn) {
+    // Remover cualquier popup existente
+    const existingPopup = document.getElementById('platformLinksPopup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Crear el popup HTML
+    const popup = document.createElement('div');
+    popup.id = 'platformLinksPopup';
+    popup.className = 'platform-links-popup';
+
+    let linksHtml = '';
+
+    if (urlEs) {
+        linksHtml += `
+            <div class="platform-link-item">
+                <span class="platform-link-lang es">ES</span>
+                <a href="${urlEs}" target="_blank" class="platform-link-url">
+                    <i class="bi bi-box-arrow-up-right me-2"></i>Ver contenido en español
+                </a>
+            </div>
+        `;
+    }
+
+    if (urlEn) {
+        linksHtml += `
+            <div class="platform-link-item">
+                <span class="platform-link-lang en">EN</span>
+                <a href="${urlEn}" target="_blank" class="platform-link-url">
+                    <i class="bi bi-box-arrow-up-right me-2"></i>View content in English
+                </a>
+            </div>
+        `;
+    }
+
+    popup.innerHTML = `
+        <div class="platform-links-popup-backdrop"></div>
+        <div class="platform-links-popup-content">
+            <div class="platform-links-popup-header">
+                <h6 class="mb-0">
+                    <span class="platform-icon">${platformConfig.icon}</span>
+                    ${platformConfig.name} - Enlaces Publicados
+                </h6>
+                <button type="button" class="platform-links-popup-close">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="platform-links-popup-body">
+                <div class="platform-links-content-title">"${contentTitle}"</div>
+                <div class="platform-links-list">
+                    ${linksHtml}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Añadir al documento
+    document.body.appendChild(popup);
+
+    // Añadir event listeners
+    const closeBtn = popup.querySelector('.platform-links-popup-close');
+    const backdrop = popup.querySelector('.platform-links-popup-backdrop');
+
+    const closePopup = () => {
+        popup.classList.add('closing');
+        setTimeout(() => {
+            popup.remove();
+        }, 200);
+    };
+
+    closeBtn.addEventListener('click', closePopup);
+    backdrop.addEventListener('click', closePopup);
+
+    // Cerrar con ESC
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            closePopup();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    // Mostrar el popup con animación
+    setTimeout(() => {
+        popup.classList.add('show');
+    }, 10);
 }

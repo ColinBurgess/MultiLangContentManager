@@ -9,16 +9,19 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 ## ✨ Key Features
 
 - Manage content scripts and descriptions in multiple languages
+- **Advanced platform status tracking** with independent management per platform and language
+- **Interactive platform link popups** for quick access to published content
 - Track publication status per language with direct access to published content
 - Organize content with a tagging system
-- Create optimized descriptions for various platforms (YouTube, TikTok, Twitter, Facebook)
+- Create optimized descriptions for various platforms (YouTube, TikTok, Twitter, Facebook, Instagram)
 - Real-time search functionality
 - Copy-to-clipboard functionality for easy content transfer
 - Kanban board for task management and workflow tracking
 - Responsive user interface
 - User preferences with theme customization
-- MongoDB database for flexible content storage
+- MongoDB database with optimized nested object handling
 - Word document parser for importing structured content
+- **Enhanced debugging tools and systematic troubleshooting**
 
 ## 🔍 Perfect For
 
@@ -37,11 +40,13 @@ MultiLangContentManager helps content creators streamline their workflow by prov
 - Integration with external services
 - Advanced logging and monitoring
 - Bilingual content management (Spanish/English)
-- Publication status tracking by language
+- **Platform-specific publication status** tracking with independent URLs per platform
+- **Interactive popup system** for quick access to published platform links
 - Direct access to published content from the interface
 - Tagging system for categorization
 - Enhanced security for database credentials
 - Word document parsing for content import
+- **Systematic debugging methodology** with comprehensive error tracking
 
 ## Project Structure 📁
 
@@ -286,14 +291,21 @@ Creating and editing content:
 
 1. **Content Form:**
    - Complete form for all fields in both languages
-   - Publication status controls
-   - URLs for direct access to published content
+   - **Advanced platform status controls** with independent tracking per platform
+   - **Platform-specific URLs** for YouTube, TikTok, Instagram, Twitter, and Facebook
+   - **Interactive status indicators** with clickable access to published content
    - Character counters for social media optimization
 
 2. **Content Details:**
-   - Detailed view with all information
+   - **Enhanced platform status visualization** with color-coded indicators
+   - **Popup system for platform links** - click status indicators to access published URLs
    - Copy to clipboard functionality
    - Quick access to editing
+
+3. **Platform Management:**
+   - Independent status tracking for each platform (YouTube, TikTok, Instagram, Twitter, Facebook)
+   - Separate publication dates and URLs per platform and language
+   - Visual indicators for pending, in-progress, and published states
 
 ## API Endpoints 🛣️
 
@@ -322,15 +334,26 @@ Creating and editing content:
 
 - Basic information (title, tags)
 - Bilingual content (ES/EN)
-- Publication status by language
-- Published content URLs
+- **Enhanced platform status system** with nested structure per platform
+- **Platform-specific URLs and publication dates** (YouTube, TikTok, Instagram, Twitter, Facebook)
 - Teleprompter text
 - Descriptions for different platforms:
   - YouTube
   - TikTok
+  - Instagram
   - Twitter (X)
   - Facebook
 - Pinned comments
+
+**Platform Status Structure:**
+```javascript
+platformStatus: {
+  youtube: { statusEs: 'pending', statusEn: 'published', urlEs: '', urlEn: 'https://...' },
+  tiktok: { statusEs: 'published', statusEn: 'pending', urlEs: 'https://...', urlEn: '' },
+  instagram: { statusEs: 'pending', statusEn: 'pending', urlEs: '', urlEn: '' },
+  // ... additional platforms
+}
+```
 
 ### Task Model
 
@@ -358,55 +381,83 @@ The project implements several security measures:
 
 ## Maintenance 🔧
 
+### Version Management
+
+The project uses both `package.json` and `version.txt` for version tracking:
+
+- **`package.json`**: Standard npm version for dependencies and Node.js ecosystem
+- **`version.txt`**: Plain text version for automation, CI/CD, and deployment scripts
+
+#### Git Tags & Semantic Versioning
+
+The project follows **Semantic Versioning** (semver) with comprehensive git tagging:
+
+- **Format**: `v{MAJOR}.{MINOR}.{PATCH}` (e.g., `v2.5.0`)
+- **Complete Coverage**: Every version in the changelog has a corresponding git tag
+- **Professional Workflow**: Tags enable proper release management and version navigation
+
+**Key Benefits:**
+- 🏷️ **Easy Navigation**: `git checkout v2.4.0` to switch to any version
+- 📦 **Release Automation**: CI/CD systems can trigger on tag pushes
+- 🔍 **Change Tracking**: `git diff v2.3.0..v2.4.0` to see differences
+- 📊 **GitHub Releases**: Tags automatically appear in GitHub's release section
+
+**Working with Tags:**
+
+```bash
+# List all tags in semantic order
+git tag --sort=version:refname
+
+# View a specific version
+git checkout v2.4.0
+
+# See changes between versions
+git diff v2.3.0..v2.4.0
+
+# View tag information and commit
+git show v2.4.0
+
+# Return to latest development
+git checkout main
+
+# Push tags to remote (for releases)
+git push origin --tags
+```
+
+**Tag Structure:**
+- **v1.x.x**: Initial development and feature additions
+- **v2.0.0**: Major restructure milestone
+- **v2.4.0**: Platform status system and documentation improvements
+- **v2.5.0**: Complete English translation and version management system
+
+#### Synchronizing Versions
+
+```bash
+# Sync version.txt with current package.json version
+npm run sync-version
+
+# Update both files to a new version
+npm run version-bump 2.6.0
+```
+
+#### API Version Endpoint
+
+The server exposes the current version at `/api/version` endpoint for monitoring and deployment verification.
+
 ### Database Backup
 
 1. Export data:
-   ```bash
-   mongodump --uri="[your-mongodb-uri]" --out=./backup
    ```
+```
 
-2. Import data:
-   ```bash
-   mongorestore --uri="[your-mongodb-uri]" ./backup
-   ```
+## Changelog 📋
 
-## Troubleshooting 🔍
+To see the complete history of changes and improvements to the project, check the [CHANGELOG.md](CHANGELOG.md). This document contains:
 
-- Server not starting: Check MongoDB connection and credentials
-- Tasks not updating: Verify proper ID formatting between frontend and MongoDB
-- Content not displaying: Check browser console for API errors
+- **Complete chronology**: All changes since project creation
+- **Categorization by types**: Features, fixes, UI improvements, documentation, etc.
+- **Technical details**: Detailed description of each important change
+- **Git tag references**: Each version has a corresponding git tag (e.g., `v2.5.0`)
+- **Semantic versioning**: Version tracking using semantic versioning standards
 
-## Word Document Parser 📄
-
-The project includes a Python module to parse structured text (like that exported from Word) and transform it into the JSON format required for the API.
-
-### Key Features
-
-- Parses structured text in two different formats
-- Extracts bilingual content (Spanish/English)
-- Generates curl commands for the API
-- Supports creation and updating of content
-- Allows automatic detection of existing content by title
-
-### Usage Methods
-
-1. **Basic CLI (cli.py)** - For text analysis and curl command generation
-2. **Automatic Detection (auto_detect_update.py)** - To automatically decide between creating or updating
-3. **wordexporter.py Module** - Basic module-level functionality
-
-**For detailed documentation**, including usage examples, supported formats, and available options, see the [Parser Documentation](./parser/README.md).
-
-## Recent Updates 🆕
-
-- **Automatic Content Detection**: Added functionality to automatically detect existing content by title and decide between creation or update
-- **GitHub-Style Publication Calendar**: Added an interactive visualization similar to GitHub's contribution calendar to show publication activity by date
-- **Language-Specific Publication Dates**: Updated the system to track and display separate publication dates for Spanish and English content
-- **Activity Log Enhancement**: Improved the chronological activity log with language indicators and direct access to published content
-
-## Future Enhancements 🚀
-
-- Support for additional languages
-- Advanced content analytics
-- User authentication and role-based access
-- Enhanced AI-powered translation integration
-- Mobile application version
+**Navigation Tip**: Use `git tag --sort=version:refname` to see all tagged versions, then `git checkout v{version}` to explore any specific release.

@@ -1,12 +1,14 @@
 {
   "name": "video-content-organizer",
-  "version": "1.0.0",
+  "version": "2.5.0",
   "description": "Video content organizer with bilingual support",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
-    "init-db": "node scripts/init-db.js"
+    "init-db": "node scripts/init-db.js",
+    "sync-version": "node scripts/sync-version.js",
+    "version-bump": "node scripts/sync-version.js"
   },
   "dependencies": {
     "cal-heatmap": "^4.1.0",

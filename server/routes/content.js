@@ -22,24 +22,24 @@ router.get('/', async (req, res) => {
         }
 
         const contents = await Content.find(filter).sort({ createdAt: -1 });
-        
+
         // Asegurarse de que todos los contenidos tengan statusEs y statusEn
         const processedContents = contents.map(content => {
             const contentObj = content.toObject();
-            
+
             // Si no existe statusEs, derivarlo de publishedEs
             if (!contentObj.statusEs) {
                 contentObj.statusEs = contentObj.publishedEs ? 'published' : 'pending';
             }
-            
+
             // Si no existe statusEn, derivarlo de publishedEn
             if (!contentObj.statusEn) {
                 contentObj.statusEn = contentObj.publishedEn ? 'published' : 'pending';
             }
-            
+
             return contentObj;
         });
-        
+
         logger.success(`Contents retrieved successfully. Count: ${processedContents.length}`);
         res.json(processedContents);
     } catch (error) {
@@ -250,19 +250,19 @@ router.get('/:id', async (req, res) => {
             logger.error(`Content not found. ID: ${req.params.id}`);
             return res.status(404).json({ message: 'Content not found' });
         }
-        
+
         // Convertir a objeto para poder modificar
         const contentObj = content.toObject();
-        
+
         // Asegurar que statusEs y statusEn están establecidos
         if (!contentObj.statusEs) {
             contentObj.statusEs = contentObj.publishedEs ? 'published' : 'pending';
         }
-        
+
         if (!contentObj.statusEn) {
             contentObj.statusEn = contentObj.publishedEn ? 'published' : 'pending';
         }
-        
+
         logger.success(`Content retrieved successfully. ID: ${req.params.id}`);
         res.json(contentObj);
     } catch (error) {
@@ -308,7 +308,7 @@ router.post('/', async (req, res) => {
                     const validStatuses = ['pending', 'in-progress', 'published'];
                     const status = String(req.body[field]);
                     sanitizedInput[field] = validStatuses.includes(status) ? status : 'pending';
-                    
+
                     // Actualizar publishedEs/publishedEn en función del status
                     if (field === 'statusEs') {
                         sanitizedInput.publishedEs = (status === 'published');
@@ -329,9 +329,38 @@ router.post('/', async (req, res) => {
         // Sanitizar cada tag
         const tags = rawTags.map(tag => String(tag).trim()).filter(tag => tag.length > 0);
 
+        // Handle platformStatus data for new content
+        let platformStatus = {};
+        if (req.body.platformStatus && typeof req.body.platformStatus === 'object') {
+            logger.success(`Processing platformStatus for new content: ${JSON.stringify(req.body.platformStatus)}`);
+
+            const validPlatforms = ['youtube', 'tiktok', 'instagram', 'twitter', 'facebook'];
+            const validStatuses = ['pending', 'in-progress', 'published'];
+
+            // Process each platform
+            Object.keys(req.body.platformStatus).forEach(platform => {
+                if (validPlatforms.includes(platform)) {
+                    const platformData = req.body.platformStatus[platform];
+
+                    platformStatus[platform] = {};
+
+                    // Set platform fields with defaults
+                    platformStatus[platform].statusEs = validStatuses.includes(String(platformData.statusEs)) ? String(platformData.statusEs) : 'pending';
+                    platformStatus[platform].statusEn = validStatuses.includes(String(platformData.statusEn)) ? String(platformData.statusEn) : 'pending';
+                    platformStatus[platform].urlEs = platformData.urlEs ? String(platformData.urlEs) : '';
+                    platformStatus[platform].urlEn = platformData.urlEn ? String(platformData.urlEn) : '';
+                    platformStatus[platform].publishedDateEs = platformData.publishedDateEs ? new Date(platformData.publishedDateEs) : null;
+                    platformStatus[platform].publishedDateEn = platformData.publishedDateEn ? new Date(platformData.publishedDateEn) : null;
+
+                    logger.success(`Setting new content ${platform}.urlEs to: "${platformStatus[platform].urlEs}"`);
+                }
+            });
+        }
+
         const content = new Content({
             ...sanitizedInput,
-            tags: tags
+            tags: tags,
+            platformStatus: platformStatus
         });
 
         const newContent = await content.save();
@@ -393,51 +422,51 @@ router.put('/:id', async (req, res) => {
             const validStatuses = ['pending', 'in-progress', 'published'];
             const statusEs = String(req.body.statusEs);
             sanitizedInput.statusEs = validStatuses.includes(statusEs) ? statusEs : 'pending';
-            
+
             // Actualizar publishedEs en función del status
             sanitizedInput.publishedEs = (statusEs === 'published');
-            
+
             // Si está publicado y no tiene fecha, actualizar la fecha de publicación
             if (statusEs === 'published' && !content.publishedDateEs) {
                 sanitizedInput.publishedDateEs = new Date();
             }
-            
+
             logger.success(`Procesando statusEs: ${statusEs} -> published=${sanitizedInput.publishedEs}`);
         }
-        
+
         if (req.body.statusEn !== undefined) {
             const validStatuses = ['pending', 'in-progress', 'published'];
             const statusEn = String(req.body.statusEn);
             sanitizedInput.statusEn = validStatuses.includes(statusEn) ? statusEn : 'pending';
-            
+
             // Actualizar publishedEn en función del status
             sanitizedInput.publishedEn = (statusEn === 'published');
-            
+
             // Si está publicado y no tiene fecha, actualizar la fecha de publicación
             if (statusEn === 'published' && !content.publishedDateEn) {
                 sanitizedInput.publishedDateEn = new Date();
             }
-            
+
             logger.success(`Procesando statusEn: ${statusEn} -> published=${sanitizedInput.publishedEn}`);
         }
-        
+
         // Si se especificó explícitamente publishedEs/En, usar ese valor (más prioritario que el derivado del status)
         if (typeof req.body.publishedEs === 'boolean') {
             sanitizedInput.publishedEs = Boolean(req.body.publishedEs);
-            
+
             // Sincronizar el status si published cambia pero status no fue especificado
             if (req.body.statusEs === undefined) {
-                sanitizedInput.statusEs = sanitizedInput.publishedEs ? 'published' : 
+                sanitizedInput.statusEs = sanitizedInput.publishedEs ? 'published' :
                                          (content.statusEs === 'published' ? 'pending' : content.statusEs || 'pending');
             }
         }
-        
+
         if (typeof req.body.publishedEn === 'boolean') {
             sanitizedInput.publishedEn = Boolean(req.body.publishedEn);
-            
+
             // Sincronizar el status si published cambia pero status no fue especificado
             if (req.body.statusEn === undefined) {
-                sanitizedInput.statusEn = sanitizedInput.publishedEn ? 'published' : 
+                sanitizedInput.statusEn = sanitizedInput.publishedEn ? 'published' :
                                          (content.statusEn === 'published' ? 'pending' : content.statusEn || 'pending');
             }
         }
@@ -445,11 +474,11 @@ router.put('/:id', async (req, res) => {
         // Copiar el resto de los campos permitidos después de santizarlos
         allowedFields.forEach(field => {
             // Saltar los campos de status y published que ya se procesaron
-            if (field === 'statusEs' || field === 'statusEn' || 
+            if (field === 'statusEs' || field === 'statusEn' ||
                 field === 'publishedEs' || field === 'publishedEn') {
                 return;
             }
-            
+
             if (req.body[field] !== undefined) {
                 // Convertir a String solo si no es una fecha
                 if (field.includes('Date') && !isNaN(new Date(req.body[field]))) {
@@ -459,6 +488,62 @@ router.put('/:id', async (req, res) => {
                 }
             }
         });
+
+        // Handle platformStatus data
+        if (req.body.platformStatus && typeof req.body.platformStatus === 'object') {
+            logger.success(`Processing platformStatus: ${JSON.stringify(req.body.platformStatus)}`);
+
+            const validPlatforms = ['youtube', 'tiktok', 'instagram', 'twitter', 'facebook'];
+            const validStatuses = ['pending', 'in-progress', 'published'];
+
+            // Initialize platformStatus if it doesn't exist
+            if (!content.platformStatus) {
+                content.platformStatus = {};
+            }
+
+            // Process each platform
+            Object.keys(req.body.platformStatus).forEach(platform => {
+                if (validPlatforms.includes(platform)) {
+                    const platformData = req.body.platformStatus[platform];
+
+                    // Initialize platform data if it doesn't exist
+                    if (!content.platformStatus[platform]) {
+                        content.platformStatus[platform] = {};
+                    }
+
+                    // Update platform fields
+                    if (platformData.statusEs !== undefined) {
+                        const status = String(platformData.statusEs);
+                        content.platformStatus[platform].statusEs = validStatuses.includes(status) ? status : 'pending';
+                    }
+
+                    if (platformData.statusEn !== undefined) {
+                        const status = String(platformData.statusEn);
+                        content.platformStatus[platform].statusEn = validStatuses.includes(status) ? status : 'pending';
+                    }
+
+                    if (platformData.urlEs !== undefined) {
+                        content.platformStatus[platform].urlEs = String(platformData.urlEs);
+                        logger.success(`Setting ${platform}.urlEs to: "${platformData.urlEs}"`);
+                    }
+
+                    if (platformData.urlEn !== undefined) {
+                        content.platformStatus[platform].urlEn = String(platformData.urlEn);
+                    }
+
+                    if (platformData.publishedDateEs !== undefined) {
+                        content.platformStatus[platform].publishedDateEs = platformData.publishedDateEs ? new Date(platformData.publishedDateEs) : null;
+                    }
+
+                    if (platformData.publishedDateEn !== undefined) {
+                        content.platformStatus[platform].publishedDateEn = platformData.publishedDateEn ? new Date(platformData.publishedDateEn) : null;
+                    }
+                }
+            });
+
+            // Mark platformStatus as modified for Mongoose to detect the change
+            content.markModified('platformStatus');
+        }
 
         // Prepare tags: use as array if already array, otherwise convert and sanitize
         if (req.body.tags !== undefined) {
@@ -477,10 +562,10 @@ router.put('/:id', async (req, res) => {
         Object.keys(sanitizedInput).forEach(key => {
             content[key] = sanitizedInput[key];
         });
-        
+
         // Guardar el documento usando save() para asegurar que se activen los hooks y validaciones
         await content.save();
-        
+
         // Verificar resultado de la actualización
         logger.success(`Document saved with _id: ${content._id}`);
 
@@ -498,7 +583,7 @@ router.put('/:id', async (req, res) => {
         if (originalValues.publishedEn !== content.publishedEn) {
             changesLog.push(`publishedEn: ${originalValues.publishedEn} -> ${content.publishedEn}`);
         }
-        
+
         if (changesLog.length > 0) {
             logger.success(`Content updated with changes: ${changesLog.join(', ')}. ID: ${req.params.id}`);
         } else {
@@ -575,27 +660,27 @@ router.patch('/:id', async (req, res) => {
                     const status = String(req.body[field]);
                     if (!validStatuses.includes(status)) {
                         logger.error(`Invalid status value: ${status} for field ${field}. ID: ${req.params.id}`);
-                        return res.status(400).json({ 
+                        return res.status(400).json({
                             message: 'Invalid status value',
                             field: field,
-                            value: status, 
+                            value: status,
                             valid: validStatuses
                         });
                     }
-                    
+
                     updateData[field] = status;
-                    
+
                     // Actualizar publishedEs/publishedEn en función del status
                     if (field === 'statusEs') {
                         updateData.publishedEs = (status === 'published');
-                        
+
                         // Si se publica, actualizar automáticamente la fecha
                         if (status === 'published') {
                             updateData.publishedDateEs = new Date();
                         }
                     } else if (field === 'statusEn') {
                         updateData.publishedEn = (status === 'published');
-                        
+
                         // Si se publica, actualizar automáticamente la fecha
                         if (status === 'published') {
                             updateData.publishedDateEn = new Date();
@@ -608,7 +693,7 @@ router.patch('/:id', async (req, res) => {
         // Si no hay campos válidos para actualizar, retornar error
         if (Object.keys(updateData).length === 0) {
             logger.error(`No valid fields to update. ID: ${req.params.id}, Body: ${JSON.stringify(req.body)}`);
-            return res.status(400).json({ 
+            return res.status(400).json({
                 message: 'No valid fields to update',
                 received: req.body,
                 allowed: allowedFields
@@ -626,7 +711,7 @@ router.patch('/:id', async (req, res) => {
         await content.save();
 
         // Log detallado de los cambios realizados
-        const changesLog = Object.keys(updateData).map(field => 
+        const changesLog = Object.keys(updateData).map(field =>
             `${field}: ${content[field]}`
         ).join(', ');
 
@@ -635,7 +720,7 @@ router.patch('/:id', async (req, res) => {
         res.json(content);
     } catch (error) {
         logger.error(`Error updating publication status. ID: ${req.params.id}`, error);
-        res.status(400).json({ 
+        res.status(400).json({
             message: 'Error updating status',
             error: error.message,
             id: req.params.id
