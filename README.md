@@ -430,6 +430,44 @@ git push origin --tags
 - **v2.4.0**: Platform status system and documentation improvements
 - **v2.5.0**: Complete English translation and version management system
 
+#### GitHub Actions Automation 🤖
+
+The project includes automated GitHub Actions for streamlined version management:
+
+**Auto-Tag Workflow:**
+- **Trigger**: Automatically runs when `version.txt` or `package.json` changes on `main` branch
+- **Features**:
+  - Creates semantic version tags (e.g., `v2.6.0`)
+  - Validates version format before tagging
+  - Prevents duplicate tag creation
+  - Verifies version synchronization between files
+  - Auto-generates GitHub Releases with changelog links
+
+**Workflow Benefits:**
+- 🔄 **Automation**: No manual tag creation needed
+- ✅ **Consistency**: Always tags when version changes
+- 🛡️ **Safety**: Built-in validation and duplicate prevention
+- 📦 **Releases**: Auto-creates GitHub Releases with metadata
+- 🔍 **Monitoring**: Comprehensive logging and status reporting
+
+**Usage Examples:**
+```bash
+# Scenario 1: Update version and trigger auto-tag
+echo "2.6.0" > version.txt
+npm run sync-version
+git add . && git commit -m "feat: v2.6.0 - New features"
+git push origin main  # Triggers auto-tag workflow
+
+# Scenario 2: Use version bump script
+npm run version-bump 2.7.0
+git add . && git commit -m "chore: bump to v2.7.0"
+git push origin main  # Triggers auto-tag workflow
+```
+
+**Monitoring**: Check repository → Actions tab → "Auto Tag on Version Change" workflow for execution logs and status.
+
+For detailed workflow documentation, see [`.github/workflows/README.md`](.github/workflows/README.md).
+
 #### Synchronizing Versions
 
 ```bash

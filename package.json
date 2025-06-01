@@ -1,6 +1,6 @@
 {
   "name": "video-content-organizer",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Video content organizer with bilingual support",
   "main": "server/server.js",
   "scripts": {

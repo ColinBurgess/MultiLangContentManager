@@ -1,0 +1,132 @@
+name: Auto Tag on Version Change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'version.txt'
+      - 'package.json'
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to compare changes
+
+      - name: Get version from version.txt
+        id: version
+        run: |
+          if [ -f "version.txt" ]; then
+            VERSION=$(cat version.txt | tr -d '\n\r ')
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Found version: $VERSION"
+          else
+            echo "version.txt not found!"
+            exit 1
+          fi
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION"
+            echo "Expected format: X.Y.Z (semantic versioning)"
+            exit 1
+          fi
+          echo "Version format is valid: $VERSION"
+
+      - name: Check if tag already exists
+        id: tag_check
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git tag --list | grep -q "^${TAG}$"; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "Tag $TAG already exists, skipping creation"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG does not exist, will create"
+          fi
+
+      - name: Verify version.txt and package.json are in sync
+        run: |
+          VERSION_TXT="${{ steps.version.outputs.version }}"
+          if [ -f "package.json" ]; then
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            if [ "$VERSION_TXT" != "$PACKAGE_VERSION" ]; then
+              echo "⚠️ Warning: version.txt ($VERSION_TXT) and package.json ($PACKAGE_VERSION) are out of sync"
+              echo "Consider running 'npm run sync-version' to synchronize versions"
+            else
+              echo "✅ version.txt and package.json are in sync: $VERSION_TXT"
+            fi
+          fi
+
+      - name: Create and push tag
+        if: steps.tag_check.outputs.tag_exists == 'false'
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          echo "Creating tag: $TAG"
+
+          # Configure git (using GitHub Actions bot)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create annotated tag with metadata
+          git tag -a "$TAG" -m "Release $TAG
+
+          Auto-tagged by GitHub Actions
+          Commit: ${{ github.sha }}
+          Triggered by: ${{ github.actor }}
+          Workflow: ${{ github.workflow }}
+          "
+
+          # Push the tag
+          git push origin "$TAG"
+          echo "✅ Successfully created and pushed tag: $TAG"
+
+      - name: Create GitHub Release (optional)
+        if: steps.tag_check.outputs.tag_exists == 'false'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          body: |
+            ## Release v${{ steps.version.outputs.version }}
+
+            This release was automatically created by GitHub Actions when version.txt was updated.
+
+            ### Changes
+            - Version updated to ${{ steps.version.outputs.version }}
+            - Auto-tagged from commit ${{ github.sha }}
+
+            ### Installation
+            ```bash
+            git checkout v${{ steps.version.outputs.version }}
+            ```
+
+            For detailed changes, see [CHANGELOG.md](CHANGELOG.md)
+          draft: false
+          prerelease: false
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auto-Tag Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag**: v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag Exists**: ${{ steps.tag_check.outputs.tag_exists }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.tag_check.outputs.tag_exists }}" == "false" ]; then
+            echo "- **Action**: ✅ Tag created and pushed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Action**: ⏭️ Tag already exists, skipped" >> $GITHUB_STEP_SUMMARY
+          fi
