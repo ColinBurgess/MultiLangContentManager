@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # MultiLangContentManager Application
+  multilang:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: multilang-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/multilang-content
+      - ALLOWED_ORIGINS=http://localhost,http://multilang.home.local,http://localhost:3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - multilang-network
+    volumes:
+      - ../logs:/app/logs
+      - ../config:/app/config
+    labels:
+      # Traefik labels for reverse proxy (optional)
+      - "traefik.enable=true"
+      - "traefik.http.routers.multilang.rule=Host(`multilang.home.local`)"
+      - "traefik.http.routers.multilang.entrypoints=web"
+      - "traefik.http.services.multilang.loadbalancer.server.port=3000"
+      - "traefik.docker.network=multilang-network"
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: multilang-db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=your-secure-password
+      - MONGO_INITDB_DATABASE=multilang-content
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - multilang-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Traefik Reverse Proxy (Optional - for multiple services)
+  traefik:
+    image: traefik:v3.0
+    container_name: multilang-traefik
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik:/etc/traefik
+    networks:
+      - multilang-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.home.local`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+  # MongoDB Express (Optional - Database Web UI)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: multilang-mongo-ui
+    restart: unless-stopped
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=your-secure-password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    ports:
+      - "8081:8081"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - multilang-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo-ui.rule=Host(`mongo.home.local`)"
+      - "traefik.http.services.mongo-ui.loadbalancer.server.port=8081"
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  multilang-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

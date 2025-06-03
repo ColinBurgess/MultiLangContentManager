@@ -87,6 +87,17 @@ MultiLangContentManager/
 │       ├── test_parser.py # Basic parser tests
 │       ├── test_complex.py # Complex input tests
 │       └── test_curl.py   # API submission tests
+├── docker/                # 🐳 Docker deployment files
+│   ├── Dockerfile         # Production container image
+│   ├── Dockerfile.dev     # Development container image
+│   ├── docker-compose.yml # Production stack
+│   ├── docker-compose.dev.yml # Development stack
+│   ├── docker-commands.sh # Docker management script
+│   ├── .dockerignore      # Docker build exclusions
+│   ├── README.md          # Complete Docker documentation
+│   ├── mongo-init/        # MongoDB initialization scripts
+│   │   └── init-db.js     # Database setup and indexes
+│   └── traefik/           # Traefik reverse proxy configuration
 ├── dev-scripts/           # Development and maintenance scripts
 │   ├── migrations/        # Database migration scripts
 │   │   ├── migrate-platform-data.js    # Platform data structure migration
@@ -105,6 +116,7 @@ MultiLangContentManager/
 │   └── README-KANBAN.md  # Kanban board documentation
 ├── scripts/
 │   └── encrypt-credentials.js # Encryption script
+├── backups/              # Database backups (created by Docker scripts)
 ├── LESSONS_LEARNED.md    # Critical lessons learned during development
 └── package.json         # Dependencies and scripts
 ```
@@ -169,6 +181,78 @@ node dev-scripts/migrations/migrate-platform-data.js
 ```
 
 For detailed documentation of all available scripts, see [`dev-scripts/README.md`](dev-scripts/README.md).
+
+## 🐳 Docker Deployment
+
+MultiLangContentManager now includes complete Docker support for easy deployment, especially perfect for homelab environments.
+
+### Quick Docker Setup
+
+```bash
+# 🚀 One-command deployment:
+
+# Production (recommended for homelab)
+./docker/docker-commands.sh start-prod
+
+# Development (with live reload)
+./docker/docker-commands.sh start-dev
+```
+
+### What You Get
+
+- **📱 MultiLang App**: http://localhost:3000
+- **🍃 MongoDB**: Complete database with initialization
+- **📊 MongoDB Express**: http://localhost:8081 (database web UI)
+- **🔀 Traefik**: http://localhost:8080 (reverse proxy dashboard)
+
+### Homelab Integration
+
+Perfect for local network deployment:
+
+```bash
+# Add to your Pi-hole or router DNS:
+192.168.1.100  multilang.home.local
+192.168.1.100  mongo.home.local
+192.168.1.100  traefik.home.local
+
+# Then access via:
+# - App: http://multilang.home.local
+# - MongoDB UI: http://mongo.home.local
+# - Proxy Dashboard: http://traefik.home.local
+```
+
+### Docker Features
+
+- ✅ **Multi-stage builds** for optimized images
+- ✅ **Health checks** and automatic restart
+- ✅ **Reverse proxy** with Traefik
+- ✅ **Volume persistence** for data
+- ✅ **Organized structure** - all Docker files in `docker/` directory
+- ✅ **Easy management** with helper scripts
+- ✅ **Development mode** with live reload
+- ✅ **Automated backups** and monitoring
+
+### Docker Management
+
+```bash
+# Available commands:
+./docker/docker-commands.sh status    # Check services
+./docker/docker-commands.sh logs      # View logs
+./docker/docker-commands.sh backup    # Backup database
+./docker/docker-commands.sh stop      # Stop services
+./docker/docker-commands.sh help      # See all options
+```
+
+### Manual Docker Commands
+
+```bash
+# Alternative manual approach:
+docker-compose -f docker/docker-compose.yml up -d        # Start production
+docker-compose -f docker/docker-compose.dev.yml up -d   # Start development
+docker-compose -f docker/docker-compose.yml ps          # Check status
+```
+
+For complete Docker documentation, see [`docker/README.md`](docker/README.md).
 
 ## Usage 🚀
 

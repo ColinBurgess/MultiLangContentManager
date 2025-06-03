@@ -120,5 +120,107 @@ DB → API → localStorage → displayContents() → getPlatformStatusIndicator
 **If curl works but frontend doesn't:** → Compare data structures
 **If Mongoose doesn't save:** → Verify `markModified()`
 
+## 🐳 Docker & Deployment Lessons Learned
+
+### Project Organization Best Practices
+**Lesson:** Initially placed Docker files in project root causing clutter
+**Solution:** Organize all Docker infrastructure in dedicated `docker/` directory
+**Impact:** Clean project structure with clear separation of concerns
+```
+✅ GOOD: docker/Dockerfile, docker/docker-compose.yml
+❌ AVOID: Dockerfile, docker-compose.yml in root
+```
+
+### Script UX Improvements
+**Problem:** Scripts requiring explicit `help` command show poor UX
+**Solution:** Default to help display when no arguments provided
+**Pattern:** Standard CLI tools behavior (git, docker, npm)
+```bash
+# ❌ OLD: Error message + help
+./script.sh  # "No command provided [ERROR]"
+
+# ✅ NEW: Direct help display
+./script.sh  # Shows help immediately
+```
+
+### Docker Context Path Issues
+**Critical:** When moving Docker files to subdirectory, update ALL path references
+**Common mistake:** Forget to update volume mounts and context paths
+```yaml
+# ❌ INCORRECT after moving to docker/
+context: .
+volumes:
+  - ./logs:/app/logs
+
+# ✅ CORRECT
+context: ..
+volumes:
+  - ../logs:/app/logs
+```
+
+### Multi-Environment Docker Strategy
+**Key insight:** Separate files for production vs development environments
+- `docker-compose.yml` → Production (optimized, health checks, security)
+- `docker-compose.dev.yml` → Development (live reload, debug ports)
+**Script pattern:** Auto-detect which environment is running for operations
+
+### Health Check & Restart Policies
+**Essential for production:** Always include health checks and restart policies
+```yaml
+healthcheck:
+  test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  interval: 10s
+  timeout: 5s
+  retries: 5
+restart: unless-stopped
+```
+
+### Management Script Design Patterns
+**Best practices learned:**
+1. **Colored output:** Use consistent color coding (INFO, SUCCESS, WARNING, ERROR)
+2. **Path detection:** Scripts should work from any directory
+3. **Environment detection:** Auto-detect production vs development
+4. **Error handling:** Graceful fallbacks with `|| true` for cleanup operations
+5. **User confirmation:** Always confirm destructive operations
+
+### Documentation Structure for Docker
+**Critical files needed:**
+- `docker/README.md` → Complete technical documentation
+- Main `README.md` → Quick start integration
+- Management script → Built-in help with examples
+**Pattern:** Three levels of documentation (quick, detailed, inline help)
+
+## 🔧 Docker Debugging Commands
+
+```bash
+# Check service status
+docker-compose -f docker/docker-compose.yml ps
+
+# View logs for specific service
+docker-compose -f docker/docker-compose.yml logs -f multilang
+
+# Test container connectivity
+docker exec -it multilang-app curl http://localhost:3000/api/version
+
+# Check MongoDB connectivity
+docker exec -it multilang-db mongosh --eval "db.adminCommand('ping')"
+
+# Inspect Docker network
+docker network inspect multilangcontentmanager_multilang-network
+```
+
+## 📦 Deployment Automation Patterns
+
+### Version Synchronization
+**Pattern:** Dual file approach for automation compatibility
+- `package.json` → npm ecosystem
+- `version.txt` → CI/CD and deployment scripts
+**Scripts:** `sync-version` and `version-bump` for consistency
+
+### GitHub Actions Integration
+**Lesson:** Automate tagging when version files change
+**Trigger pattern:** Monitor both version files on main branch
+**Safety measures:** Validation, duplicate prevention, error handling
+
 ---
-**Last updated:** February 2025 | **Version:** 2.0 - LLM Optimized
+**Last updated:** June 2025 | **Version:** 2.1 - Docker & Deployment Lessons

@@ -1,0 +1,36 @@
+# Development Dockerfile for MultiLangContentManager
+FROM node:18-alpine
+
+# Install system dependencies including Python for the parser module
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    python3-dev \
+    gcc \
+    musl-dev \
+    && ln -sf python3 /usr/bin/python
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci && npm cache clean --force
+
+# Install Python dependencies for parser
+COPY parser/requirements.txt ./parser/
+RUN pip3 install --no-cache-dir -r parser/requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p logs config
+
+# Expose port
+EXPOSE 3000
+
+# Start the application in development mode with nodemon
+CMD ["npm", "run", "dev"]

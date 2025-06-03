@@ -58,6 +58,24 @@ coverage
 tmp
 temp
 
+# Docker
+docker-compose.override.yml
+.docker/
+**/.docker/
+**/Dockerfile.local
+**/.dockerignore.local
+
+# Docker volumes and data
+docker/data/
+docker/volumes/
+docker/logs/
+
+# Backups
+backups/
+*.backup
+*.dump
+*.sql
+
 # Python specific
 __pycache__/
 *.py[cod]

@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Development version with live reload
+  multilang-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: multilang-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/multilang-content-dev
+      - ALLOWED_ORIGINS=*
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - multilang-network
+    volumes:
+      # Live reload - mount source code
+      - ./server:/app/server
+      - ./client:/app/client
+      - ./utils:/app/utils
+      - ./parser:/app/parser
+      - ./scripts:/app/scripts
+      - ./logs:/app/logs
+      - ./config:/app/config
+      # Exclude node_modules from host
+      - /app/node_modules
+    command: ["npm", "run", "dev"]
+
+  # MongoDB for development
+  mongodb:
+    image: mongo:7
+    container_name: multilang-db-dev
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=multilang-content-dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - multilang-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # MongoDB Express for development
+  mongo-express:
+    image: mongo-express:latest
+    container_name: multilang-mongo-ui-dev
+    restart: unless-stopped
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_BASICAUTH_USERNAME=dev
+      - ME_CONFIG_BASICAUTH_PASSWORD=dev
+    ports:
+      - "8081:8081"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - multilang-network
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+
+networks:
+  multilang-network:
+    driver: bridge
